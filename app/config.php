@@ -1,0 +1,54 @@
+<?php
+// @todo: Include different config files for each HOST (ex. 'localhost.cfg.php' and 'domain.com.cfg.php') for different environments
+
+// Configuration
+$cfg = array();
+$cfg['cx']['env']['https'] = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? false : true;
+$cfg['cx']['request'] = (isset($_GET['url']) ? urldecode($_GET['url']) : '' );
+$cfg['cx']['root'] = dirname(dirname(__FILE__));
+
+$cfg['cx']['dir_web'] = '/';
+$cfg['cx']['dir_core'] = '/core/';
+$cfg['cx']['dir_lib'] = '/lib/';
+$cfg['cx']['dir_modules'] = '/modules/';
+$cfg['cx']['dir_public'] = $cfg['cx']['dir_web'] . 'public/';
+$cfg['cx']['dir_themes'] = $cfg['cx']['dir_public'] . 'themes/';
+
+$cfg['cx']['path_app'] = dirname(__FILE__);
+$cfg['cx']['path_lib'] = $cfg['cx']['root'] . $cfg['cx']['dir_lib'];
+$cfg['cx']['path_core'] = $cfg['cx']['root'] . $cfg['cx']['dir_core'];
+$cfg['cx']['path_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_modules'];
+$cfg['cx']['path_public'] = $cfg['cx']['root'] . $cfg['cx']['dir_public'];
+$cfg['cx']['path_themes'] = $cfg['cx']['root'] . $cfg['cx']['dir_themes'];
+
+$cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . $cfg['cx']['dir_web'];
+$cfg['cx']['debug'] = false;
+
+// Use Apache's mod_rewrite on URLs?
+$cfg['cx']['mod_rewrite'] = true;
+
+// Defaults
+$cfg['cx']['default']['module'] = 'page';
+$cfg['cx']['default']['action'] = 'index';
+
+// Database
+$cfg['cx']['db']['host'] = 'localhost';
+$cfg['cx']['db']['user'] = 'root';
+$cfg['cx']['db']['pass'] = '';
+$cfg['cx']['db']['name'] = 'cx_cms';
+$cfg['cx']['db']['options'] = array(
+	PDO::ERRMODE_EXCEPTION => true,
+	PDO::ATTR_PERSISTENT => false,
+	PDO::ATTR_EMULATE_PREPARES=> true,
+	PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"
+	);
+
+// Locale Settings
+$cfg['cx']['i18n']['charset'] = 'UTF-8';
+$cfg['cx']['i18n']['language'] = 'en_US';
+$cfg['cx']['i18n']['timezone'] = 'US/Central';
+
+// Error Reporting
+$cfg['cx']['error_reporting'] = true;
+
+return $cfg;

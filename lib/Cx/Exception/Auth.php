@@ -1,0 +1,1 @@
+<?php/* * $Id$ *  * Handles 401 unauthorized errors *  * @package Cx Framework * @author Vance Lucas <vance@vancelucas.com> * @link http://cont-xt.com/ * * @version			$Revision$ * @modifiedby		$LastChangedBy$ * @lastmodified	$Date$ */class Cx_Exception_Auth extends Cx_Exception{}

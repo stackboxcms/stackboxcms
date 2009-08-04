@@ -1,0 +1,1 @@
+<?php/* * $Id$ *  * Handles view template errors *  * @package Cx Framework * @author Vance Lucas <vance@vancelucas.com> * @link http://cont-xt.com/ * * @version			$Revision$ * @modifiedby		$LastChangedBy$ * @lastmodified	$Date$ */class Cx_Exception_View extends Cx_Exception{}
