@@ -39,8 +39,7 @@ $cfg['cx']['db']['name'] = 'cx_cms';
 $cfg['cx']['db']['options'] = array(
 	PDO::ERRMODE_EXCEPTION => true,
 	PDO::ATTR_PERSISTENT => false,
-	PDO::ATTR_EMULATE_PREPARES=> true,
-	PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"
+	PDO::ATTR_EMULATE_PREPARES=> true
 	);
 
 // Locale Settings
