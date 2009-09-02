@@ -63,7 +63,7 @@ class Cx_Locator
 	 * @param string $default Default value to return if $value not found
 	 */
 	public function config($value = null, $default = false) {
-		global $cfg;
+		global $cfg; // Ew. I know. I know. Fear not, it's only temporary. :)
 		
 		// No value passed - return entire config array
 		if($value === null) { return $cfg; }
@@ -216,28 +216,17 @@ class Cx_Locator
 			return true;
 		}
 		
-		// Special rules for underscores
-		if(strpos($className, '_') !== false) {
-			$nameParts = explode('_', $className);
-			$className = ucfirst(end($nameParts));
-			
-			$pathParts = explode('_', $moduleName);
-			$className = str_replace(' ', '_', strtolower(implode(' ', $pathParts))) . '/' . $className;
-		} else {
-			$className = strtolower($moduleName) . '/' . $className;
-		}
+		// Remove 'Module_' Prefix
+		$className = str_replace("Module_", "", $className);
 		
 		// Add current module name to each module base path
 		$fullPaths = array();
 		foreach($this->getPaths() as $path) {
-			$fullPaths[] = $path;
+			$fullPaths[] = $path . strtolower($moduleName) . DIRECTORY_SEPARATOR;
 		}
 		
-		// Trace the origins of loaded files
-		//echo '<br>Loading class "' . $className . '"<br>IN MODULE: ' . $moduleName . '</p>';
-		
 		// Load file using loader function
-		return $this->load($className, $this->getPaths());
+		return $this->load($className, $fullPaths);
 	}
 	
 
