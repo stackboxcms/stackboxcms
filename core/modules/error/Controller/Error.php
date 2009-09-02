@@ -2,7 +2,7 @@
 /**
  * $Id$
  */
-class ErrorController extends Cx_Controller
+class Module_Controller_Error extends Cx_Controller
 {
 	/**
 	 * Initialization function, unset all filters
