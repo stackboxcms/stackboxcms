@@ -27,7 +27,8 @@ class Cx_Controller_Front
 	/**
 	 *	Constructor fucntion
 	 */
-	public function __construct($cx) {
+	public function __construct($cx)
+	{
 		$this->cx = $cx;
 	}
 	
@@ -36,29 +37,36 @@ class Cx_Controller_Front
 	 *	Getters/Setters
 	 */
 	// module
-	public function setModule($str) {
+	public function setModule($str)
+	{
 		$this->module = $str;
 	}
-	public function getModule() {
+	public function getModule()
+	{
 		return $this->module;
 	}
 	
 	// action
-	public function setAction($str) {
+	public function setAction($str)
+	{
 		$this->action = $str;
 	}
-	public function getAction() {
+	public function getAction()
+	{
 		return $this->action;
 	}
 	
 	// parameters for the function call
-	public function setParam($name, $value) {
+	public function setParam($name, $value)
+	{
 		$this->params[$name] = $value;
 	}
-	public function setParams(array $params = array()) {
+	public function setParams(array $params = array())
+	{
 		$this->params = array_merge($this->params, $params);
 	}
-	public function getParams() {
+	public function getParams()
+	{
 		return $this->params;
 	}
 	
@@ -100,7 +108,7 @@ class Cx_Controller_Front
 		$response = $this->getResponse();
 		
 		// Determine module name and load class file
-		$moduleClassName = str_replace(' ', '_', ucwords(str_replace('_', ' ', $moduleName))) . 'Controller';
+		$moduleClassName = 'Module_Controller_' . str_replace(' ', '_', ucwords(str_replace('_', ' ', $moduleName)));
 	
 		$return = true;
 		$moduleClass = null;

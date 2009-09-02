@@ -71,7 +71,7 @@ class Cx_Controller
 	public function postDispatch()
 	{
 		if($this->autoRender) {
-			$this->render();
+			//$this->render();
 		}
 	}
 	
@@ -169,18 +169,6 @@ class Cx_Controller
 	
 	
 	/**
-	 * Is current user authenticated to execute command module?
-	 * 
-	 * @todo This function will be the way to check user permissions, etc.
-	 * @return boolean
-	 */
-	public function canRun($action)
-	{
-		return true;
-	}
-	
-	
-	/**
 	 * Get context object
 	 *
 	 * @return object Cx_Controller_Front
@@ -205,7 +193,7 @@ class Cx_Controller
 	/**
 	 * Get request object
 	 *
-	 * @return object Cx_Http_Request
+	 * @return object Cx_Request
 	 */
 	public function getRequest()
 	{
@@ -216,7 +204,7 @@ class Cx_Controller
 	/**
 	 * Get response object
 	 *
-	 * @return object Cx_Http_Response
+	 * @return object Cx_Response
 	 */
 	public function getResponse()
 	{
@@ -266,8 +254,8 @@ class Cx_Controller
 	public function getName()
 	{
 		if(!$this->name) {
-			// Removes last 10 characters from class name - "Controller"
-			$this->name = substr(get_class($this), 0, -10);
+			// Removes the standard 'Module_Controller_' prefix to reveal actual module name
+			$this->name = str_replace('Module_Controller_', '', get_class($this));
 		}
 		return $this->name;
 	}
