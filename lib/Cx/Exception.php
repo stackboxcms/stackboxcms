@@ -37,7 +37,7 @@ class Cx_Exception extends Exception
 		$error .= '</div>';
 		
 		// Show stack trace if not in production mode
-		if(!FW_STAGE_PRODUCTION) {
+		if(cx()->config('cx.debug')) {
 			$error .= '<div style="font-size:12px; padding:2px 8px; background:#FFFFCC; font:\'Courier New\', Courier, mono"><pre>';
 			$error .= "Code: " . $this->getCode() . "\n" . "File: " . $this->getFile() . "\n" . "Line: " . $this->getLine() . " at: \n";
 			$error .= $this->getTraceAsString() . "\n";
