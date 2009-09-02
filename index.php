@@ -9,7 +9,6 @@ $response = false;
 try {
 	$cx = cx();
 	$cx->addPath($cx->config('cx.path_lib'));
-	$cx->addPath($cx->config('cx.path_core'));
 	$cx->event('startup');
 
 	// Setup Request / Response objects
