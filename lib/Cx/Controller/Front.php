@@ -158,7 +158,8 @@ class Cx_Controller_Front
 			// Call actual module function
 			if($callable) {
 				// If module is authenticated to run
-				if($moduleClass->canRun($action)) {
+				// @todo Add check for user authentication - Is user allowed to execute this function?
+				if(true) {
 					// Pre-Dispatch
 					$moduleClass->preDispatch();
 					// Call function
