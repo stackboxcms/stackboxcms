@@ -3,15 +3,10 @@
  * Front Controller Class
  * $Id$
  * 
- * Base controller class for other component controllers to extend
+ * Main front controller for handling and dispatching requests
  * 
  * @package Cx Framework
- * @author Vance Lucas <vance@vancelucas.com>
  * @link http://cont-xt.com/
- *
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
  */
 class Cx_Controller_Front
 {
@@ -158,7 +153,7 @@ class Cx_Controller_Front
 			// Call actual module function
 			if($callable) {
 				// If module is authenticated to run
-				// @todo Insert some method of user authentication here - test that user is allowed to execute this
+				// @todo Add check for user authentication - Is user allowed to execute this function?
 				if(true) {
 					// Pre-Dispatch
 					$moduleClass->preDispatch();
