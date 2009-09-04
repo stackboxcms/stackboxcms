@@ -158,6 +158,7 @@ class Cx_Locator
 			$paths = $this->getPaths();
 			$paths[] = $className;
 		}
+		$paths = array_unique($paths);
 		
 		// Add custom set include paths
 		$incPath = false;
@@ -217,16 +218,29 @@ class Cx_Locator
 		}
 		
 		// Remove 'Module_' Prefix
-		$className = str_replace("Module_", "", $className);
+		//$className = str_replace("Module_", "", $className);
+		$classNameParts = explode("_", $className);
+		
+		// First part should be "Module_" is this is a module file
+		$isModule = (array_shift($classNameParts) == "Module");
+		if(!$isModule) {
+			return $this->load($className);
+		}
+		
+		// Get module name (2nd part)
+		$moduleName = array_shift($classNameParts);
+		
+		// Put class name back together without prefix or module name
+		$moduleClassName = implode("_", $classNameParts);
 		
 		// Add current module name to each module base path
-		$fullPaths = array();
+		$modulePaths = array();
 		foreach($this->getPaths() as $path) {
-			$fullPaths[] = $path . strtolower($moduleName) . DIRECTORY_SEPARATOR;
+			$modulePaths[] = $path . strtolower($moduleName) . DIRECTORY_SEPARATOR;
 		}
 		
 		// Load file using loader function
-		return $this->load($className, $fullPaths);
+		return $this->load($moduleClassName, $modulePaths);
 	}
 	
 
@@ -235,7 +249,7 @@ class Cx_Locator
 	 */
 	public function event($name)
 	{
-		// Run hooks for event name
+		// @todo Run hooks for event name
 	}
 	
 	
@@ -244,7 +258,7 @@ class Cx_Locator
 	 */
 	public function log($message)
 	{
-		// Record log message
+		// @todo Record log message
 	}
 	
 	

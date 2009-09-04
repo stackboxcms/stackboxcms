@@ -2,25 +2,16 @@
 /**
  * $Id$
  */
-class Module_Controller_Error extends Cx_Controller
+class Module_Error_Controller extends Cx_Controller
 {
 	/**
-	 * Initialization function, unset all filters
-	 * We don't need any kind of authentication to show errors
-	 */
-	public function init()
-	{
-		unset($this->filters);
-	}
-	
-	
-	/**
-	 * User login function
+	 * Error display and handling function
 	 */
 	public function indexAction($errorCode = 500, $errorMessage = null)
 	{
-		$request = $this->getRequest();
-		$response = $this->getResponse();
+		$cx = $this->cx;
+		$request = $cx->request()
+		$response = $cx->response();
 		
 		// Set response status
 		$response->setStatus($errorCode);

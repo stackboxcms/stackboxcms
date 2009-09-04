@@ -55,24 +55,26 @@ class Cx_Controller
 	
 	
 	/**
-	 * Pre-Dispatch
 	 * Executes immediately BEFORE each action call
 	 */
-	public function preDispatch()
+	public function beforeDispatch()
 	{
 		
 	}
 	
 	
 	/**
-	 * Post-Dispatch
 	 * Executes immediately AFTER each action call
+	 *
+	 * @param mixed $result Result from dispatch action call - can be controller object or returned result
+	 * @return mixed Can be a string or an object with __toString() method defined
 	 */
-	public function postDispatch()
+	public function afterDispatch($result)
 	{
 		if($this->autoRender) {
-			//$this->render();
+			$this->render();
 		}
+		return $result;
 	}
 	
 	
@@ -109,7 +111,9 @@ class Cx_Controller
 	 */
 	public function render()
 	{
-		$request = $this->getRequest();
+		// Turn off auto-rendering - we are already rendering right now
+		$this->autoRender = false;
+		// Return template contents
 		return $this->getView()->getContent();
 	}
 	
@@ -247,15 +251,21 @@ class Cx_Controller
 	
 	/**
 	 * Returns current module name
-	 * relies on module naming conventions
+	 * Assumes standard module naming convention
+	 * Will return full class name if name cannot be determined by conventions
 	 * 
 	 * @return string
 	 */
 	public function getName()
 	{
 		if(!$this->name) {
-			// Removes the standard 'Module_Controller_' prefix to reveal actual module name
-			$this->name = str_replace('Module_Controller_', '', get_class($this));
+			$className = get_class($this);
+			$nameParts = explode('_', $className);
+			if(isset($nameParts[1])) {
+				$this->name = $nameParts[1];
+			} else {
+				$this->name = $className;
+			}
 		}
 		return $this->name;
 	}
@@ -267,7 +277,7 @@ class Cx_Controller
 	 */
 	public function getNamePath()
 	{
-		return str_replace('_', DIRECTORY_SEPARATOR, strtolower($this->getName()));
+		return str_replace('_', DIRECTORY_SEPARATOR, $this->getName());
 	}
 	
 	
@@ -276,7 +286,7 @@ class Cx_Controller
 	 */
 	public function getPath()
 	{
-		$path = $this->cx->config('cx.path_core') . $this->cx->config('cx.dir_modules') . '/' . $this->getNamePath();
+		$path = $this->cx->config('cx.path_core') . $this->cx->config('cx.dir_modules') . $this->getNamePath();
 		return $path;
 	}
 	
@@ -286,14 +296,17 @@ class Cx_Controller
 	 */
 	public function __toString()
 	{
-		// Exceptions cannot be thrown in __toString method (results in fatal error)
-		// We have to catch any that may be thrown and return a string
-		try {
-			$content = $this->render();
-		} catch(Cx_Exception $e) {
-			$content = $e->getError();
-		} catch(Exception $e) {
-			$content = "<strong>TEMPLATE RENDERING ERROR:</strong><hr />" . $e->getMessage();
+		$content = '';
+		if($this->autoRender) {
+			// Exceptions cannot be thrown in __toString method (results in fatal error)
+			// We have to catch any that may be thrown and return a string
+			try {
+				$content = $this->render();
+			} catch(Cx_Exception $e) {
+				$content = $e->getError();
+			} catch(Exception $e) {
+				$content = "<strong>TEMPLATE RENDERING ERROR:</strong><hr />" . $e->getMessage();
+			}
 		}
 		return $content;
 	}

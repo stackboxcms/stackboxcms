@@ -2,7 +2,7 @@
 /**
  * $Id$
  */
-class Module_Controller_Page extends Cx_Controller
+class Module_Page_Controller extends Cx_Controller
 {
 	/**
 	 * Display current page
@@ -15,6 +15,6 @@ class Module_Controller_Page extends Cx_Controller
 		$this->getView()->set(array(
 			'title' => 'Page Title'
 			));
-		//$this->autoRender = false;
+		$this->autoRender = false;
 	}
 }

@@ -2,10 +2,10 @@
 /**
  * $Id$
  */
-class Module_Model_Page extends phpDataMapper_Model
+class Module_Page_Model extends phpDataMapper_Model
 {
 	// Custom row class
-	protected $rowClass = 'Module_Model_Page_Row';
+	protected $rowClass = 'Module_Page_Item';
 	
 	// Setup table and fields
 	protected $table = "pages";
@@ -23,7 +23,7 @@ class Module_Model_Page extends phpDataMapper_Model
 
 
 // Custom row object
-class Module_Model_Page_Row extends phpDataMapper_Model_Row
+class Module_Page_Item extends phpDataMapper_Model_Row
 {
 	
 }

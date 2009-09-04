@@ -83,8 +83,7 @@ class Cx_Controller_Front
 		$action .= "Action";
 		
 		// Dispatch module/action call
-		$result = $this->dispatch($module, $action);
-		return $result;
+		return $this->dispatch($module, $action);
 	}
 	
 	
@@ -103,7 +102,7 @@ class Cx_Controller_Front
 		$response = $this->getResponse();
 		
 		// Determine module name and load class file
-		$moduleClassName = 'Module_Controller_' . str_replace(' ', '_', ucwords(str_replace('_', ' ', $moduleName)));
+		$moduleClassName = 'Module_' . str_replace(' ', '_', ucwords(str_replace('_', ' ', $moduleName))) . '_Controller';
 	
 		$return = true;
 		$moduleClass = null;
@@ -155,16 +154,14 @@ class Cx_Controller_Front
 				// If module is authenticated to run
 				// @todo Add check for user authentication - Is user allowed to execute this function?
 				if(true) {
-					// Pre-Dispatch
-					$moduleClass->preDispatch();
-					// Call function
+					$moduleClass->beforeDispatch();
+					// Call requested module action
 					if(count($params) > 0) {
 						$return = call_user_func_array(array($moduleClass, $action), $params);
 					} else {
 						$return = $moduleClass->$action();
 					}
-					// Post-Dispatch
-					$return = $moduleClass->postDispatch($return);
+					$return = $moduleClass->afterDispatch($return);
 				} else {
 					// Unauthorized user
 					throw new Cx_Exception_Auth("Please log in to access this page");
@@ -180,7 +177,6 @@ class Cx_Controller_Front
 		if(null === $return) {
 			$return = $moduleClass;
 		}
-		
 		return $return;
 	}
 	
