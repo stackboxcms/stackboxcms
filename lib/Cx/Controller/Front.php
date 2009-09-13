@@ -74,7 +74,7 @@ class Cx_Controller_Front
 		$moduleClass = null;
 		
 		// Load the module file (Locator will prevent double-loading)
-		$loaded = $this->cx->loadInModule($moduleClassName, $moduleName);
+		$loaded = $this->cx->load($moduleClassName);
 		if($loaded) {
 			// Ensure class actually exists
 			if(class_exists($moduleClassName, false)) {

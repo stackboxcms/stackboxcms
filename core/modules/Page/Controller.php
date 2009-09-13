@@ -11,6 +11,8 @@ class Module_Page_Controller extends Cx_Controller
 	{
 		$request = $this->request();
 		
+		echo "PAGE MODULE: " . __FILE__;
+		
 		// Load page template for parsing
 		$this->model()->getPageByUrl($request->uri());
 		

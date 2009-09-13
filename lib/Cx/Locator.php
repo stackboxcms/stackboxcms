@@ -152,17 +152,47 @@ class Cx_Locator
 	 */
 	public function load($className, $paths = null)
 	{
+		// Ensure class is not already loaded
+		if(class_exists($className, false)) {
+			return true;
+		}
+		
 		// Is $paths null?
 		if($paths === null) {
-			$className = str_replace('_', '/', $className);
 			$paths = $this->getPaths();
-			$paths[] = $className;
+			//$className = str_replace('_', '/', $className);
+			//$paths[] = $className;
 		}
-		$paths = array_unique($paths);
+		
+		// MODULE loading
+		if(strpos($className, 'Module_') !== false) {
+			// Explode class name to get parts
+			$classNameParts = explode("_", $className);
+			
+			// Get module name (2nd part)
+			$moduleName = array_shift($classNameParts);
+			
+			// Put class name back together without prefix or module name
+			$className = implode("_", $classNameParts);
+			
+			// Add current module name to each module base path
+			/*
+			$modulePaths = array();
+			if(is_array($paths) && count($paths) > 0) {
+				foreach($paths as $path) {
+					$modulePaths[] = $path . $moduleName . DIRECTORY_SEPARATOR;
+				}
+				$paths = $modulePaths;
+			}
+			*/
+		}
 		
 		// Add custom set include paths
 		$incPath = false;
-		if(count($paths) > 0) {
+		if(is_array($paths) && count($paths) > 0) {
+			// Filter out duplicate paths
+			$paths = array_unique($paths);
+			// Change include path to have all possible paths in it
 			$dirs = implode(PATH_SEPARATOR, array_reverse($paths));
 			$incPath = get_include_path();
 			set_include_path($dirs . PATH_SEPARATOR . $incPath);
@@ -171,15 +201,6 @@ class Cx_Locator
 		// Put together the full class location (include path)
 		$className = str_replace('_', '/', $className);
 		$classLocation = $className . '.php';
-
-		// Return true if class already exists
-		if(class_exists($className, false)) {
-			// Reset include path with original
-			if($incPath) {
-				set_include_path($incPath);
-			}
-			return true;
-		}
 		
 		// Include class file if it exists
 		// Set cutom error handler to surpress inclusion failure warnings
@@ -205,42 +226,6 @@ class Cx_Locator
 		} else {
 			return false;
 		}
-	}
-	
-	
-	/**
-	 *	Load file in given module directory
-	 */
-	public function loadInModule($className, $moduleName)
-	{
-		if(class_exists($className, false)) {
-			return true;
-		}
-		
-		// Remove 'Module_' Prefix
-		//$className = str_replace("Module_", "", $className);
-		$classNameParts = explode("_", $className);
-		
-		// First part should be "Module_" is this is a module file
-		$isModule = (array_shift($classNameParts) == "Module");
-		if(!$isModule) {
-			return $this->load($className);
-		}
-		
-		// Get module name (2nd part)
-		$moduleName = array_shift($classNameParts);
-		
-		// Put class name back together without prefix or module name
-		$moduleClassName = implode("_", $classNameParts);
-		
-		// Add current module name to each module base path
-		$modulePaths = array();
-		foreach($this->getPaths() as $path) {
-			$modulePaths[] = $path . strtolower($moduleName) . DIRECTORY_SEPARATOR;
-		}
-		
-		// Load file using loader function
-		return $this->load($moduleClassName, $modulePaths);
 	}
 	
 
