@@ -10,8 +10,6 @@
  */
 class Cx_Controller_Front
 {
-	protected $module;
-	protected $action;
 	protected $params = array();
 	
 	protected $cx;
@@ -25,30 +23,6 @@ class Cx_Controller_Front
 	public function __construct($cx)
 	{
 		$this->cx = $cx;
-	}
-	
-	
-	/**
-	 *	Getters/Setters
-	 */
-	// module
-	public function setModule($str)
-	{
-		$this->module = $str;
-	}
-	public function getModule()
-	{
-		return $this->module;
-	}
-	
-	// action
-	public function setAction($str)
-	{
-		$this->action = $str;
-	}
-	public function getAction()
-	{
-		return $this->action;
 	}
 	
 	// parameters for the function call
@@ -69,16 +43,8 @@ class Cx_Controller_Front
 	/**
 	 *	Invoke application
 	 */
-	public function run(Cx_Request $request, Cx_Response $response)
+	public function run($module, $action)
 	{
-		// Store request & response
-		$this->request = $request;
-		$this->response = $response;
-		
-		// Get common variables
-		$module = $this->getModule();
-		$action = $this->getAction();
-		
 		// Append 'Action' to URL
 		$action .= "Action";
 		
@@ -98,8 +64,8 @@ class Cx_Controller_Front
 	 */
 	public function dispatch($moduleName, $action = 'index', array $params = array())
 	{
-		$request = $this->getRequest();
-		$response = $this->getResponse();
+		$request = $this->cx->request();
+		$response = $this->cx->response();
 		
 		// Determine module name and load class file
 		$moduleClassName = 'Module_' . str_replace(' ', '_', ucwords(str_replace('_', ' ', $moduleName))) . '_Controller';
@@ -123,8 +89,7 @@ class Cx_Controller_Front
 		
 		// Ensure module was found
 		if($moduleClass) {
-			$moduleClass->setAction($action);
-			$moduleClass->setContext($this);
+			$moduleClass->action($action);
 			
 			// Save instance in locator
 			$this->cx->set($moduleClassName, $moduleClass);
@@ -178,27 +143,5 @@ class Cx_Controller_Front
 			$return = $moduleClass;
 		}
 		return $return;
-	}
-	
-	
-	/**
-	 * Get request object
-	 *
-	 * @return object Cx_Request
-	 */
-	public function getRequest()
-	{
-		return $this->request;
-	}
-	
-	
-	/**
-	 * Get response object
-	 *
-	 * @return object Cx_Response
-	 */
-	public function getResponse()
-	{
-		return $this->response;
 	}
 }

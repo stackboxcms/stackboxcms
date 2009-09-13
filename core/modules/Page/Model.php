@@ -19,6 +19,16 @@ class Module_Page_Model extends phpDataMapper_Model
 		'date_created' => array('type' => 'date'),
 		'date_modified' => array('type' => 'date')
 		);
+	
+	/**
+	 * Get current page by given URL
+	 */
+	public function getPageByUrl($url)
+	{
+		return $this->first(array(
+			'url' => $url
+			));
+	}
 }
 
 

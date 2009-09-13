@@ -9,12 +9,12 @@ class Module_Page_Controller extends Cx_Controller
 	 */
 	public function indexAction()
 	{
-		$request = $this->getRequest();
+		$request = $this->request();
 		
-		// Assign template variables
-		$this->getView()->set(array(
-			'title' => 'Page Title'
-			));
+		// Load page template for parsing
+		$this->model()->getPageByUrl($request->uri());
+		
+		// Prevent template from rendering
 		$this->autoRender = false;
 	}
 }

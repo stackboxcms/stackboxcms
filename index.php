@@ -12,8 +12,8 @@ try {
 	$cx->event('startup');
 
 	// Setup Request / Response objects
-	$request = $cx->get('Cx_Request');
-	$response = $cx->get('Cx_Response');
+	$request = $cx->request();
+	$response = $cx->response();
 
 	// Router to match HTTP requests
 	$router = $cx->get('Cx_Router');
@@ -32,16 +32,16 @@ try {
 	// Set request parameters parsed from router
 	$request->setParams($requestParams);
 
-	// Load front controller
+	// Load front controller, pass in $cx as a dependency
 	$app = $cx->get('Cx_Controller_Front', array($cx));
 
 	// Set data parsed from router
-	$app->setModule($request->getParam('module', $cx->config('cx.default.module')));
-	$app->setAction($request->getParam('action', $cx->config('cx.default.action')));
-
+	$module = $request->getParam('module', $cx->config('cx.default.module'));
+	$action = $request->getParam('action', $cx->config('cx.default.action'));
+	
 	// Run/execute
 	$responseStatus = 200;
-	$content = $app->run($request, $response);
+	$content = $app->run($module, $action);
 
 // Authentication Error
 } catch(Cx_Exception_Auth $e) {
@@ -87,8 +87,8 @@ if($app && $response) {
 	}
 
 	// Set content and send response
-	$response->setStatus($responseStatus);
-	$response->setContent($content);
+	$response->status($responseStatus);
+	$response->content($content);
 	$response->send();
 	
 	if($cx) {

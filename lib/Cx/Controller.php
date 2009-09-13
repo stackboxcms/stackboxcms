@@ -114,36 +114,36 @@ class Cx_Controller
 		// Turn off auto-rendering - we are already rendering right now
 		$this->autoRender = false;
 		// Return template contents
-		return $this->getView()->getContent();
+		return $this->view()->getContent();
 	}
 	
 	
 	/**
 	 * Get model class to use for module
 	 */
-	public function getModel($name = null)
+	public function model($name = null)
 	{
 		// Get model for current module
-		if($this->useModel && $name === null) {
+		if($name === null) {
+			// Model name
+			$modelName = 'Module_' . $this->name() . '_Model';
 			// Instantiate model - first time used
 			if($this->model === null) {
-				$this->model = $this->cx->getModel($this->getName());
-				if(is_object($this->model)) {
+				$this->model = $this->cx->get($modelName);
+				if(is_object($this->model) && $model instanceof phpDataMapper_Model) {
 					$this->model->setLoader($this->cx, 'load');
 				}
 			}
 			$model = $this->model;
 		
 		// Get model by given name
-		} elseif($name !== null) {
-			$model = $this->cx->getModel($name);
-			if(is_object($model)) {
+		} else {
+			// Model name 'Page'
+			$modelName = 'Module_' . $name . '_Model';
+			$model = $this->cx->get($modelName);
+			if(is_object($model) && $model instanceof phpDataMapper_Model) {
 				$model->setLoader($this->cx, 'load');
 			}
-		
-		// No model
-		} else {
-			$model = false;
 		}
 		
 		return $model;
@@ -155,13 +155,13 @@ class Cx_Controller
 	 *
 	 * @return object Cx_View
 	 */
-	public function getView()
+	public function view()
 	{
 		if($this->view === null) {
-			$this->view = new $this->viewClass($this->getAction(), $this->getName());
+			$this->view = new $this->viewClass($this->action(), $this->name());
 			
 			// Set view template path
-			$this->view->setPath($this->getPath() . '/views/');
+			$this->view->setPath($this->path() . $this->namePath() . '/views/');
 			
 			// Give the view access to session and request vars
 			$this->view->set('request', $this->getRequest());
@@ -173,35 +173,18 @@ class Cx_Controller
 	
 	
 	/**
-	 * Get context object
-	 *
-	 * @return object Cx_Controller_Front
-	 */
-	public function getContext()
-	{
-		return $this->context;
-	}
-	
-	
-	/**
-	 * Set context object
-	 *
-	 * @param object Cx_Controller_Front
-	 */
-	public function setContext(Cx_Controller_Front $context)
-	{
-		$this->context = $context;
-	}
-	
-	
-	/**
 	 * Get request object
 	 *
 	 * @return object Cx_Request
 	 */
-	public function getRequest()
+	public function request($key = null, $value = null)
 	{
-		return $this->getContext()->getRequest();
+		$object = $this->cx->request();
+		if($key === null) {
+			return $object;
+		} else {
+			return $object->get($key, $value);
+		}
 	}
 	
 	
@@ -210,9 +193,9 @@ class Cx_Controller
 	 *
 	 * @return object Cx_Response
 	 */
-	public function getResponse()
+	public function response()
 	{
-		return $this->getContext()->getResponse();
+		return $this->cx->response();
 	}
 	
 	
@@ -221,31 +204,25 @@ class Cx_Controller
 	 *
 	 * @return object Cx_Session
 	 */
-	public function getSession()
+	public function session()
 	{
-		return $this->getContext()->getSession();
+		return $this->cx->session();
 	}
 	
 	
 	/**
-	 * Returns current action
+	 * Getter/setter
+	 * Current action that was run
 	 *
-	 * @return string
+	 * @return string or null
 	 */
-	public function getAction()
+	public function action($action = null)
 	{
-		return $this->action;
-	}
-	
-	
-	/**
-	 * Sets current action
-	 *
-	 * @param string Name of the action being executed on the current module
-	 */
-	public function setAction($action)
-	{
-		$this->action = $action;
+		if($action === null) {
+			return $this->action;
+		} else {
+			$this->action = $action;
+		}
 	}
 	
 	
@@ -256,7 +233,7 @@ class Cx_Controller
 	 * 
 	 * @return string
 	 */
-	public function getName()
+	public function name()
 	{
 		if(!$this->name) {
 			$className = get_class($this);
@@ -275,16 +252,16 @@ class Cx_Controller
 	 * Returns module name transformed into a directory
 	 * Relies on naming conventions - replaces underscores with directory separators
 	 */
-	public function getNamePath()
+	public function namePath()
 	{
-		return str_replace('_', DIRECTORY_SEPARATOR, $this->getName());
+		return str_replace('_', DIRECTORY_SEPARATOR, $this->name());
 	}
 	
 	
 	/**
 	 * Returns guess at current module path
 	 */
-	public function getPath()
+	public function path()
 	{
 		$path = $this->cx->config('cx.path_core') . $this->cx->config('cx.dir_modules') . $this->getNamePath();
 		return $path;

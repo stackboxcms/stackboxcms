@@ -286,4 +286,31 @@ class Cx_Locator
 	    // Don't execute PHP internal error handler
 	    return true;
 	}
+	
+	
+	/**
+	 * Get request object
+	 */
+	public function request()
+	{
+		return $this->get('Cx_Request');
+	}
+	
+	
+	/**
+	 * Get response object
+	 */
+	public function response()
+	{
+		return $this->get('Cx_Response');
+	}
+	
+	
+	/**
+	 * Get session object
+	 */
+	public function session()
+	{
+		return $this->get('Cx_Session');
+	}
 }

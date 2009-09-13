@@ -50,7 +50,7 @@ class Cx_Response
 		}
 	}
 
-	public function setStatus($status)
+	public function status($status)
 	{
 		$this->status = $status;
 	}
@@ -65,7 +65,7 @@ class Cx_Response
 		$this->content .= $content;
 	}
 
-	public function setContent($content)
+	public function content($content)
 	{
 		$this->content = $content;
 	}

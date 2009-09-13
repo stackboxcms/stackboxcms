@@ -10,11 +10,11 @@ class Module_Error_Controller extends Cx_Controller
 	public function indexAction($errorCode = 500, $errorMessage = null)
 	{
 		$cx = $this->cx;
-		$request = $cx->request()
+		$request = $cx->request();
 		$response = $cx->response();
 		
 		// Set response status
-		$response->setStatus($errorCode);
+		$response->status($errorCode);
 		
 		// Custom error page titles
 		switch($errorCode) {
@@ -39,7 +39,7 @@ class Module_Error_Controller extends Cx_Controller
 		}
 		
 		// Assign template variables
-		$this->getView()->set(array(
+		$this->view()->set(array(
 			'title' => $title,
 			'errorCode' => $errorCode,
 			'errorMessage' => $errorMessage
