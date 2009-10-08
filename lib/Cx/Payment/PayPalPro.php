@@ -387,7 +387,9 @@ class Cx_Payment_PayPalPro implements Cx_Payment_Interface
 		
 
 		// Return boolean true/false
-		return (isset($this->response['ACK']) && $this->response['ACK'] == "Success") ? true : false;
+        // PayPal result can be "SuccessWithWarning" or "Success"
+        // @todo Handle "SuccessWithWarning" better to store the warning messages
+		return (isset($this->response['ACK']) && strpos($this->response['ACK'], "Success" === 0) ? true : false;
 	}
 	
 	
