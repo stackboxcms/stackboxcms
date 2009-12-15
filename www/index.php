@@ -1,16 +1,10 @@
 <?php
 // Require common application file
 define('APP_WEB_ROOT', dirname(__FILE__));
-require('../lib/Cx.php');
 require('../app/common.php');
 
 // Configuration settings
 $cfg = require('../app/config.php');
-
-// Debug Mode?
-if(isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) {
-	$cfg['debug'] = true;
-}
 
 // Run!
 $cx = false;
