@@ -1,290 +1,124 @@
 <?php
-/*
- * Base Controller Class
- * $Id$
- * 
- * Base controller class for other component controllers to extend
- * 
- * @package Cx Framework
- * @author Vance Lucas <vance@vancelucas.com>
- * @link http://cont-xt.com/
- *
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
+/**
+ * Base application module
+ * Used as a base module class other modules must extend from
  */
-class Cx_Controller
+abstract class App_Module
 {
-	// Automatically render the page after action call
-	protected $autoRender = true;
-
-	// Model Settings
-	protected $model = null;
+	protected static $connection;
+	protected static $session;
 	
-	// View Settings
-	protected $viewClass = "Cx_View";
-	protected $view = null;
-	
-	// Other required variables
-	protected $name = null;
-	protected $action = null;
-	protected $module = null;
-	
-	// Context object (Front Controller)
-	protected $context;
-	protected $cx;
+	protected $app;
+	protected $file = __FILE__;
 	
 	
 	/**
-	 *	Constructor Method
+	 * To handle Spot dependency
 	 */
-	public function __construct($cx)
+	public function __construct(Spot $app)
 	{
-		// Save loader
-		$this->cx = $cx;
+		$this->app = $app;
 	}
 	
 	
 	/**
-	 *	Initialization function
+	 * Called immediately upon instantiation, before the action is called
 	 */
-	public function init()
+	public function init() {}
+	
+	
+	/**
+	 * Return current class path, based on given '$file' class var
+	 */
+	public function path()
 	{
-		// Initialize me!
+		return dirname($this->file);
 	}
 	
 	
 	/**
-	 * Executes immediately BEFORE each action call
+	 * Return current module name, based on class naming conventions
+	 * Expected: [Name]_Module
 	 */
-	public function beforeDispatch()
+	public function name()
 	{
-		
+		return str_replace("_Module", "", get_class($this));
 	}
 	
 	
 	/**
-	 * Executes immediately AFTER each action call
+	 * Return a request object to work with
+	 */
+	public function request()
+	{
+		return $this->app->request();
+	}
+	
+	
+	/**
+	 * Return a session object to work with
+	 */
+	public function session()
+	{
+		if(null === self::$session) {
+			self::$session = new App_Session();
+		}
+		return self::$session;
+	}
+	
+	
+	/**
+	 * New module view template
 	 *
-	 * @param mixed $result Result from dispatch action call - can be controller object or returned result
-	 * @return mixed Can be a string or an object with __toString() method defined
+	 * @param string $template Template name/path
 	 */
-	public function afterDispatch($result)
+	public function view($template, $format = "html")
 	{
-		if($this->autoRender) {
-			$this->render();
-		}
-		return $result;
-	}
-	
-	
-	/**
-	 *	Forward processing to a different action
-	 */
-	public function forward($component, $action, array $params = array())
-	{
-		$controller = false;
-		
-		// Use passed controller object or get instance from given controller name
-		if(!is_subclass_of($component, 'Cx_Controller')) {
-			$controller = $this->cx->getController($component);
-		}
-
-		if($controller) {
-			// Update $action to new one
-			$controller->setAction($action);
-			
-			// Call function if we can
-			if(is_callable(array($controller, $action))) {
-				return call_user_func_array(array($controller, $action), $params);
-			} else {
-				throw new Cx_Exception('Attempting to forward execution to method that does not exist!<br /> Attempted: ' . $controller . '::' . $action);
-			}
-		} else {
-			return false;
-		}
-	}
-	
-	
-	/**
-	 * Begin output to browser window
-	 */
-	public function render()
-	{
-		// Turn off auto-rendering - we are already rendering right now
-		$this->autoRender = false;
-		// Return template contents
-		return $this->view()->getContent();
-	}
-	
-	
-	/**
-	 * Get model class to use for module
-	 */
-	public function model($name = null)
-	{
-		// Get model for current module
-		if($name === null) {
-			// Model name
-			$modelName = 'Module_' . $this->name() . '_Model';
-			// Instantiate model - first time used
-			if($this->model === null) {
-				$this->model = $this->cx->get($modelName);
-				if(is_object($this->model) && $model instanceof phpDataMapper_Model) {
-					$this->model->setLoader($this->cx, 'load');
-				}
-			}
-			$model = $this->model;
-		
-		// Get model by given name
-		} else {
-			// Model name 'Page'
-			$modelName = 'Module_' . $name . '_Model';
-			$model = $this->cx->get($modelName);
-			if(is_object($model) && $model instanceof phpDataMapper_Model) {
-				$model->setLoader($this->cx, 'load');
-			}
-		}
-		
-		return $model;
-	}
-	
-	
-	/**
-	 * Get view object
-	 *
-	 * @return object Cx_View
-	 */
-	public function view()
-	{
-		if($this->view === null) {
-			$this->view = new $this->viewClass($this->action(), $this->name());
-			
-			// Set view template path
-			$this->view->setPath($this->path() . $this->namePath() . '/views/');
-			
-			// Give the view access to session and request vars
-			$this->view->set('request', $this->getRequest());
-		}
-		$view = $this->view;
-		
+		$view = new App_View($template, $format, $this->path() . "/views/");
+		$view->format($this->request()->format);
+		$view->set('app', $this->app);
 		return $view;
 	}
 	
 	
 	/**
-	 * Get request object
-	 *
-	 * @return object Cx_Request
+	 * Get instance of database connection
 	 */
-	public function request($key = null, $value = null)
+	public function connection()
 	{
-		$object = $this->cx->request();
-		if($key === null) {
-			return $object;
-		} else {
-			return $object->get($key, $value);
-		}
-	}
-	
-	
-	/**
-	 * Get response object
-	 *
-	 * @return object Cx_Response
-	 */
-	public function response()
-	{
-		return $this->cx->response();
-	}
-	
-	
-	/**
-	 * Get session object
-	 *
-	 * @return object Cx_Session
-	 */
-	public function session()
-	{
-		return $this->cx->session();
-	}
-	
-	
-	/**
-	 * Getter/setter
-	 * Current action that was run
-	 *
-	 * @return string or null
-	 */
-	public function action($action = null)
-	{
-		if($action === null) {
-			return $this->action;
-		} else {
-			$this->action = $action;
-		}
-	}
-	
-	
-	/**
-	 * Returns current module name
-	 * Assumes standard module naming convention
-	 * Will return full class name if name cannot be determined by conventions
-	 * 
-	 * @return string
-	 */
-	public function name()
-	{
-		if(!$this->name) {
-			$className = get_class($this);
-			$nameParts = explode('_', $className);
-			if(isset($nameParts[1])) {
-				$this->name = $nameParts[1];
+		if(null === self::$connection) {
+			$cfg = $this->app->config('database');
+			if($this->app->load('phpDataMapper_Database_Adapter_Mysql')) {
+				self::$connection = new phpDataMapper_Database_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
 			} else {
-				$this->name = $className;
+				throw new Exception("Unable to load database connection");
 			}
 		}
-		return $this->name;
+		return self::$connection;
 	}
 	
 	
 	/**
-	 * Returns module name transformed into a directory
-	 * Relies on naming conventions - replaces underscores with directory separators
+	 * Get mapper object to work with
+	 * @todo Ensure only one instance of a mapper gets loaded
 	 */
-	public function namePath()
+	public function mapper($mapperName = null)
 	{
-		return str_replace('_', DIRECTORY_SEPARATOR, $this->name());
-	}
-	
-	
-	/**
-	 * Returns guess at current module path
-	 */
-	public function path()
-	{
-		$path = $this->cx->config('cx.path_core') . $this->cx->config('cx.dir_modules') . $this->getNamePath();
-		return $path;
-	}
-	
-	
-	/**
-	 * Return template contents as string
-	 */
-	public function __toString()
-	{
-		$content = '';
-		if($this->autoRender) {
-			// Exceptions cannot be thrown in __toString method (results in fatal error)
-			// We have to catch any that may be thrown and return a string
-			try {
-				$content = $this->render();
-			} catch(Cx_Exception $e) {
-				$content = $e->getError();
-			} catch(Exception $e) {
-				$content = "<strong>TEMPLATE RENDERING ERROR:</strong><hr />" . $e->getMessage();
-			}
+		// Append given name, if any
+		if(null === $mapperName) {
+			$mapperName = $this->name();
 		}
-		return $content;
+		
+		// Append 'Mapper' to the end, as per convention
+		$mapperName .=  "_Mapper";
+		
+		// Ensure file can be loaded
+		if(!$this->app->load($mapperName, $this->app->config('path.modules'))) {
+			throw new Exception("Unable to load class '" . $mapperName . "' - requested class not found");
+		}
+		
+		// Create new mapper, passing in adapter connection
+		$mapper = new $mapperName($this->connection());
+		return $mapper;
 	}
 }

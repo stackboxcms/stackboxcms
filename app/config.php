@@ -22,7 +22,15 @@ $cfg['cx']['path_public'] = $cfg['cx']['root'] . $cfg['cx']['dir_public'];
 $cfg['cx']['path_themes'] = $cfg['cx']['root'] . $cfg['cx']['dir_themes'];
 
 $cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . $cfg['cx']['dir_web'];
+
+// Debug?
 $cfg['cx']['debug'] = false;
+
+// In Development Mode?
+$cfg['cx']['mode']['development'] = true;
+
+// Error Reporting
+$cfg['cx']['error_reporting'] = true;
 
 // Use Apache's mod_rewrite on URLs?
 $cfg['cx']['mod_rewrite'] = true;
@@ -31,12 +39,12 @@ $cfg['cx']['mod_rewrite'] = true;
 $cfg['cx']['default']['module'] = 'page';
 $cfg['cx']['default']['action'] = 'index';
 
-// Database
-$cfg['cx']['db']['host'] = 'localhost';
-$cfg['cx']['db']['user'] = 'root';
-$cfg['cx']['db']['pass'] = '';
-$cfg['cx']['db']['name'] = 'cx_cms';
-$cfg['cx']['db']['options'] = array(
+// Database - Params to match Zend_Config
+$cfg['cx']['database']['host'] = 'localhost';
+$cfg['cx']['database']['username'] = 'root';
+$cfg['cx']['database']['password'] = '';
+$cfg['cx']['database']['dbname'] = 'cx_cms';
+$cfg['cx']['database']['options'] = array(
 	PDO::ERRMODE_EXCEPTION => true,
 	PDO::ATTR_PERSISTENT => false,
 	PDO::ATTR_EMULATE_PREPARES=> true
@@ -45,9 +53,9 @@ $cfg['cx']['db']['options'] = array(
 // Locale Settings
 $cfg['cx']['i18n']['charset'] = 'UTF-8';
 $cfg['cx']['i18n']['language'] = 'en_US';
-$cfg['cx']['i18n']['timezone'] = 'US/Central';
+$cfg['cx']['i18n']['timezone'] = 'America/Chicago';
 
-// Error Reporting
-$cfg['cx']['error_reporting'] = true;
+// Global setup
+date_default_timezone_set($cfg['cx']['i18n']['timezone']);
 
 return $cfg;

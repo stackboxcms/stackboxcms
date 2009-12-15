@@ -1,33 +1,14 @@
 <?php
 /**
- * View Class
- * $Id$
- *
- * View class that will display and handle all templates
- *
- * @package Cx Framework
- * @author Vance Lucas <vance@vancelucas.com>
- * @link http://cont-xt.com/
- *
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
+ * View template class that will display and handle module views
  */
-class Cx_View extends Cx_View_Abstract
+class Cx_View
 {
 	// Template specific stuff
-	protected $_module;
 	protected $_template;
 	protected $_templateFormat;
 	protected $_vars;
 	protected $_path;
-	
-	// Template internals
-	protected $_messages = array();
-	protected $_html = array('head' => array(), 'body' => array());
-	
-	// Saves reference to instances of view helpers
-	protected static $helpers = array();
 	
 	// Extension type
 	protected $_default_format = 'html';
@@ -40,10 +21,10 @@ class Cx_View extends Cx_View_Abstract
 	 * @param $template string	Template file name to use
 	 * @param $module string	Module template file resides in
 	 */
-	public function __construct($template, $module)
+	public function __construct($template, $format, $path = null)
 	{
-		$this->setTemplate($template, $this->_default_format);
-		$this->_module = $module;
+		$this->template($template, $format);
+		$this->path($path);
 	}
 	
 	
@@ -107,6 +88,7 @@ class Cx_View extends Cx_View_Abstract
 				$this->_vars[$key] = $value;
 			}
 		}
+		return $this; // Fluent interface
 	}
 	
 	
@@ -115,76 +97,40 @@ class Cx_View extends Cx_View_Abstract
 	 * 
 	 * @return array
 	 */
-	public function getVars()
+	public function vars()
 	{
 		return $this->_vars;
 	}
 	
 	
 	/**
-	 * Converts view object to string on the fly
-	 *
-	 * @return  string
+	 * Get/Set path to look in for templates
 	 */
-	public function __toString()
+	public function path($path = null)
 	{
-		// Exceptions cannot be thrown in __toString method (results in fatal error)
-		// We have to catch any that may be thrown and return a string
-		try {
-			$content = $this->render(self::OUTPUT_CAPTURE);
-		} catch(Cx_Exception_View $e) {
-			$content = $e->getError();
-		} catch(Exception $e) {
-			$content = "<strong>TEMPLATE RENDERING ERROR:</strong><br />" . $e->getMessage();
+		if(null === $path) {
+			return $this->_path;
+		} else {
+			$this->_path = $path;
+			return $this; // Fluent interface
 		}
-		return $content;
 	}
 	
-	
-	/**
-	 * Set path to look in for templates
-	 */
-	public function setPath($path)
-	{
-		$this->_path = $path;
-	}
-	
-	
-	/**
-	 * Get template path
-	 */
-	public function getPath()
-	{
-		return $this->_path;
-	}
-	
-	
-	// Set template to use (changes template from what was set in constructor)
-	public function setTemplate($view, $format = null)
-	{
-		$this->_template = $view;
-		$this->_templateFormat = ($format) ? $format : $this->_default_extenstion;
-	}
 	
 	/**
 	 * Get template name that was set
 	 *
 	 * @return string
 	 */
-	public function getTemplate()
+	public function template($view = null, $format = null)
 	{
-		return $this->_template;
-	}
-	
-	
-	/**
-	 * Get module name that was set
-	 *
-	 * @return string
-	 */
-	public function getModule()
-	{
-		return $this->_module;
+		if(null === $view) {
+			return $this->_template;
+		} else {
+			$this->_template = $view;
+			$this->_templateFormat = ($format) ? $format : $this->_default_extenstion;
+			return $this; // Fluent interface
+		}
 	}
 	
 	
@@ -194,34 +140,30 @@ class Cx_View extends Cx_View_Abstract
 	 * @param OPTIONAL $template string (Name of the template to return full file format)
 	 * @return string
 	 */
-	public function getTemplateFilename($template = NULL)
+	public function templateFilename($template = null)
 	{
-		if(is_null($template)) {
-			$template = $this->getTemplate();
+		if(null === $template) {
+			$template = $this->template();
 		}
-		return $template . '.' . $this->getFormat() . '.' . $this->_default_extenstion;
+		return $template . '.' . $this->format() . '.' . $this->_default_extenstion;
 	}
 	
 	
 	/**
-	 * Set layout format to use
+	 * Get/Set layout format to use
 	 * Templates will use: <template>.<format>.<extension>
 	 * Example: index.html.php
 	 *
 	 * @param $format string (html|xml)
 	 */
-	public function setFormat($format)
+	public function format($format = null)
 	{
-		$this->_templateFormat = $format;
-	}
-	
-	
-	/**
-	 * Get layout format used
-	 */
-	public function getFormat()
-	{
-		return $this->_templateFormat;
+		if(null === $format) {
+			return $this->_templateFormat;
+		} else {
+			$this->_templateFormat = $format;
+			return $this; // Fluent interface
+		}
 	}
 	
 	
@@ -230,28 +172,29 @@ class Cx_View extends Cx_View_Abstract
 	 */
 	public function render()
 	{
-		echo $this->getContent();
+		echo $this->content();
 	}
 	
 	
 	/**
-	 * Read template file
+	 * Read template file into content string and return it
 	 *
 	 * @return string
 	 */
-	public function read($template, $parsePHP = true)
+	public function content($parsePHP = true)
 	{
-		$vpath = $this->getPath();
+		$vpath = $this->path();
+		$template = $this->templateFilename();
 		$vfile = $vpath . $template;
 		
 		// Empty template name
 		if(empty($vpath)) {
-			throw new Cx_Exception_View("Base template path is not set!  Use '\$view->setPath('/path/to/template')' to set root path to template files!");
+			throw new RuntimeException("Base template path is not set!  Use '\$view->path('/path/to/template')' to set root path to template files!");
 		}
 		
 		// Ensure template file exists
 		if(!file_exists($vfile)) {
-			throw new Cx_Exception_View("The template file '" . $template . "' does not exist.<br />Path: " . $vpath);
+			throw new RuntimeException("The template file '" . $template . "' does not exist.<br />Path: " . $vpath);
 		}
 		
 		// Include() and parse PHP code
@@ -275,15 +218,21 @@ class Cx_View extends Cx_View_Abstract
 	
 	
 	/**
-	 * Get stored content or read template content
-	 * 
-	 * @return string
+	 * Converts view object to string on the fly
+	 *
+	 * @return  string
 	 */
-	public function getContent()
+	public function __toString()
 	{
-		$templateFile = $this->getTemplateFilename();
-		$output = $this->read($templateFile);
-		
-		return $output;
+		// Exceptions cannot be thrown in __toString method (results in fatal error)
+		// We have to catch any that may be thrown and return a string
+		try {
+			$content = $this->content();
+		} catch(Cx_Exception_View $e) {
+			$content = $e->getError();
+		} catch(Exception $e) {
+			$content = "<strong>TEMPLATE RENDERING ERROR:</strong><br />" . $e->getMessage();
+		}
+		return $content;
 	}
 }
