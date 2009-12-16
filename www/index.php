@@ -1,22 +1,41 @@
 <?php
+// PHP version must be 5.2 or greater
+if(version_compare(phpversion(), "5.2.0", "<")) {
+	exit("<b>Fatal Error:</b> PHP version must be 5.2.0 or greater to run this application!");
+}
+
 // Require common application file
 define('APP_WEB_ROOT', dirname(__FILE__));
-require('../app/common.php');
 
 // Configuration settings
 $cfg = require('../app/config.php');
+
+// Cont-xt Kernel
+require $cfg['cx']['path_lib'] . '/Cx.php';
 
 // Run!
 $cx = false;
 try {
 	$cx = cx($cfg);
-	// Enable debug mode if set
+	spl_autoload_register(array($cx, 'load'));
+	set_error_handler(array($cx, 'errorHandler'));
+	
+	// Debug?
 	if($cx->config('debug')) {
+		// Enable debug mode
 		$cx->debug(true);
+		
+		// Show all errors
+		error_reporting(E_ALL | E_STRICT);
+		ini_set('display_errors', '1');
+	} else {
+		// Show NO errors
+		//error_reporting(0);
+		//ini_set('display_errors', '0');
 	}
+	
 	$request = $cx->request();
 	$router = $cx->router();
-	spl_autoload_register(array($cx, 'load'));
 	 
 	// Router - Add routes we want to match
 	$router->route('(*url)', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
@@ -31,9 +50,14 @@ try {
 	$module = $params['module'];
 	$action = $params['action'] . 'Action'; // Append with 'Action' to limit scope of available functions from HTTP request
 	
+	// Set class load paths
+	$cx->addLoadPath($cx->config('cx.path_lib'));
+	$cx->addLoadPath($cx->config('cx.path_core_modules')); // core modules
+	$cx->addLoadPath($cx->config('cx.path_modules')); // CMS & custom modules
+	
 	// Run/execute
 	$responseStatus = 200;
-	$content = $cx->dispatch($module, $action);
+	$content = $cx->dispatch($module, $action, array($request));
  
 // Authentication Error
 } catch(Cx_Exception_Auth $e) {

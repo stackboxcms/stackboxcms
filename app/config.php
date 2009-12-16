@@ -18,6 +18,7 @@ $cfg['cx']['path_app'] = dirname(__FILE__);
 $cfg['cx']['path_lib'] = $cfg['cx']['root'] . $cfg['cx']['dir_lib'];
 $cfg['cx']['path_core'] = $cfg['cx']['root'] . $cfg['cx']['dir_core'];
 $cfg['cx']['path_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_modules'];
+$cfg['cx']['path_core_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_core'] . $cfg['cx']['dir_modules'];
 $cfg['cx']['path_public'] = $cfg['cx']['root'] . $cfg['cx']['dir_public'];
 $cfg['cx']['path_themes'] = $cfg['cx']['root'] . $cfg['cx']['dir_themes'];
 
@@ -50,6 +51,9 @@ $cfg['cx']['database']['options'] = array(
 	PDO::ATTR_EMULATE_PREPARES=> true
 	);
 
+// Session Settings
+$cfg['cx']['session']['lifetime'] = 28000;
+
 // Locale Settings
 $cfg['cx']['i18n']['charset'] = 'UTF-8';
 $cfg['cx']['i18n']['language'] = 'en_US';
@@ -57,5 +61,6 @@ $cfg['cx']['i18n']['timezone'] = 'America/Chicago';
 
 // Global setup
 date_default_timezone_set($cfg['cx']['i18n']['timezone']);
+ini_set("session.gc_maxlifetime", $cfg['cx']['session']['lifetime']);
 
 return $cfg;

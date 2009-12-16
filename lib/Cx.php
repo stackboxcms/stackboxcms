@@ -39,7 +39,7 @@ class Cx extends AppKernel_Main
 	 */
 	public function addLoadPath($path)
 	{
-		$this->paths[] = $path;
+		$this->loadPaths[] = $path;
 	}
 	 
 	 
@@ -62,9 +62,7 @@ class Cx extends AppKernel_Main
 	 */
 	public function load($className, $paths = null)
 	{
-		if(null === $paths) {
-			$paths = $this->loadPaths();
-		}
+		$paths = (array) $paths + $this->loadPaths();
 		return parent::load($className, $paths);
 	}
 	
@@ -88,8 +86,7 @@ class Cx extends AppKernel_Main
 		$sModule = str_replace('_', '/', $sModule);
 		
 		// Load module file, call function on it
-		$path = $this->config('cx.path_modules');
-		$loaded = $this->load($sModuleClass, $path);
+		$loaded = $this->load($sModuleClass, $this->loadPaths());
 		if(!$loaded) {
 			throw new Cx_Exception_FileNotFound("Requested module '" . $sModule . "' not found");	
 		}
@@ -237,6 +234,19 @@ class Cx extends AppKernel_Main
 			echo "\n<pre>\n";
 			print_r($object);
 			echo "\n</pre>\n";
+		}
+	}
+	
+	
+	/**
+	 * Custom error reporting
+	 */
+	public function errorHandler($errno, $errstr, $errfile, $errline) {
+		$errorMsg = $errstr . " (Line: " . $errline . ")";
+		if($errno != E_WARNING && $errno != E_NOTICE && $errno != E_STRICT) {
+			throw new Exception($errorMsg, $errno);
+		} else {
+			return false; // Let PHP handle it
 		}
 	}
 }
