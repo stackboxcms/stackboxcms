@@ -12,6 +12,7 @@ require dirname(__FILE__) . '/AppKernel/Main.php';
 class Cx extends AppKernel_Main
 {
 	protected $loadPaths = array();
+	protected static $database;
 	
 	
 	/**
@@ -114,6 +115,23 @@ class Cx extends AppKernel_Main
 			$result = call_user_func_array(array($sModuleObject, $action), $params);
 		}
 		return $result;
+	}
+	
+	
+	/**
+	 * Get instance of database connection
+	 */
+	public function database($name = 'master')
+	{
+		if(null === self::$database) {
+			$cfg = $this->config('cx.database.' . $name);
+			if($this->load('phpDataMapper_Adapter_Mysql')) {
+				self::$database = new phpDataMapper_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
+			} else {
+				throw new Exception("Unable to load database connection - Check to ensure the username and password are correct");
+			}
+		}
+		return self::$database;
 	}
 	
 	

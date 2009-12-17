@@ -7,6 +7,7 @@ abstract class Cx_Module
 {
 	protected static $connection;
 	protected static $session;
+	protected static $mappers = array();
 	
 	protected $app;
 	protected $file = __FILE__;
@@ -82,23 +83,6 @@ abstract class Cx_Module
 	
 	
 	/**
-	 * Get instance of database connection
-	 */
-	public function connection()
-	{
-		if(null === self::$connection) {
-			$cfg = $this->cx->config('database');
-			if($this->cx->load('phpDataMapper_Database_Adapter_Mysql')) {
-				self::$connection = new phpDataMapper_Database_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
-			} else {
-				throw new Exception("Unable to load database connection");
-			}
-		}
-		return self::$connection;
-	}
-	
-	
-	/**
 	 * Get mapper object to work with
 	 * @todo Ensure only one instance of a mapper gets loaded
 	 */
@@ -112,13 +96,22 @@ abstract class Cx_Module
 		// Append 'Mapper' to the end, as per convention
 		$mapperName .=  "_Mapper";
 		
-		// Ensure file can be loaded
-		if(!$this->cx->load($mapperName, $this->cx->config('path.modules'))) {
-			throw new Exception("Unable to load class '" . $mapperName . "' - requested class not found");
+		if(!isset(self::$mappers[$mapperName])) {
+			// Ensure file can be loaded
+			if(!$this->cx->load($mapperName)) {
+				throw new Exception("Unable to load class '" . $mapperName . "' - requested class not found");
+			}
+			
+			// Create new mapper, passing in adapter connection
+			$mapper = new $mapperName($this->cx->database());
+			
+			// Auto-Migrations when in debug mode
+			if($this->cx->config('cx.mode.development')) {
+				$mapper->migrate();
+			}
+			
+			self::$mappers[$mapperName] = $mapper;
 		}
-		
-		// Create new mapper, passing in adapter connection
-		$mapper = new $mapperName($this->connection());
-		return $mapper;
+		return self::$mappers[$mapperName];
 	}
 }
