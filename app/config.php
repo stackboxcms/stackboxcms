@@ -40,12 +40,12 @@ $cfg['cx']['mod_rewrite'] = true;
 $cfg['cx']['default']['module'] = 'page';
 $cfg['cx']['default']['action'] = 'index';
 
-// Database - Params to match Zend_Config
-$cfg['cx']['database']['host'] = 'localhost';
-$cfg['cx']['database']['username'] = 'root';
-$cfg['cx']['database']['password'] = '';
-$cfg['cx']['database']['dbname'] = 'cx_cms';
-$cfg['cx']['database']['options'] = array(
+// Database - Param names to match Zend_Config
+$cfg['cx']['database']['master']['host'] = 'localhost';
+$cfg['cx']['database']['master']['username'] = 'test';
+$cfg['cx']['database']['master']['password'] = 'password';
+$cfg['cx']['database']['master']['dbname'] = 'cx_cms';
+$cfg['cx']['database']['master']['options'] = array(
 	PDO::ERRMODE_EXCEPTION => true,
 	PDO::ATTR_PERSISTENT => false,
 	PDO::ATTR_EMULATE_PREPARES=> true
