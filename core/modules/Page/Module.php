@@ -10,7 +10,7 @@ class Page_Module extends Cx_Module
 	public function indexAction($request)
 	{
 		// Load page template for parsing
-		//$this->model()->getPageByUrl($request->uri());
+		$this->mapper()->getPageByUrl($request->url);
 		
 		return "Awesome!<br />" . __FILE__;
 	}
