@@ -8,9 +8,9 @@ $cfg['cx']['request'] = (isset($_GET['url']) ? urldecode($_GET['url']) : '' );
 $cfg['cx']['root'] = dirname(dirname(__FILE__));
 
 $cfg['cx']['dir_web'] = '/';
-$cfg['cx']['dir_core'] = '/core/';
+$cfg['cx']['dir_core'] = '/app/core/';
 $cfg['cx']['dir_lib'] = '/lib/';
-$cfg['cx']['dir_modules'] = '/modules/';
+$cfg['cx']['dir_modules'] = '/app/';
 $cfg['cx']['dir_public'] = $cfg['cx']['dir_web'] . 'public/';
 $cfg['cx']['dir_themes'] = $cfg['cx']['dir_public'] . 'themes/';
 
@@ -18,7 +18,7 @@ $cfg['cx']['path_app'] = dirname(__FILE__);
 $cfg['cx']['path_lib'] = $cfg['cx']['root'] . $cfg['cx']['dir_lib'];
 $cfg['cx']['path_core'] = $cfg['cx']['root'] . $cfg['cx']['dir_core'];
 $cfg['cx']['path_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_modules'];
-$cfg['cx']['path_core_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_core'] . $cfg['cx']['dir_modules'];
+$cfg['cx']['path_core_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_core'];
 $cfg['cx']['path_public'] = $cfg['cx']['root'] . $cfg['cx']['dir_public'];
 $cfg['cx']['path_themes'] = $cfg['cx']['root'] . $cfg['cx']['dir_themes'];
 

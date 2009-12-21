@@ -2,7 +2,7 @@
 /**
  * $Id$
  */
-class Page_Mapper extends phpDataMapper_Base
+class Module_Page_Mapper extends phpDataMapper_Base
 {
 	// Custom row class
 	protected $rowClass = 'Page_Item';

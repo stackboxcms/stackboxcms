@@ -33,17 +33,17 @@ try {
 		//error_reporting(0);
 		//ini_set('display_errors', '0');
 	}
-	
-	$request = $cx->request();
-	$router = $cx->router();
 	 
 	// Router - Add routes we want to match
+	$router = $cx->router();
 	$router->route('(*url)', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
 	$router->route('(*url).(:format)', array('module' => 'Page', 'action' => 'index'));
 	
 	// Router - Match HTTP request and return named params
 	$requestUrl = isset($_GET['r']) ? $_GET['r'] : '/';
 	$params = $router->match($requestUrl);
+	// Set matched params back on request object
+	$request = $cx->request();
 	$request->setParams($params);
 	
 	// Required params
@@ -52,8 +52,9 @@ try {
 	
 	// Set class load paths
 	$cx->addLoadPath($cx->config('cx.path_lib'));
-	$cx->addLoadPath($cx->config('cx.path_core_modules')); // core modules
-	$cx->addLoadPath($cx->config('cx.path_modules')); // CMS & custom modules
+	// Module paths
+	$cx->addModulePath($cx->config('cx.path_core_modules'));
+	$cx->addModulePath($cx->config('cx.path_modules'));
 	
 	// Run/execute
 	$responseStatus = 200;
@@ -64,7 +65,7 @@ try {
 	$responseStatus = 403;
 	$content = $e->getMessage();
 	$cx->response($responseStatus);
-	$cx->dispatch('user', 'loginAction');
+	$cx->dispatch('user', 'loginAction', array($request));
  
 // 404 Errors
 } catch(Cx_Exception_FileNotFound $e) {
@@ -92,7 +93,7 @@ try {
 if($cx && $content) {
 	if($responseStatus != 200) {
 		try {
-			$content = $cx->dispatch('error', 'index', array($responseStatus, $content));
+			$content = $cx->dispatch('error', 'indexAction', array($responseStatus, $content));
 		} catch(Exception $e) {
 			$content = $e->getMessage();
 		}

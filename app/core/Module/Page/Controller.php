@@ -2,7 +2,7 @@
 /**
  * $Id$
  */
-class Page_Module extends Cx_Module
+class Module_Page_Controller extends Cx_Module_Controller
 {
 	/**
 	 * Display current page

@@ -3,7 +3,7 @@ require dirname(__FILE__) . '/AppKernel/Main.php';
 /**
  * Cx Kernel
  *
- * Application kernel with custom methods added
+ * Cont-xt Application kernel
  * 
  * @package Cx Framework
  * @author Vance Lucas <vance@vancelucas.com>
@@ -12,7 +12,12 @@ require dirname(__FILE__) . '/AppKernel/Main.php';
 class Cx extends AppKernel_Main
 {
 	protected $loadPaths = array();
+	protected $modulePaths = array();
+	protected $pluginPaths = array();
+	
 	protected static $database;
+	protected static $session;
+	protected static $mappers = array();
 	
 	
 	/**
@@ -36,7 +41,7 @@ class Cx extends AppKernel_Main
 	
 	
 	/**
-	 * Add path for loader to look in
+	 * Add path for class loader to look in
 	 */
 	public function addLoadPath($path)
 	{
@@ -45,11 +50,45 @@ class Cx extends AppKernel_Main
 	 
 	 
 	/**
-	 * Return array of set module paths
+	 * Return array of set class paths
 	 */
 	public function loadPaths()
 	{
 		return $this->loadPaths;
+	}
+	
+	/**
+	 * Add path for module loader to look in
+	 */
+	public function addModulePath($path)
+	{
+		$this->modulePaths[] = $path;
+	}
+	 
+	 
+	/**
+	 * Return array of set module paths
+	 */
+	public function modulePaths()
+	{
+		return $this->modulePaths;
+	}
+	
+	/**
+	 * Add path for plugin loader to look in
+	 */
+	public function addPluginPath($path)
+	{
+		$this->pluginPaths[] = $path;
+	}
+	 
+	 
+	/**
+	 * Return array of set plugin paths
+	 */
+	public function pluginPaths()
+	{
+		return $this->pluginPaths;
 	}
 	
 	
@@ -63,8 +102,89 @@ class Cx extends AppKernel_Main
 	 */
 	public function load($className, $paths = null)
 	{
-		$paths = (array) $paths + $this->loadPaths();
+		// Module
+		if(strpos($className, 'Module_') === 0) {
+			$paths = (array) $paths + $this->modulePaths();
+		
+		// Plugin
+		} elseif(strpos($className, 'Plugin_') === 0) {
+			$paths = (array) $paths + $this->pluginPaths();
+		
+		// Library
+		} else {
+			$paths = (array) $paths + $this->loadPaths();
+		}
+		
 		return parent::load($className, $paths);
+	}
+	
+	
+	/**
+	 * Load and return instantiated module class
+	 *
+	 * @param $className string Name of the class
+	 * @return object
+	 * @throws Cx_Exception_FileNotFound
+	 */
+	public function module($module)
+	{
+		// Clean module name to prevent possible security vulnerabilities
+		$sModule = preg_replace('/[^a-zA-Z0-9_]/', '', $module);
+		$sModuleClass = 'Module_' . $sModule . '_Controller';
+		
+		// Replace underscores with folder slashes
+		$sModule = str_replace('_', '/', $sModule);
+		
+		// Load module file, call function on it
+		$loaded = $this->load($sModuleClass, $this->modulePaths());
+		if(!$loaded) {
+			$this->dump($this->modulePaths());
+			throw new Cx_Exception_FileNotFound("Module '" . $sModule . "' not found (class " . $sModuleClass . ")");
+		}
+		
+		// Instantiate class and call method
+		$sModuleObject = new $sModuleClass($this);
+		
+		// Run init() setup only if supported
+		if(is_callable(array($sModuleObject, 'init'))) {
+			$sModuleObject->init();
+		}
+		
+		return $sModuleObject;
+	}
+	
+	
+	/**
+	 * Get mapper object to work with
+	 * Ensures only one instance of a mapper gets loaded
+	 */
+	public function mapper($mapperName = null)
+	{
+		// Append given name, if any
+		if(null === $mapperName) {
+			$mapperName = $this->name();
+		}
+		
+		// Append 'Mapper' to the end, as per convention
+		$mapperName .=  "_Mapper";
+		
+		if(!isset(self::$mappers[$mapperName])) {
+			// Ensure file can be loaded
+			if(!$this->load($mapperName)) {
+				throw new Exception("Unable to load class '" . $mapperName . "' - requested class not found");
+			}
+			
+			// Create new mapper, passing in adapter connection
+			$mapper = new $mapperName($this->database());
+			
+			// Auto-Migrations when in debug mode
+			if($this->config('cx.mode.development')) {
+				$mapper->migrate();
+			}
+			
+			self::$mappers[$mapperName] = $mapper;
+		}
+		return self::$mappers[$mapperName];
 	}
 	
 
@@ -79,26 +199,8 @@ class Cx extends AppKernel_Main
 	 */
 	public function dispatch($module, $action = 'indexAction', array $params = array())
 	{
-		// Clean module name to prevent possible security vulnerabilities
-		$sModule = preg_replace('/[^a-zA-Z0-9_]/', '', $module);
-		$sModuleClass = $sModule . '_Module';
-		
-		// Replace underscores with folder slashes
-		$sModule = str_replace('_', '/', $sModule);
-		
-		// Load module file, call function on it
-		$loaded = $this->load($sModuleClass, $this->loadPaths());
-		if(!$loaded) {
-			throw new Cx_Exception_FileNotFound("Requested module '" . $sModule . "' not found");	
-		}
-		
-		// Instantiate class and call method
-		$sModuleObject = new $sModuleClass($this);
-		
-		// Run init() setup only if supported
-		if(is_callable(array($sModuleObject, 'init'))) {
-			$sModuleObject->init();
-		}
+		// Get module
+		$sModuleObject = $this->module($module);
 		
 		// Run module action
 		if(!is_callable(array($sModuleObject, $action))) {
@@ -115,6 +217,18 @@ class Cx extends AppKernel_Main
 			$result = call_user_func_array(array($sModuleObject, $action), $params);
 		}
 		return $result;
+	}
+	
+	
+	/**
+	 * Return a session object to work with
+	 */
+	public function session()
+	{
+		if(null === self::$session) {
+			self::$session = new Cx_Session();
+		}
+		return self::$session;
 	}
 	
 	

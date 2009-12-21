@@ -2,7 +2,7 @@
 /**
  * $Id$
  */
-class Error_Module extends Cx_Module
+class Module_Error_Controller extends Cx_Module_Controller
 {
 	/**
 	 * Error display and handling function
