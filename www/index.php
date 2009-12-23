@@ -4,9 +4,6 @@ if(version_compare(phpversion(), "5.2.0", "<")) {
 	exit("<b>Fatal Error:</b> PHP version must be 5.2.0 or greater to run this application!");
 }
 
-// Require common application file
-define('APP_WEB_ROOT', dirname(__FILE__));
-
 // Configuration settings
 $cfg = require('../app/config.php');
 
@@ -38,8 +35,10 @@ try {
 	 
 	// Router - Add routes we want to match
 	$router = $cx->router();
+	$cx->trigger('cx_router_before', array($router));
 	$router->route('(*url)', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
 	$router->route('(*url).(:format)', array('module' => 'Page', 'action' => 'index'));
+	$cx->trigger('cx_router_after', array($router));
 	
 	// Router - Match HTTP request and return named params
 	$requestUrl = isset($_GET['r']) ? $_GET['r'] : '/';
