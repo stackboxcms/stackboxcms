@@ -15,9 +15,10 @@ class Cx extends AppKernel_Main
 	protected $modulePaths = array();
 	protected $pluginPaths = array();
 	
-	protected static $database;
-	protected static $session;
-	protected static $mappers = array();
+	protected $session;
+	protected $database = array();
+	protected $mappers = array();
+	protected $binds = array();
 	
 	
 	/**
@@ -150,6 +151,10 @@ class Cx extends AppKernel_Main
 			$sModuleObject->init();
 		}
 		
+		// @event
+		$this->trigger('cx_module', array($sModuleObject));
+		$this->trigger('cx_module_' . strtolower($module), array($sModuleObject));
+		
 		return $sModuleObject;
 	}
 	
@@ -168,7 +173,7 @@ class Cx extends AppKernel_Main
 		// Append 'Mapper' to the end, as per convention
 		$mapperName .=  "_Mapper";
 		
-		if(!isset(self::$mappers[$mapperName])) {
+		if(!isset($this->mappers[$mapperName])) {
 			// Ensure file can be loaded
 			if(!$this->load($mapperName)) {
 				throw new Exception("Unable to load class '" . $mapperName . "' - requested class not found");
@@ -182,9 +187,9 @@ class Cx extends AppKernel_Main
 				$mapper->migrate();
 			}
 			
-			self::$mappers[$mapperName] = $mapper;
+			$this->mappers[$mapperName] = $mapper;
 		}
-		return self::$mappers[$mapperName];
+		return $this->mappers[$mapperName];
 	}
 	
 
@@ -216,6 +221,11 @@ class Cx extends AppKernel_Main
 		} else {
 			$result = call_user_func_array(array($sModuleObject, $action), $params);
 		}
+		
+		// @event
+		$this->trigger('cx_dispatch', array($sModuleObject, $action, $params, $result));
+		$this->trigger('cx_dispatch_' . strtolower($module), array($sModuleObject, $action, $params, $result));
+		
 		return $result;
 	}
 	
@@ -225,10 +235,10 @@ class Cx extends AppKernel_Main
 	 */
 	public function session()
 	{
-		if(null === self::$session) {
-			self::$session = new Cx_Session();
+		if(null === $this->session) {
+			$this->session = new Cx_Session();
 		}
-		return self::$session;
+		return $this->session;
 	}
 	
 	
@@ -237,15 +247,58 @@ class Cx extends AppKernel_Main
 	 */
 	public function database($name = 'master')
 	{
-		if(null === self::$database) {
+		if(!isset($this->database[$name])) {
 			$cfg = $this->config('cx.database.' . $name);
 			if($this->load('phpDataMapper_Adapter_Mysql')) {
-				self::$database = new phpDataMapper_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
+				$this->database[$name] = new phpDataMapper_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
 			} else {
 				throw new Exception("Unable to load database connection - Check to ensure the username and password are correct");
 			}
 		}
-		return self::$database;
+		return $this->database[$name];
+	}
+	
+	/**
+	 * Event: Trigger a named event and execute callbacks that have been hooked onto it
+	 * 
+	 * @param string $name Name of the event
+	 * @param array $params Parameters to pass to bound event callbacks
+	 */
+	public function trigger($name, array $params = array())
+	{
+		if(isset($this->binds[$name])) {
+			foreach($this->binds[$name] as $hookName => $callback) {
+				call_user_func_array($callback, $params);
+			}
+		}
+		
+		$this->trace('[Event] Fired: ' . $name);
+	}
+	
+	
+	/**
+	 * Event: Add callback to be triggered on event name
+	 * 
+	 * @param string $name Name of the event
+	 * @param string $hookName Name of the bound callback that is being added (custom for each callback)
+	 * @param callback $callback Callback to execute when named event is triggered
+	 */
+	public function bind($name, $hookName, $callback)
+	{
+		$this->binds[$name][$hookName] = $callback;
+		$this->trace('[Event] Hook callback added: ' . $hookName . ' on event ' . $name);
+	}
+	
+	
+	/**
+	 * Event: Remove callback by name
+	 */
+	public function unbind($hookName)
+	{
+		if(isset($this->binds[$name][$hookName])) {
+			unset($this->binds[$name][$hookName]);
+		}
+		$this->trace('[Event] Hook callback removed: ' . $hookName);
 	}
 	
 	
