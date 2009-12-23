@@ -7,7 +7,7 @@ $cfg['cx']['env']['https'] = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['
 $cfg['cx']['request'] = (isset($_GET['url']) ? urldecode($_GET['url']) : '' );
 $cfg['cx']['root'] = dirname(dirname(__FILE__));
 
-$cfg['cx']['dir_web'] = '/';
+$cfg['cx']['dir_web'] = '/www/';
 $cfg['cx']['dir_core'] = '/app/core/';
 $cfg['cx']['dir_lib'] = '/lib/';
 $cfg['cx']['dir_modules'] = '/app/';
