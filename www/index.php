@@ -21,7 +21,7 @@ try {
 	set_error_handler(array($cx, 'errorHandler'));
 	
 	// Debug?
-	if($cx->config('debug')) {
+	if($cx->config('cx.debug')) {
 		// Enable debug mode
 		$cx->debug(true);
 		
@@ -33,6 +33,8 @@ try {
 		//error_reporting(0);
 		//ini_set('display_errors', '0');
 	}
+	
+	$cx->trigger('cx_boot');
 	 
 	// Router - Add routes we want to match
 	$router = $cx->router();
@@ -58,7 +60,13 @@ try {
 	
 	// Run/execute
 	$responseStatus = 200;
-	$content = $cx->dispatch($module, $action, array($request));
+	$content = "";
+	
+	$cx->trigger('cx_boot_dispatch_before', array(&$responseStatus, &$content));
+	
+	$content .= $cx->dispatch($module, $action, array($request));
+	
+	$cx->trigger('cx_boot_dispatch_after', array(&$responseStatus, &$content));
  
 // Authentication Error
 } catch(Cx_Exception_Auth $e) {
@@ -103,17 +111,23 @@ if($cx && $content) {
 
 // Send proper response
 if($cx) {
+	$cx->trigger('cx_boot_render_before', array(&$responseStatus, &$content));
+	
 	// Set content and send response
 	$cx->response($responseStatus);
 	echo $content;
 	
+	$cx->trigger('cx_boot_render_after', array(&$responseStatus));
+	
 	// Debugging on?
-	if($cx->config('debug')) {
+	if($cx->config('cx.debug')) {
 		echo "<hr />";
 		echo "<pre>";
 		print_r($cx->trace());
 		echo "</pre>";	
 	}
+	
+	$cx->trigger('cx_shutdown');
 	
 } else {
 	header("HTTP/1.0 500 Internal Server Error");
