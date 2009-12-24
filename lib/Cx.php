@@ -11,10 +11,6 @@ require dirname(__FILE__) . '/AppKernel/Main.php';
  */
 class Cx extends AppKernel_Main
 {
-	protected $loadPaths = array();
-	protected $modulePaths = array();
-	protected $pluginPaths = array();
-	
 	protected $session;
 	protected $database = array();
 	protected $mappers = array();
@@ -42,87 +38,6 @@ class Cx extends AppKernel_Main
 	
 	
 	/**
-	 * Add path for class loader to look in
-	 */
-	public function addLoadPath($path)
-	{
-		$this->loadPaths[] = $path;
-	}
-	 
-	 
-	/**
-	 * Return array of set class paths
-	 */
-	public function loadPaths()
-	{
-		return $this->loadPaths;
-	}
-	
-	/**
-	 * Add path for module loader to look in
-	 */
-	public function addModulePath($path)
-	{
-		$this->modulePaths[] = $path;
-	}
-	 
-	 
-	/**
-	 * Return array of set module paths
-	 */
-	public function modulePaths()
-	{
-		return $this->modulePaths;
-	}
-	
-	/**
-	 * Add path for plugin loader to look in
-	 */
-	public function addPluginPath($path)
-	{
-		$this->pluginPaths[] = $path;
-	}
-	 
-	 
-	/**
-	 * Return array of set plugin paths
-	 */
-	public function pluginPaths()
-	{
-		return $this->pluginPaths;
-	}
-	
-	
-	/**
-	 * Load (include) class file
-	 * Overridden to enable custom 'addLoadPath' function to add multiple module load paths
-	 *
-	 * @param $className string Name of the class
-	 * @param $path string Path to begin looking in for class file
-	 * @return boolean
-	 */
-	public function load($className, $paths = null)
-	{
-		// Module
-		if(strpos($className, 'Module_') === 0) {
-			$paths = (array) $paths + $this->modulePaths();
-		
-		// Plugin
-		} elseif(strpos($className, 'Plugin_') === 0) {
-			$paths = (array) $paths + $this->pluginPaths();
-		
-		// Library
-		} else {
-			$paths = (array) $paths + $this->loadPaths();
-		}
-		
-		$this->trace('Loader', array($className, $paths));
-		
-		return parent::load($className, $paths);
-	}
-	
-	
-	/**
 	 * Load and return instantiated module class
 	 *
 	 * @param $className string Name of the class
@@ -139,9 +54,8 @@ class Cx extends AppKernel_Main
 		$sModule = str_replace('_', '/', $sModule);
 		
 		// Load module file, call function on it
-		$loaded = $this->load($sModuleClass, $this->modulePaths());
+		$loaded = $this->load($sModuleClass);
 		if(!$loaded) {
-			$this->dump($this->modulePaths());
 			throw new Cx_Exception_FileNotFound("Module '" . $sModule . "' not found (class " . $sModuleClass . ")");
 		}
 		
@@ -406,22 +320,6 @@ class Cx extends AppKernel_Main
 			}
 		}
 		return $output;
-	}
-	
-	
-	/**
-	 * Print out an array or object contents in preformatted text
-	 * Useful for debugging and quickly determining contents of variables
-	 */
-	public function dump()
-	{
-		$objects = func_get_args();
-		foreach($objects as $object) {
-			echo "<h1>Dumping " . gettype($object) . "</h1><br />\n";
-			echo "\n<pre>\n";
-			print_r($object);
-			echo "\n</pre>\n";
-		}
 	}
 	
 	
