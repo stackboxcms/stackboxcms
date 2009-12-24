@@ -116,6 +116,8 @@ class Cx extends AppKernel_Main
 			$paths = (array) $paths + $this->loadPaths();
 		}
 		
+		$this->trace('Loader', array($className, $paths));
+		
 		return parent::load($className, $paths);
 	}
 	
