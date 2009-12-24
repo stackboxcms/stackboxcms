@@ -54,8 +54,8 @@ try {
 	// Set class load paths
 	$cx->addLoadPath($cx->config('cx.path_lib'));
 	// Module paths
-	$cx->addModulePath($cx->config('cx.path_core_modules'));
-	$cx->addModulePath($cx->config('cx.path_modules'));
+	$cx->addLoadPath($cx->config('cx.path_core_modules'), 'Module_');
+	$cx->addLoadPath($cx->config('cx.path_modules'), 'Module_');
 	
 	// Run/execute
 	$responseStatus = 200;
