@@ -5,7 +5,7 @@
 class Module_Page_Mapper extends phpDataMapper_Base
 {
 	// Custom row class
-	protected $rowClass = 'Page_Item';
+	protected $rowClass = 'Module_Page_Entity';
 	
 	// Setup table and fields
 	protected $source = "pages";
@@ -30,8 +30,8 @@ class Module_Page_Mapper extends phpDataMapper_Base
 }
 
 
-// Custom row object
-class Page_Item extends phpDataMapper_Entity
+// Custom entity object
+class Module_Page_Entity extends phpDataMapper_Entity
 {
 	
 }
