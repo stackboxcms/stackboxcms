@@ -35,10 +35,10 @@ try {
 	 
 	// Router - Add routes we want to match
 	$router = $cx->router();
-	$cx->trigger('cx_router_before', array($router));
+	$cx->trigger('cx_boot_router_before', array($router));
 	$router->route('(*url)', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
 	$router->route('(*url).(:format)', array('module' => 'Page', 'action' => 'index'));
-	$cx->trigger('cx_router_after', array($router));
+	$cx->trigger('cx_boot_router_after', array($router));
 	
 	// Router - Match HTTP request and return named params
 	$requestUrl = isset($_GET['r']) ? $_GET['r'] : '/';
@@ -96,27 +96,23 @@ try {
 }
  
 // Error handling through core error module
-/*
-if($cx && $content) {
-	if($responseStatus != 200) {
-		try {
-			$content = $cx->dispatch('error', 'indexAction', array($responseStatus, $content));
-		} catch(Exception $e) {
-			$content = $e->getMessage();
-		}
+if($cx && $content && $responseStatus >= 400) {
+	try {
+		$content = $cx->dispatch('Error', 'display', array($responseStatus, $content));
+	} catch(Exception $e) {
+		$content = $e->getMessage();
 	}
 }
-*/
 
 // Send proper response
 if($cx) {
-	$cx->trigger('cx_boot_render_before', array(&$responseStatus, &$content));
+	$cx->trigger('cx_response_before', array(&$responseStatus, &$content));
 	
 	// Set content and send response
 	$cx->response($responseStatus);
 	echo $content;
 	
-	$cx->trigger('cx_boot_render_after', array(&$responseStatus));
+	$cx->trigger('cx_response_after', array(&$responseStatus));
 	
 	// Debugging on?
 	if($cx->config('cx.debug')) {

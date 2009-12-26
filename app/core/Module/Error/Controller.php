@@ -4,54 +4,34 @@
  */
 class Module_Error_Controller extends Cx_Module_Controller
 {
+	protected $file = __FILE__;
+	
+	
 	/**
 	 * Error display and handling function
 	 */
-	public function indexAction($request, $errorCode = 500, $errorMessage = null)
+	public function display($errorCode = 500, $errorMessage = null)
 	{
 		$cx = $this->cx;
-		$response = $cx->response();
+		$request = $cx->request();
 		
-		// Set response status
-		$response->status($errorCode);
+		// Send response status
+		$responseText = $cx->response($errorCode);
 		
 		// Custom error page titles
-		switch($errorCode) {
-			case 404:
-				$title = 'File Not Found';
-				if(empty($errorMessage)) {
-					$errorMessage = 'The page or file you were looking for does not exist.';
-				}
-			break;
-			
-			case 405:
-				$title = 'Whoops!';
-			break;
-			
-			case 500:
-				$title = 'Application Error';
-			break;
-			
-			default:
-				$title = 'Error ' . $errorCode;
-			break;
+		$title = 'Error ' . $errorCode . ' - ' . $responseText;
+		if($errorCode == 404) {
+			if(empty($errorMessage)) {
+				$errorMessage = 'The page or file you were looking for does not exist.';
+			}
 		}
 		
 		// Assign template variables
-		return $this->view()->set(array(
+		return $this->view(__FUNCTION__)->set(array(
 			'title' => $title,
 			'errorCode' => $errorCode,
-			'errorMessage' => $errorMessage
+			'errorMessage' => $errorMessage,
+			'responseText' => $responseText
 			));
-	}
-	
-	
-	/**
-	 * Missed function call passthrough
-	 */
-	public function __call($func, $args)
-	{
-		$errorCode = str_replace("Action", "", $func);
-		$this->forward($this, 'indexAction', array($errorCode));
 	}
 }
