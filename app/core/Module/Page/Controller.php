@@ -9,16 +9,27 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function indexAction($request)
 	{
+		return $this->view($request->url);
+	}
+	
+	
+	/**
+	 * View page by URL
+	 */
+	public function view($url)
+	{
+		$cx = $this->cx;
+		
 		// Ensure page exists
-		$page = $this->mapper()->getPageByUrl($request->url);
+		$page = $this->mapper()->getPageByUrl($url);
 		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->url . "'");
+			throw new Cx_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($request->url) . "'");
 		}
 		
 		// Load page template
-		$template = new Module_Page_Template($page->template);
+		$activeTheme = ($page->theme) ? $page->theme : $cx->config('cx.default.theme');
+		$activeTemplate = ($page->template) ? $page->template : $cx->config('cx.default.theme_template');
+		$template = new Module_Page_Template($cx->config('cx.path_themes') . $activeTheme . $activeTemplate);
 		$regions = $template->getRegions();
-		
-		return "Awesome!<br />" . __FILE__;
 	}
 }
