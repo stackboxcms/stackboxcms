@@ -39,6 +39,8 @@ $cfg['cx']['mod_rewrite'] = true;
 // Defaults
 $cfg['cx']['default']['module'] = 'page';
 $cfg['cx']['default']['action'] = 'index';
+$cfg['cx']['default']['theme'] = 'default';
+$cfg['cx']['default']['theme_template'] = 'index';
 
 // Database - Param names to match Zend_Config
 $cfg['cx']['database']['master']['host'] = 'localhost';
