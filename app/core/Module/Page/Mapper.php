@@ -9,17 +9,17 @@ class Module_Page_Mapper extends phpDataMapper_Base
 	
 	// Setup table and fields
 	protected $source = "pages";
-	protected $fields = array(
-		'id' => array('type' => 'int', 'primary' => true),
-		'title' => array('type' => 'string', 'required' => true),
-		'url' => array('type' => 'string', 'key' => true, 'required' => true),
-		'meta_keywords' => array('type' => 'string'),
-		'meta_description' => array('type' => 'string'),
-		'theme' => array('type' => 'string'),
-		'template' => array('type' => 'string'),
-		'date_created' => array('type' => 'datetime'),
-		'date_modified' => array('type' => 'datetime')
-		);
+	
+	// Fields
+	public $id = array('type' => 'int', 'primary' => true);
+	public $title = array('type' => 'string', 'required' => true);
+	public $url = array('type' => 'string', 'key' => true, 'required' => true);
+	public $meta_keywords = array('type' => 'string');
+	public $meta_description = array('type' => 'string');
+	public $theme = array('type' => 'string');
+	public $template = array('type' => 'string');
+	public $date_created = array('type' => 'datetime');
+	public $date_modified = array('type' => 'datetime');
 	
 	
 	/**
