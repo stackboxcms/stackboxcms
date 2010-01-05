@@ -25,7 +25,7 @@ $cfg['cx']['path_themes'] = $cfg['cx']['root'] . $cfg['cx']['dir_themes'];
 $cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . $cfg['cx']['dir_web'];
 
 // Debug?
-$cfg['cx']['debug'] = false;
+$cfg['cx']['debug'] = true;
 
 // In Development Mode?
 $cfg['cx']['mode']['development'] = true;
