@@ -11,15 +11,14 @@ $cfg['cx']['dir_web'] = '/www/';
 $cfg['cx']['dir_core'] = '/app/core/';
 $cfg['cx']['dir_lib'] = '/lib/';
 $cfg['cx']['dir_modules'] = '/app/';
-$cfg['cx']['dir_public'] = $cfg['cx']['dir_web'] . 'public/';
-$cfg['cx']['dir_themes'] = $cfg['cx']['dir_public'] . 'themes/';
+$cfg['cx']['dir_themes'] = $cfg['cx']['dir_web'] . 'themes/';
 
 $cfg['cx']['path_app'] = dirname(__FILE__);
 $cfg['cx']['path_lib'] = $cfg['cx']['root'] . $cfg['cx']['dir_lib'];
 $cfg['cx']['path_core'] = $cfg['cx']['root'] . $cfg['cx']['dir_core'];
 $cfg['cx']['path_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_modules'];
 $cfg['cx']['path_core_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_core'];
-$cfg['cx']['path_public'] = $cfg['cx']['root'] . $cfg['cx']['dir_public'];
+$cfg['cx']['path_public'] = $cfg['cx']['root'] . $cfg['cx']['dir_web'];
 $cfg['cx']['path_themes'] = $cfg['cx']['root'] . $cfg['cx']['dir_themes'];
 
 $cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . $cfg['cx']['dir_web'];
