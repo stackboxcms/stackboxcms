@@ -28,28 +28,21 @@ class Module_Page_Template
 		if(!$content) {
 			throw new Module_Page_Template_Exception("Template not found: '" . $template . "'");
 		}
-		$this->setContent($content);
+		$this->content($content);
 	}
 	
 	/**
 	 * Set template contents
 	 * 
 	 * @param string $content
-	 */
-	public function setContent($content)
-	{
-		$this->content = $content;
-	}
-	
-	
-	/**
-	 * Get template contents
-	 * 
 	 * @return string
 	 */
-	public function getContent()
+	public function content($content = null)
 	{
-		return $this->content;
+		if(null !== $content) {
+			$this->content = $content;
+		}
+		return $content;
 	}
 	
 	
@@ -65,14 +58,15 @@ class Module_Page_Template
 		}
 		
 		// Get template content
-		$content = $this->getContent();
+		$content = $this->content();
 		
 		// Match all template tags
 		$matches = array();
-		preg_match_all("@<!--\{([\w]+)[:]*([^\s\}]*)(.*) \/\}-->@", $content, $matches, PREG_SET_ORDER);
+		preg_match_all("@<([\w]+):([^\s]*)([^>]*)>([^<]*)<\/\\1:\\2>@", $content, $matches, PREG_SET_ORDER);
 		
 		// Assemble list of tags by type
 		$tokens = array();
+		$ri = 0;
 		foreach ($matches as $val) {
 			$tagFull = $val[0];
 			$tagNamespace = $val[1];
@@ -92,20 +86,29 @@ class Module_Page_Template
 			}
 			
 			// Ouput array
-			$tokens[] = array(
+			$token = array(
 				'tag' => $tagFull,
-				'ns' => $tagNamespace,
 				'type' => $tagType,
+				'namespace' => $tagNamespace,
 				'attributes' => $tagAttributes
 				);
 			
 			// Store found regions
 			if($tagType == $this->regionTagType) {
-				$this->foundRegions[] = $tagName;
+				// Set key as name or number
+				if(isset($tagAttributes['name'])) {
+					$tokenName = $tagAttributes['name'];
+				} else {
+					$tokenName = $ri++;
+				}
+				$this->foundRegions[$tokenName] = $token;
+				continue;
 			}
+			
+			$tokens[] = $token;
 		}
 		
-		$this->tokens = $tagsList;
+		$this->tokens = $tokens;
 		return $tokens;
 	}
 	
@@ -115,7 +118,7 @@ class Module_Page_Template
 	 * 
 	 * @return array
 	 */
-	public function getTags()
+	public function tags()
 	{
 		// Parse template if is has not been parsed already
 		if(!$this->tokens) {
@@ -131,7 +134,7 @@ class Module_Page_Template
 	 * 
 	 * @return array
 	 */
-	public function getRegions()
+	public function regions()
 	{
 		// Parse template if is has not been parsed already
 		if(!$this->tokens) {
@@ -150,6 +153,6 @@ class Module_Page_Template
 	 */
 	public function replaceTag($tag, $replacement)
 	{
-		$this->content = str_replace($tag, $replacement, $this->content);
+		$this->content(str_replace($tag, $replacement, $this->content()));
 	}
 }
