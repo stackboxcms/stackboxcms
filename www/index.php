@@ -113,6 +113,7 @@ if($cx) {
 	echo $content;
 	
 	$cx->trigger('cx_response_after', array(&$responseStatus));
+	$cx->trigger('cx_shutdown');
 	
 	// Debugging on?
 	if($cx->config('cx.debug')) {
@@ -121,8 +122,6 @@ if($cx) {
 		print_r($cx->trace());
 		echo "</pre>";	
 	}
-	
-	$cx->trigger('cx_shutdown');
 	
 } else {
 	header("HTTP/1.0 500 Internal Server Error");
