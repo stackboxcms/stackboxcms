@@ -1,9 +1,6 @@
 <?php
 /**
  * PayPal Pro Payment Processing Class
- * $Id$
- *
- * Class library for processing payments through the Authorize.net gateway
  *
  * @package Cont-xt Framework
  * @link http://www.cont-xt.com/
