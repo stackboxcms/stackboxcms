@@ -23,8 +23,6 @@ class Module_Page_Controller extends Cx_Module_Controller
 		// Ensure page exists
 		$page = $this->mapper()->getPageByUrl($url);
 		if(!$page) {
-			var_dump($page);
-			$this->mapper()->debug();
 			throw new Cx_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($cx->request()->url) . "'");
 		}
 		
@@ -36,6 +34,9 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$tags = $template->tags();
 		
 		//$cx->dump($tags, $regions);
+		
+		// Modules
+		$modules = $page->modules;
 		
 		return $template;
 	}

@@ -12,6 +12,8 @@ class Module_Page_Module_Mapper extends Cx_Mapper
 	public $page_id = array('type' => 'int', 'key' => true);
 	public $region = array('type' => 'string', 'required' => true);
 	public $name = array('type' => 'string', 'required' => true);
+	public $ordering = array('type' => 'int', 'default' => 0);
+	public $is_active = array('type' => 'boolean', 'default' => true);
 	public $date_created = array('type' => 'datetime');
 }
 

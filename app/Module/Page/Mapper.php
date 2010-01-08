@@ -1,10 +1,7 @@
 <?php
 class Module_Page_Mapper extends Cx_Mapper
 {
-	// Custom row class
-	protected $_entityClass = 'Module_Page_Entity';
-	
-	// Setup table and fields
+	// Table
 	protected $source = "pages";
 	
 	// Fields
@@ -18,11 +15,18 @@ class Module_Page_Mapper extends Cx_Mapper
 	public $date_created = array('type' => 'datetime');
 	public $date_modified = array('type' => 'datetime');
 	
+	// Relations
 	public $modules = array(
 		'type' => 'relation',
 		'relation' => 'HasMany',
-		'mapper' => 'Module_Page_Module_Mapper'
+		'mapper' => 'Module_Page_Module_Mapper',
+		'where' => array('page_id' => 'entity.id'),
+		'order' => array('ordering' => 'ASC')
 		);
+	
+	// Custom entity class
+	protected $_entityClass = 'Module_Page_Entity';
+
 	
 	/**
 	 * Get current page by given URL
