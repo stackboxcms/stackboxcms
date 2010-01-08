@@ -1,8 +1,5 @@
 <?php
 /**
- * Payment Interface
- * $Id$
- *
  * Interface for processing payments online
  *
  * @package Cont-xt Framework
