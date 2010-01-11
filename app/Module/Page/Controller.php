@@ -33,10 +33,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$regions = $template->regions();
 		$tags = $template->tags();
 		
-		//$cx->dump($tags, $regions);
-		
 		// Modules
-		$modules = $page->modules;
+		foreach($page->modules as $module) {
+			// Loop over modules, building content for each region
+		}
 		
 		return $template;
 	}
