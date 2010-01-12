@@ -58,10 +58,3 @@ class Module_Page_Mapper extends Cx_Mapper
 		return $url;
 	}
 }
-
-
-// Custom entity object
-class Module_Page_Entity extends Cx_Mapper_Entity
-{
-	
-}

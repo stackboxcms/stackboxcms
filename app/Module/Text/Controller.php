@@ -15,7 +15,6 @@ class Module_Text_Controller extends Cx_Module_Controller
 		return $this->view(__FUNCTION__);
 	}
 	
-	public function putMethod() {}
-	public function postMethod() {}
-	public function deleteMethod() {}
+	public function editAction($request, Module_Page_Entity $page) {}
+	public function deleteAction($request, Module_Page_Entity $page) {}
 }

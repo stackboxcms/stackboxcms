@@ -13,10 +13,3 @@ class Module_Text_Mapper extends Cx_Mapper_Module
 	// Custom entity class
 	protected $_entityClass = 'Module_Text_Entity';
 }
-
-
-// Custom entity object
-class Module_Text_Entity extends Cx_Mapper_Entity
-{
-	
-}
