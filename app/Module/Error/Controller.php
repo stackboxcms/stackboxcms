@@ -4,7 +4,7 @@
  */
 class Module_Error_Controller extends Cx_Module_Controller
 {
-	protected $file = __FILE__;
+	protected $_file = __FILE__;
 	
 	
 	/**
