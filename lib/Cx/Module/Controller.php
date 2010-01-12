@@ -6,7 +6,7 @@
 abstract class Cx_Module_Controller
 {
 	protected $cx;
-	protected $file = __FILE__;
+	protected $_file = __FILE__;
 	
 	
 	/**
@@ -29,7 +29,7 @@ abstract class Cx_Module_Controller
 	 */
 	public function path()
 	{
-		return dirname($this->file);
+		return dirname($this->_file);
 	}
 	
 	
@@ -47,6 +47,7 @@ abstract class Cx_Module_Controller
 	 * New module view template
 	 *
 	 * @param string $template Template name/path
+	 * @param string $format Template output format
 	 */
 	public function view($template, $format = "html")
 	{
@@ -59,7 +60,8 @@ abstract class Cx_Module_Controller
 	
 	/**
 	 * Get mapper object to work with
-	 * @todo Ensure only one instance of a mapper gets loaded
+	 * 
+	 * @param string $mapperName Name of the mapper object to load (by convention)
 	 */
 	public function mapper($mapperName = null)
 	{
