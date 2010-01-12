@@ -79,13 +79,8 @@ class Cx extends AppKernel_Main
 	 * Get mapper object to work with
 	 * Ensures only one instance of a mapper gets loaded
 	 */
-	public function mapper($mapperName = null)
+	public function mapper($mapperName)
 	{
-		// Append given name, if any
-		if(null === $mapperName) {
-			$mapperName = $this->name();
-		}
-		
 		// Append 'Mapper' to the end, as per convention
 		$mapperName .=  "_Mapper";
 		
@@ -174,6 +169,7 @@ class Cx extends AppKernel_Main
 		return $this->database[$name];
 	}
 	
+	
 	/**
 	 * Event: Trigger a named event and execute callbacks that have been hooked onto it
 	 * 
@@ -188,7 +184,7 @@ class Cx extends AppKernel_Main
 			}
 		}
 		
-		$this->trace('[Event] Fired: ' . $name);
+		$this->trace('[Event] Triggered: ' . $name);
 	}
 	
 	
@@ -199,20 +195,20 @@ class Cx extends AppKernel_Main
 	 * @param string $hookName Name of the bound callback that is being added (custom for each callback)
 	 * @param callback $callback Callback to execute when named event is triggered
 	 */
-	public function bind($name, $hookName, $callback)
+	public function bind($eventName, $hookName, $callback)
 	{
-		$this->binds[$name][$hookName] = $callback;
-		$this->trace('[Event] Hook callback added: ' . $hookName . ' on event ' . $name);
+		$this->binds[$eventName][$hookName] = $callback;
+		$this->trace('[Event] Hook callback added: ' . $hookName . ' on event ' . $eventName);
 	}
 	
 	
 	/**
 	 * Event: Remove callback by name
 	 */
-	public function unbind($hookName)
+	public function unbind($eventName, $hookName)
 	{
-		if(isset($this->binds[$name][$hookName])) {
-			unset($this->binds[$name][$hookName]);
+		if(isset($this->binds[$eventName][$hookName])) {
+			unset($this->binds[$eventName][$hookName]);
 		}
 		$this->trace('[Event] Hook callback removed: ' . $hookName);
 	}

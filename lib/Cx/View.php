@@ -14,6 +14,9 @@ class Cx_View
 	protected $_default_format = 'html';
 	protected $_default_extenstion = 'php';
 	
+	// Helpers
+	protected static $_helpers = array();
+	
 	
 	/**
 	 *	Constructor function
@@ -100,6 +103,23 @@ class Cx_View
 	public function vars()
 	{
 		return $this->_vars;
+	}
+	
+	
+	/**
+	 * Load and return view helper
+	 * 
+	 * @return Cx_View_Helper
+	 */
+	public function helper($name)
+	{
+		$helperClass = 'Cx_View_Helper_' . $name;
+		
+		if(!isset(self::$_helper[$helperClass])) {
+			$helper = new $helperClass($this);
+		}
+		
+		return self::$_helper[$helperClass];
 	}
 	
 	
