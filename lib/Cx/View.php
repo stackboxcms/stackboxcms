@@ -115,11 +115,10 @@ class Cx_View
 	{
 		$helperClass = 'Cx_View_Helper_' . $name;
 		
-		if(!isset(self::$_helper[$helperClass])) {
-			$helper = new $helperClass($this);
+		if(!isset(self::$_helpers[$helperClass])) {
+			self::$_helpers[$helperClass] = new $helperClass($this);
 		}
-		
-		return self::$_helper[$helperClass];
+		return self::$_helpers[$helperClass];
 	}
 	
 	
