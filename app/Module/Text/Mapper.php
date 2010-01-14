@@ -1,5 +1,5 @@
 <?php
-class Module_Text_Mapper extends Cx_Mapper_Module
+class Module_Text_Mapper extends Cx_Module_Mapper
 {
 	// Table
 	protected $source = "module_text";
