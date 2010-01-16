@@ -32,12 +32,14 @@ try {
 	}
 	
 	$cx->trigger('cx_boot');
-	 
+	
 	// Router - Add routes we want to match
 	$router = $cx->router();
 	$cx->trigger('cx_boot_router_before', array($router));
+	$router->route('(*url)\/(:action)\.(:format)', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
+	$router->route('(:action)\.(:format)', array('url' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));
+	$router->route('(*url)\.(:format)', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
 	$router->route('(*url)', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
-	$router->route('(*url).(:format)', array('module' => 'Page', 'action' => 'index'));
 	$cx->trigger('cx_boot_router_after', array($router));
 	
 	// Router - Match HTTP request and return named params
