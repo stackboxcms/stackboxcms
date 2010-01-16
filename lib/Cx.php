@@ -120,7 +120,7 @@ class Cx extends AppKernel_Main
 		
 		// Run module action
 		if(!is_callable(array($sModuleObject, $action))) {
-			throw new Cx_Exception_FileNotFound("Module '" . $sModule ."' does not have a callable method '" . $action . "'");
+			throw new Cx_Exception_FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
 		}
 		
 		// Handle result
