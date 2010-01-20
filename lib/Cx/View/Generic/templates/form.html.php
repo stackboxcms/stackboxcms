@@ -8,7 +8,7 @@ $form = $this->helper('Form');
   <?php foreach($fields as $fieldName => $fieldOpts): ?>
 	<dt class="cx-form-label"><label><?php echo $fieldName; ?></label></dt>
 	<dd class="cx-form-value cx-form-field-<?php echo strtolower($fieldOpts['type']); ?>">
-	  <?php echo $form->input($fieldOpts['type'], $fieldName); ?>
+	  <?php echo $form->input($fieldOpts['type'], $fieldName, $request->$fieldName); ?>
 	</dd>
   <?php endforeach; ?>
   </dl>

@@ -20,7 +20,9 @@ class Cx_View_Helper_Form extends Cx_View_Helper
 			'integer' => 'text',
 			'time' => 'text',
 			'date' => 'text',
-			'datetime' => 'text'
+			'datetime' => 'text',
+			'email' => 'text',
+			'url' => 'text'
 		);
 		$type = (isset($inputTypeMap[$type]) ? $inputTypeMap[$type] : $type);
 		$extra['id'] = isset($extra['id']) ? $extra['id'] : trim($name);

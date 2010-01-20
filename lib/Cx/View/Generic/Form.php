@@ -7,17 +7,47 @@
  */
 class Cx_View_Generic_Form extends Cx_View
 {
+	protected $_cx;
 	protected $_fields = array();
 	
 	
 	/**
 	 * Create form object
 	 */
-	public function __construct()
+	public function __construct(Cx $cx)
 	{
+		$this->_cx = $cx;
+		
+		// Setup default template vars
+		$this->set('request', $cx->request());
+		
 		// Pick template and set path
 		$this->template('form', 'html')
 			->path(dirname(__FILE__) . '/templates/');
+	}
+	
+	
+	/**
+	 * Action param of form
+	 *
+	 * @param string $action URL form will submit to
+	 */
+	public function action($action = '')
+	{
+		$this->set('action', $action);
+		return $this;
+	}
+	
+	
+	/**
+	 * HTTP Method param of form
+	 *
+	 * @param string $action Method used to submit form to server
+	 */
+	public function method($method = 'POST')
+	{
+		$this->set('method', $method);
+		return $this;
 	}
 	
 	
