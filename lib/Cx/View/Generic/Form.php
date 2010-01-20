@@ -7,21 +7,14 @@
  */
 class Cx_View_Generic_Form extends Cx_View
 {
-	protected $_mapper;
 	protected $_fields = array();
 	
 	
 	/**
 	 * Create form object
 	 */
-	public function __construct(phpDataMapper_Base $mapper)
+	public function __construct()
 	{
-		$this->_mapper = $mapper;
-		$this->fields($mapper->fields());
-		
-		// Set template vars
-		$this->set('fields', $this->fields());
-		
 		// Pick template and set path
 		$this->template('form', 'html')
 			->path(dirname(__FILE__) . '/templates/');
@@ -35,7 +28,37 @@ class Cx_View_Generic_Form extends Cx_View
 	{
 		if(count($fields) > 0 ) {
 			$this->_fields = $fields;
+			return $this;
 		}
 		return $this->_fields;
+	}
+	
+	
+	/**
+	 * Remove fields by name
+	 *
+	 * @param mixed $fieldName String or array of field names
+	 */
+	public function removeFields($fieldName)
+	{
+		$fields = (array) $fieldName;
+		foreach($fields as $field) {
+			if(isset($this->_fields[$field])) {
+				unset($this->_fields[$field]);
+			}
+		}
+		return $this;
+	}
+	
+	
+	/**
+	 * Return template content
+	 */
+	public function content($parsePHP = true)
+	{
+		// Set template vars
+		$this->set('fields', $this->fields());
+		
+		return parent::content($parsePHP);
 	}
 }

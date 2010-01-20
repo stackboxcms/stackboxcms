@@ -13,6 +13,16 @@ class Cx_View_Helper_Form extends Cx_View_Helper
 	 */
 	public function input($type, $name, $value='', $extra='')
 	{
+		// Field type maps - for non-standard field types (and HTML5 types for today)
+		$inputTypeMap = array(
+			'string' => 'text',
+			'int' => 'text',
+			'integer' => 'text',
+			'time' => 'text',
+			'date' => 'text',
+			'datetime' => 'text'
+		);
+		$type = (isset($inputTypeMap[$type]) ? $inputTypeMap[$type] : $type);
 		$extra['id'] = isset($extra['id']) ? $extra['id'] : trim($name);
 		$tag = '<input type="' . $type . '" name="' . $name . '" value="' . $value . '"' . $this->listExtra($extra) . ' />';
 		echo $tag;
