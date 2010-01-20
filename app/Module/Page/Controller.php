@@ -5,7 +5,7 @@
 class Module_Page_Controller extends Cx_Module_Controller
 {
 	/**
-	 * GET
+	 * @method GET
 	 */
 	public function indexAction($request)
 	{
@@ -61,10 +61,44 @@ class Module_Page_Controller extends Cx_Module_Controller
 	/**
 	 * @method GET
 	 */
+	public function newAction($request)
+	{
+		return $this->formView();
+	}
+	
+	
+	/**
+	 * @method GET
+	 */
 	public function editAction($request)
 	{
-		$view = new Cx_View_Generic_Form();
-		$view->fields($this->mapper()->fields())
+		return $this->formView();
+	}
+	
+	
+	/**
+	 * @method DELETE
+	 */
+	public function deleteAction($request)
+	{
+		// Ensure page exists
+		$page = $this->mapper()->getPageByUrl($request->url);
+		if(!$page) {
+			throw new Cx_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($url) . "'");
+		}
+		
+		$this->mapper()->delete($page);
+	}
+	
+	
+	/**
+	 * Return view object for the add/edit form
+	 */
+	protected function formView()
+	{
+		$view = new Cx_View_Generic_Form($this->cx);
+		$view->action("")
+			->fields($this->mapper()->fields())
 			->removeFields(array('id', 'date_created', 'date_modified'));
 		return $view;
 	}
