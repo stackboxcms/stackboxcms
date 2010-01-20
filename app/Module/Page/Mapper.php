@@ -5,7 +5,7 @@ class Module_Page_Mapper extends Cx_Mapper
 	protected $source = "pages";
 	
 	// Fields
-	public $id = array('type' => 'int', 'primary' => true);
+	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
 	public $title = array('type' => 'string', 'required' => true);
 	public $url = array('type' => 'string', 'key' => true, 'required' => true);
 	public $meta_keywords = array('type' => 'string');

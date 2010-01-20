@@ -56,4 +56,16 @@ class Module_Page_Controller extends Cx_Module_Controller
 		
 		return $template;
 	}
+	
+	
+	/**
+	 * @method GET
+	 */
+	public function editAction($request)
+	{
+		$view = new Cx_View_Generic_Form();
+		$view->fields($this->mapper()->fields())
+			->removeFields(array('id', 'date_created', 'date_modified'));
+		return $view;
+	}
 }
