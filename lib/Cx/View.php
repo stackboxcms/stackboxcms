@@ -187,6 +187,18 @@ class Cx_View
 	
 	
 	/**
+	 * Set errors to template
+	 *
+	 * @param array $errors
+	 */
+	public function errors($errors)
+	{
+		$this->set('errors', $errors);
+		return $this; // Fluent interface
+	}
+	
+	
+	/**
 	 * Display template file (read and echo contents)
 	 */
 	public function render()

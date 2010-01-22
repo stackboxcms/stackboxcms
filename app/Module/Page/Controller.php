@@ -63,8 +63,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request)
 	{
-		$this->mapper()->save($request->getPost());
-		return $this->formView();
+		return $this->formView()->method('post');
 	}
 	
 	
@@ -83,12 +82,13 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function postMethod($request)
 	{
-		$entity = $this->mapper()->get()->data($request->getPost());
-		if($this->mapper()->save($entity)) {
+		$mapper = $this->mapper();
+		$entity = $mapper->get()->data($request->getPost());
+		if($mapper->save($entity)) {
 			return $this->cx->resource($entity)->status(201);
 		} else {
 			$cx->response(400);
-			return $this->formView();
+			return $this->formView()->errors($mapper->getErrors());
 		}
 	}
 	
