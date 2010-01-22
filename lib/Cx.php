@@ -142,6 +142,15 @@ class Cx extends AppKernel_Main
 	
 	
 	/**
+	 * Return a resource object to work with
+	 */
+	public function resource($data)
+	{
+		return new Cx_Resource($data);
+	}
+	
+	
+	/**
 	 * Return a session object to work with
 	 */
 	public function session()
