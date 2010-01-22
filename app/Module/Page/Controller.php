@@ -63,6 +63,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request)
 	{
+		$this->mapper()->save($request->getPost());
 		return $this->formView();
 	}
 	
@@ -77,9 +78,25 @@ class Module_Page_Controller extends Cx_Module_Controller
 	
 	
 	/**
+	 * Create a new resource with the given parameters
+	 * @method POST
+	 */
+	public function postMethod($request)
+	{
+		$entity = $this->mapper()->get()->data($request->getPost());
+		if($this->mapper()->save($entity)) {
+			return $this->cx->resource($entity)->status(201);
+		} else {
+			$cx->response(400);
+			return $this->formView();
+		}
+	}
+	
+	
+	/**
 	 * @method DELETE
 	 */
-	public function deleteAction($request)
+	public function deleteMethod($request)
 	{
 		// Ensure page exists
 		$page = $this->mapper()->getPageByUrl($request->url);
