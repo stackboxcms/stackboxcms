@@ -1,7 +1,7 @@
 <?php
 // PHP version must be 5.2 or greater
 if(version_compare(phpversion(), "5.2.0", "<")) {
-	exit("<b>Fatal Error:</b> PHP version must be 5.2.0 or greater to run this application!");
+	exit("<b>Fatal Error:</b> PHP version must be 5.2.0 or greater to run in Cont-xt.");
 }
 
 // Configuration settings
@@ -53,7 +53,7 @@ try {
 	$module = $params['module'];
 	$action = $params['action'] . 'Action'; // Append with 'Action' to limit scope of available functions from HTTP request
 	
-	// Set class load paths
+	// Set class load paths - works for all classes using the PEAR/Zend naming convention placed in 'lib'
 	$cx->addLoadPath($cx->config('cx.path_lib'));
 	// Module paths
 	$cx->addLoadPath($cx->config('cx.path_modules'), 'Module_');
