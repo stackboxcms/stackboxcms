@@ -7,8 +7,13 @@
  * @package Cont-xt
  * @link http://cont-xt.com/
  */
-class Module_Page_Template
+class Module_Page_Template extends Cx_View
 {
+	// Extension type (inherited from Cx_View)
+	protected $_default_format = 'html';
+	protected $_default_extenstion = 'tpl';
+	
+	// Parsing storage
 	protected $_content;
 	protected $_tokens;
 	
@@ -64,7 +69,7 @@ class Module_Page_Template
 		
 		// Match all template tags
 		$matches = array();
-		preg_match_all("@<([\w]+):([^\s]*)([^>]*)>([^<]*)<\/\\1:\\2>@", $content, $matches, PREG_SET_ORDER);
+		preg_match_all("@<([\w]+):([^\s]*)([^>]*)>(.*)<\/\\1:\\2>@", $content, $matches, PREG_SET_ORDER);
 		
 		// Assemble list of tags by type
 		$tokens = array();
@@ -250,5 +255,20 @@ class Module_Page_Template
 	{
 		$this->clean();
 		return $this->content();
+	}
+	
+	
+	/**
+	 * Returns full template filename with format and extension
+	 *
+	 * @param OPTIONAL $template string (Name of the template to return full file format)
+	 * @return string
+	 */
+	public function templateFilename($template = null)
+	{
+		if(null === $template) {
+			$template = $this->template();
+		}
+		return $template . '.' . $this->_default_extenstion . '.' . $this->format();
 	}
 }
