@@ -24,7 +24,7 @@ class Cx_View
 	 * @param $template string	Template file name to use
 	 * @param $module string	Module template file resides in
 	 */
-	public function __construct($template, $format, $path = null)
+	public function __construct($template, $format = 'html', $path = null)
 	{
 		$this->template($template, $format);
 		$this->path($path);
