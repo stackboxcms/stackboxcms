@@ -4,14 +4,16 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title><cx:tag name="title">Page Title</cx:tag></title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="stylesheets/960.css" />
 </head>
 <body>
-  
-  <cx:region name="main"></cx:region>
-  
-  <hr />
-  
-  <cx:region name="secondary"></cx:region>
-  
+  <div class="container_12">
+	<div class="grid_8 alpha">
+	  <cx:region name="main"><p>Main Content Here!</p></cx:region>
+	</div>
+	<div class="grid_4 omega">
+	  <cx:region name="secondary"><p>Navigation and secondary content will be over here</p></cx:region>
+	</div>
+  </div>
 </body>
 </html>
