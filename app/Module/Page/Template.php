@@ -29,28 +29,16 @@ class Module_Page_Template extends Cx_View
 	 * 
 	 * @param string $content
 	 */
+	/*
 	public function __construct($template)
 	{
 		$content = @file_get_contents($template);
 		if(!$content) {
 			throw new Module_Page_Template_Exception("Template not found: '" . $template . "'");
 		}
-		$this->content($content);
+		$this->_content = $content;
 	}
-	
-	/**
-	 * Set template contents
-	 * 
-	 * @param string $content
-	 * @return string
-	 */
-	public function content($content = null)
-	{
-		if(null !== $content) {
-			$this->_content = $content;
-		}
-		return $this->_content;
-	}
+	*/
 	
 	
 	/**
@@ -189,7 +177,7 @@ class Module_Page_Template extends Cx_View
 		foreach($this->tokens() as $tag) {
 			$cleanContent = str_replace($tag['tag'], $tag['content'], $cleanContent);
 		}
-		return $this->content($cleanContent);
+		return $this->_content = $cleanContent;
 	}
 	
 	
@@ -203,7 +191,7 @@ class Module_Page_Template extends Cx_View
 	 */
 	public function replaceToken($tag, $replacement)
 	{
-		$this->content(str_replace($tag, $replacement, $this->content()));
+		$this->_content = str_replace($tag, $replacement, $this->content());
 		return true;
 	}
 	
@@ -220,7 +208,7 @@ class Module_Page_Template extends Cx_View
 	{
 		$tags = $this->tags();
 		if(isset($tags[$tagName])) {
-			$this->content(str_replace($tags[$tagName]['tag'], $replacement, $this->content()));
+			$this->_content = str_replace($tags[$tagName]['tag'], $replacement, $this->content());
 			return true;
 		} else {
 			return false;
@@ -240,21 +228,11 @@ class Module_Page_Template extends Cx_View
 	{
 		$regions = $this->regions();
 		if(isset($regions[$regionName])) {
-			$this->content(str_replace($regions[$regionName]['tag'], $replacement, $this->content()));
+			$this->_content = str_replace($regions[$regionName]['tag'], $replacement, $this->content());
 			return true;
 		} else {
 			return false;
 		}
-	}
-	
-	
-	/**
-	 * Return full template content as a string
-	 */
-	public function __toString()
-	{
-		$this->clean();
-		return $this->content();
 	}
 	
 	
@@ -270,5 +248,32 @@ class Module_Page_Template extends Cx_View
 			$template = $this->template();
 		}
 		return $template . '.' . $this->_default_extenstion . '.' . $this->format();
+	}
+	
+	
+	/**
+	 * Set template contents
+	 * 
+	 * @param string $content
+	 * @return string
+	 */
+	public function content($parsePHP = true)
+	{
+		if(null === $this->_content) {
+			$this->_content = parent::content(false);
+		}
+		return $this->_content;
+	}
+	
+	
+	/**
+	 * Converts view object to string on the fly
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		$this->clean();
+		return parent::__toString();
 	}
 }

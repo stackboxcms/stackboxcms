@@ -19,6 +19,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	public function viewUrl($url)
 	{
 		$cx = $this->cx;
+		$request = $cx->request();
 		
 		// Ensure page exists
 		$page = $this->mapper()->getPageByUrl($url);
@@ -28,17 +29,17 @@ class Module_Page_Controller extends Cx_Module_Controller
 		
 		// Load page template
 		$activeTheme = ($page->theme) ? $page->theme : $cx->config('cx.default.theme');
-		$activeTemplate = (($page->template) ? $page->template : $cx->config('cx.default.theme_template')) . ".tpl.html";
-		$template = new Module_Page_Template($cx->config('cx.path_themes') . $activeTheme . '/' . $activeTemplate);
+		$activeTemplate = ($page->template) ? $page->template : $cx->config('cx.default.theme_template');
+		$template = new Module_Page_Template($activeTemplate);
+		$template->format($request->format);
+		$template->path($cx->config('cx.path_themes') . $activeTheme . '/');
 		$template->parse();
-		//$templateRegions = $template->regions();
-		//$templateTags = $template->tags();
 		
 		// Modules
 		$regionModules = array();
 		foreach($page->modules as $module) {
 			// Loop over modules, building content for each region
-			$regionModules[$module->region][] = $cx->dispatch($module->name, 'indexAction', array($cx->request(), $page));
+			$regionModules[$module->region][] = $cx->dispatch($module->name, 'indexAction', array($request, $page));
 		}
 		
 		// Replace region content
@@ -54,7 +55,18 @@ class Module_Page_Controller extends Cx_Module_Controller
 			$template->replaceTag($tagName, $tagValue);
 		}
 		
-		return $template;
+		// Template string content
+		$templateContent = $template->content();
+		
+		// Add admin stuff to the page
+		// Admin toolbar, javascript, styles, etc.
+		if($template->format() == 'html') {
+			$templateHeadContent = '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>';
+			$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
+			$templateBodyContent = '<div id="cx-admin-bar"></div>';
+			$templateContent = str_replace("</body>", $templateBodyContent . "</body>", $templateContent);
+		}
+		return $templateContent;
 	}
 	
 	
