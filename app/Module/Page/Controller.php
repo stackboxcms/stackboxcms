@@ -4,6 +4,9 @@
  */
 class Module_Page_Controller extends Cx_Module_Controller
 {
+	protected $_file = __FILE__;
+	
+	
 	/**
 	 * @method GET
 	 */
@@ -63,8 +66,8 @@ class Module_Page_Controller extends Cx_Module_Controller
 		if($template->format() == 'html') {
 			$templateHeadContent = '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>';
 			$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
-			$templateBodyContent = '<div id="cx-admin-bar"></div>';
-			$templateContent = str_replace("</body>", $templateBodyContent . "</body>", $templateContent);
+			$templateBodyContent = $this->view('_adminBar');
+			$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
 		}
 		return $templateContent;
 	}
