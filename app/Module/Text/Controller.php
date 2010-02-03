@@ -12,7 +12,7 @@ class Module_Text_Controller extends Cx_Module_Controller
 	 */
 	public function indexAction($request, Module_Page_Entity $page)
 	{
-		$view = new Cx_View_Generic_Form();
+		$view = new Cx_View_Generic_Form($this->cx);
 		$view->fields($this->mapper()->fields());
 		return $view;
 		//return $this->view(__FUNCTION__);
