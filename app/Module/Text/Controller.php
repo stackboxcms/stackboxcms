@@ -10,16 +10,26 @@ class Module_Text_Controller extends Cx_Module_Controller
 	/**
 	 * GET
 	 */
-	public function indexAction($request, Module_Page_Entity $page)
+	public function indexAction($request, $page, $module)
 	{
-		$view = new Cx_View_Generic_Form($this->cx);
-		$view->fields($this->mapper()->fields());
-		return $view;
+		$text = $this->mapper()->first(array('module_id' => $module->id));
+		if(!$text) {
+			return false;
+		}
+		
+		if($request->format == 'html') {
+			return $text->content;
+		} else {
+			return $this->cx->resource($text);
+		}
+		
 		//return $this->view(__FUNCTION__);
 	}
 	
-	public function editAction($request, Module_Page_Entity $page) {
+	public function editAction($request, $page, $module) {
 		
 	}
-	public function deleteAction($request, Module_Page_Entity $page) {}
+	public function deleteAction($request, $page, $module) {
+		
+	}
 }

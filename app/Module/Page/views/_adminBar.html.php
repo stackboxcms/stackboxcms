@@ -1,3 +1,3 @@
-<div id="cx-admin-bar">
+<div id="cx_admin_bar">
 	
 </div>

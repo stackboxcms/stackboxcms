@@ -42,13 +42,17 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$regionModules = array();
 		foreach($page->modules as $module) {
 			// Loop over modules, building content for each region
-			$regionModules[$module->region][] = $cx->dispatch($module->name, 'indexAction', array($request, $page));
+			$regionModules[$module->region][] = $cx->dispatch($module->name, 'indexAction', array($request, $page, $module));
 		}
 		
 		// Replace region content
 		$cx->trigger('module_page_regions', array(&$regionModules));
 		foreach($regionModules as $region => $modules) {
-			$template->replaceRegion($region, implode("\n", $modules));
+			$regionContent = "";
+			foreach($modules as $module) {
+				$regionContent .= $this->regionModuleFormat($request, $module);
+			}
+			$template->replaceRegion($region, $regionContent);
 		}
 		
 		// Replace template tags
@@ -65,6 +69,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		// Admin toolbar, javascript, styles, etc.
 		if($template->format() == 'html') {
 			$templateHeadContent = '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>';
+			$templateHeadContent = '<link type="text/css" href="' . $this->cx->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />';
 			$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
 			$templateBodyContent = $this->view('_adminBar');
 			$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
@@ -134,5 +139,14 @@ class Module_Page_Controller extends Cx_Module_Controller
 			->fields($this->mapper()->fields())
 			->removeFields(array('id', 'date_created', 'date_modified'));
 		return $view;
+	}
+	
+	
+	/**
+	 * Format module return content for display on page response
+	 */
+	protected function regionModuleFormat($request, $moduleResponse)
+	{
+		
 	}
 }
