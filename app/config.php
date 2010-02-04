@@ -5,20 +5,24 @@
 $cfg = array();
 $cfg['cx']['env']['https'] = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? false : true;
 $cfg['cx']['request'] = (isset($_GET['url']) ? urldecode($_GET['url']) : '' );
-$cfg['cx']['root'] = dirname(dirname(__FILE__));
+$cfg['cx']['path_root'] = dirname(dirname(__FILE__));
 
-$cfg['cx']['dir_web'] = '/www/';
+$cfg['cx']['dir_www'] = '/www/';
+$cfg['cx']['dir_assets'] = $cfg['cx']['dir_www'] . 'assets/';
+$cfg['cx']['dir_assets_admin'] = $cfg['cx']['dir_assets'] . 'admin/';
 $cfg['cx']['dir_lib'] = '/lib/';
 $cfg['cx']['dir_modules'] = '/app/';
-$cfg['cx']['dir_themes'] = $cfg['cx']['dir_web'] . 'themes/';
+$cfg['cx']['dir_themes'] = $cfg['cx']['dir_www'] . 'themes/';
 
 $cfg['cx']['path_app'] = dirname(__FILE__);
-$cfg['cx']['path_lib'] = $cfg['cx']['root'] . $cfg['cx']['dir_lib'];
-$cfg['cx']['path_modules'] = $cfg['cx']['root'] . $cfg['cx']['dir_modules'];
-$cfg['cx']['path_public'] = $cfg['cx']['root'] . $cfg['cx']['dir_web'];
-$cfg['cx']['path_themes'] = $cfg['cx']['root'] . $cfg['cx']['dir_themes'];
+$cfg['cx']['path_lib'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_lib'];
+$cfg['cx']['path_modules'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_modules'];
+$cfg['cx']['path_public'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_www'];
+$cfg['cx']['path_themes'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_themes'];
 
-$cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . $cfg['cx']['dir_web'];
+$cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . substr($cfg['cx']['path_root'] . $cfg['cx']['dir_www'], strlen($_SERVER['DOCUMENT_ROOT']));
+$cfg['cx']['url_assets'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_assets']);
+$cfg['cx']['url_assets_admin'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_assets_admin']);
 
 // Debug?
 $cfg['cx']['debug'] = true;
@@ -39,6 +43,7 @@ $cfg['cx']['default']['theme'] = 'default';
 $cfg['cx']['default']['theme_template'] = 'index';
 
 // Database - Param names to match Zend_Config
+$cfg['cx']['database']['master']['adapter'] = 'MySQL';
 $cfg['cx']['database']['master']['host'] = 'localhost';
 $cfg['cx']['database']['master']['username'] = 'test';
 $cfg['cx']['database']['master']['password'] = 'password';
