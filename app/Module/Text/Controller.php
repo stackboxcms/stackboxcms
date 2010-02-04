@@ -17,12 +17,12 @@ class Module_Text_Controller extends Cx_Module_Controller
 			return false;
 		}
 		
+		// Return only content for HTML
 		if($request->format == 'html') {
 			return $text->content;
-		} else {
-			return $this->cx->resource($text);
 		}
 		
+		return $this->cx->resource($text);
 		//return $this->view(__FUNCTION__);
 	}
 	

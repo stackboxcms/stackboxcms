@@ -42,17 +42,14 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$regionModules = array();
 		foreach($page->modules as $module) {
 			// Loop over modules, building content for each region
-			$regionModules[$module->region][] = $cx->dispatch($module->name, 'indexAction', array($request, $page, $module));
+			$moduleResponse = $cx->dispatch($module->name, 'indexAction', array($request, $page, $module));
+			$regionModules[$module->region][] = $this->regionModuleFormat($request, $module, $moduleResponse);
 		}
 		
 		// Replace region content
 		$cx->trigger('module_page_regions', array(&$regionModules));
 		foreach($regionModules as $region => $modules) {
-			$regionContent = "";
-			foreach($modules as $module) {
-				$regionContent .= $this->regionModuleFormat($request, $module);
-			}
-			$template->replaceRegion($region, $regionContent);
+			$template->replaceRegion($region, implode("\n", $modules));
 		}
 		
 		// Replace template tags
@@ -145,8 +142,14 @@ class Module_Page_Controller extends Cx_Module_Controller
 	/**
 	 * Format module return content for display on page response
 	 */
-	protected function regionModuleFormat($request, $moduleResponse)
+	protected function regionModuleFormat($request, $module, $moduleResponse)
 	{
-		
+		$content = "";
+		if(false !== $moduleResponse) {
+			if($request->format == 'html') {
+				$content = '<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">' . $moduleResponse . '</div>';
+			}
+		}
+		return $content;
 	}
 }
