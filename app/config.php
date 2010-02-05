@@ -20,7 +20,8 @@ $cfg['cx']['path_modules'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_modules']
 $cfg['cx']['path_public'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_www'];
 $cfg['cx']['path_themes'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_themes'];
 
-$cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . substr($cfg['cx']['path_root'] . $cfg['cx']['dir_www'], strlen($_SERVER['DOCUMENT_ROOT']));
+$cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . str_replace('\\', '/', substr($cfg['cx']['path_root'] . $cfg['cx']['dir_www'], strlen($_SERVER['DOCUMENT_ROOT'])));
+$cfg['cx']['url_themes'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_themes']);
 $cfg['cx']['url_assets'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_assets']);
 $cfg['cx']['url_assets_admin'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_assets_admin']);
 

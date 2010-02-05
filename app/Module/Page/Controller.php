@@ -33,6 +33,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		// Load page template
 		$activeTheme = ($page->theme) ? $page->theme : $cx->config('cx.default.theme');
 		$activeTemplate = ($page->template) ? $page->template : $cx->config('cx.default.theme_template');
+		$themeUrl = $cx->config('cx.url_themes') . $activeTheme . '/';
 		$template = new Module_Page_Template($activeTemplate);
 		$template->format($request->format);
 		$template->path($cx->config('cx.path_themes') . $activeTheme . '/');
@@ -62,14 +63,22 @@ class Module_Page_Controller extends Cx_Module_Controller
 		// Template string content
 		$templateContent = $template->content();
 		
-		// Add admin stuff to the page
-		// Admin toolbar, javascript, styles, etc.
+		// Admin stuff for HTML format
+		$userIsAdmin = true; // @todo Implement the user authentication stuff...
 		if($template->format() == 'html') {
-			$templateHeadContent = '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>';
-			$templateHeadContent = '<link type="text/css" href="' . $this->cx->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />';
-			$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
-			$templateBodyContent = $this->view('_adminBar');
-			$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
+			// Add admin stuff to the page
+			// Admin toolbar, javascript, styles, etc.
+			if($userIsAdmin) {
+				$templateHeadContent = '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>';
+				$templateHeadContent = '<link type="text/css" href="' . $this->cx->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />';
+				$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
+				$templateBodyContent = $this->view('_adminBar');
+				$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
+			}
+			
+			// Prepend asset path to beginning of elements
+			$templateContent = preg_replace("/<link(.*?)href=\"@([^\"|:]+)\"([^>]*>)/i", "<link$1href=\"".$themeUrl."$2\"$3", $templateContent);
+			$templateContent = preg_replace("/<script(.*?)src=\"@([^\"|:]+)\"([^>]*>)/i", "<script$1src=\"".$themeUrl."$2\"$3", $templateContent);
 		}
 		return $templateContent;
 	}
