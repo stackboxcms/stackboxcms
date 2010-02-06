@@ -25,9 +25,23 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$request = $cx->request();
 		
 		// Ensure page exists
-		$page = $this->mapper()->getPageByUrl($url);
+		$mapper = $this->mapper();
+		$page = $mapper->getPageByUrl($url);
 		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($url) . "'");
+			$pageUrl = $mapper->formatPageUrl($url);
+			if($pageUrl == '/') {
+				// Create new page for the homepage automatically if it does not exist
+				$page = $mapper->get();
+				$page->title = "Home";
+				$page->url = $pageUrl;
+				$page->date_created = date($mapper->adapter()->dateTimeFormat());
+				$page->date_modified = $page->date_created;
+				if(!$mapper->save($page)) {
+					throw new Cx_Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
+				}
+			} else {
+				throw new Cx_Exception_FileNotFound("Page not found: '" . $pageUrl . "'");
+			}
 		}
 		
 		// Load page template
