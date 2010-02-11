@@ -7,7 +7,7 @@ class Module_Page_Mapper extends Cx_Mapper
 	// Fields
 	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
 	public $title = array('type' => 'string', 'required' => true);
-	public $url = array('type' => 'string', 'key' => true, 'required' => true);
+	public $url = array('type' => 'string', 'required' => true, 'unique' => true);
 	public $meta_keywords = array('type' => 'string');
 	public $meta_description = array('type' => 'string');
 	public $theme = array('type' => 'string');
@@ -30,6 +30,8 @@ class Module_Page_Mapper extends Cx_Mapper
 	
 	/**
 	 * Get current page by given URL
+	 *
+	 * @param string $url
 	 */
 	public function getPageByUrl($url)
 	{
@@ -45,16 +47,11 @@ class Module_Page_Mapper extends Cx_Mapper
 	 */
 	public function formatPageUrl($url)
 	{
-		// Prepended slash
-		if(strpos($url, '/') !== 0) {
-			$url = '/' . $url;
+		if(empty($url)) {
+			$url = '/';
+		} elseif($url != '/') {
+			$url = '/' . trim($url, '/') . '/';
 		}
-		
-		// Appended slash
-		if(substr($url, strlen($url)-1, 1) != "/") {
-			$url .= '/';
-		}
-		
 		return $url;
 	}
 }
