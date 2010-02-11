@@ -46,7 +46,7 @@ class Cx_View_Generic_Form extends Cx_View
 	 */
 	public function method($method = 'POST')
 	{
-		$this->set('method', $method);
+		$this->set('method', strtoupper($method));
 		return $this;
 	}
 	

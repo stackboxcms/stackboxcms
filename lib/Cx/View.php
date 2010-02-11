@@ -17,6 +17,9 @@ class Cx_View
 	// Helpers
 	protected static $_helpers = array();
 	
+	// Errors
+	protected $_errors = array();
+	
 	
 	/**
 	 *	Constructor function
@@ -191,9 +194,17 @@ class Cx_View
 	 *
 	 * @param array $errors
 	 */
-	public function errors($errors)
+	public function errors($errors = null)
 	{
-		$this->set('errors', $errors);
+		//$this->set('errors', $errors);
+		if(null === $errors) {
+			return $this->_errors;
+		} elseif(is_string($errors)) {
+			return isset($this->_errors[$errors]) ? $this->_errors[$errors] : array();
+		} else {
+			$this->_errors = $errors;
+			return $this; // Fluent interface
+		}
 		return $this; // Fluent interface
 	}
 	

@@ -53,6 +53,6 @@ class Cx_Resource
 	 */
 	public function __toString()
 	{
-		
+		return json_encode($this->_resource);
 	}
 }
