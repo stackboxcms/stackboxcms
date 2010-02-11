@@ -36,18 +36,19 @@ try {
 	// Router - Add routes we want to match
 	$router = $cx->router();
 	$cx->trigger('cx_boot_router_before', array($router));
-	$router->route('page_action_format', '(*url)\/(:action)\.(:format)', array('module' => 'Page'));
-	$router->route('action_format', '(:action)\.(:format)', array('url' => '/', 'module' => 'Page'));
-	$router->route('page_format', '(*url)\.(:format)', array('module' => 'Page', 'action' => 'index'));
-	$router->route('page', '(*url)', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
+	$router->route('page_action', '<*url>/<:action>(.<:format>)')->defaults(array('module' => 'Page'));
+	$router->route('index_action', '<:action>\.<:format>')->defaults(array('module' => 'Page', 'url' => '/'));
+	$router->route('page', '<*url>', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
 	$cx->trigger('cx_boot_router_after', array($router));
 	
 	// Router - Match HTTP request and return named params
-	$requestUrl = isset($_GET['r']) ? $_GET['r'] : '/';
-	$params = $router->match($requestUrl);
-	// Set matched params back on request object
 	$request = $cx->request();
+	$requestUrl = isset($_GET['r']) ? $_GET['r'] : '/';
+	$params = $router->match($request->method(), $requestUrl);
+	// Set matched params back on request object
 	$request->setParams($params);
+	
+	$cx->dump($params);
 	
 	// Required params
 	$module = $params['module'];

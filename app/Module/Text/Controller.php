@@ -23,11 +23,10 @@ class Module_Text_Controller extends Cx_Module_Controller
 		}
 		
 		return $this->cx->resource($text);
-		//return $this->view(__FUNCTION__);
 	}
 	
 	public function editAction($request, $page, $module) {
-		
+		return $this->view('indexAction')->set(array('mapper' => $this->mapper()));
 	}
 	public function deleteAction($request, $page, $module) {
 		
