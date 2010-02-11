@@ -36,23 +36,46 @@ try {
 	// Router - Add routes we want to match
 	$router = $cx->router();
 	$cx->trigger('cx_boot_router_before', array($router));
-	$router->route('page_action', '<*url>/<:action>(.<:format>)')->defaults(array('module' => 'Page'));
-	$router->route('index_action', '<:action>\.<:format>')->defaults(array('module' => 'Page', 'url' => '/'));
-	$router->route('page', '<*url>', array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
+	
+	$router->route('module_item', '<*url>/m_<#module_id>/<#module_item>(/<:module_action>)(.<:format>)')
+		->defaults(array('module' => 'Page', 'action' => 'index', 'module_action' => 'view', 'format' => 'html'))
+		->get(array('module_action' => 'view'))
+		->post(array('module_action' => 'post'))
+		->put(array('module_action' => 'put'))
+		->delete(array('module_action' => 'delete'));
+	$router->route('module_action', '<*url>/m_<#module_id>/<:module_action>(.<:format>)')
+		->defaults(array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
+	$router->route('index_action', '<:action>\.<:format>')
+		->defaults(array('module' => 'Page', 'url' => '/'));
+	$router->route('page_action', '<*url>/<:action>(.<:format>)')
+		->defaults(array('module' => 'Page', 'format' => 'html'));
+	$router->route('page', '<*url>')
+		->defaults(array('module' => 'Page', 'action' => 'index', 'format' => 'html'))
+		->post(array('action' => 'post'))
+		->put(array('action' => 'put'))
+		->delete(array('action' => 'delete'));
+		
 	$cx->trigger('cx_boot_router_after', array($router));
 	
 	// Router - Match HTTP request and return named params
 	$request = $cx->request();
 	$requestUrl = isset($_GET['r']) ? $_GET['r'] : '/';
-	$params = $router->match($request->method(), $requestUrl);
+	$requestMethod = $request->method();
+	// Emulate REST for browsers
+	if($request->isPost() && $request->post('_method')) {
+		$requestMethod = $request->post('_method');
+	}
+	$params = $router->match($requestMethod, $requestUrl);
 	// Set matched params back on request object
 	$request->setParams($params);
 	
-	$cx->dump($params);
-	
 	// Required params
 	$module = $params['module'];
-	$action = $params['action'] . 'Action'; // Append with 'Action' to limit scope of available functions from HTTP request
+	if(strtolower($requestMethod) == strtolower($params['action'])) {
+		$action = $params['action'] . 'Method'; // Append with 'Method' to limit scope to REST access only
+	} else {
+		$action = $params['action'] . 'Action'; // Append with 'Action' to limit scope of available functions from HTTP request
+	}
 	
 	// Set class load paths - works for all classes using the PEAR/Zend naming convention placed in 'lib'
 	$cx->addLoadPath($cx->config('cx.path_lib'));
