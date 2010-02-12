@@ -1,4 +1,6 @@
-h1. Cont-xt CMS
-http://cont-xt.com
+Cont-xt CMS
+===========
+
+[http://cont-xt.com]
 
 An ambitious new open source content management system aimed to end the "backend" editing idea for good. All content editing is done directly in place and on-page through JavaScript and AJAX methods.
