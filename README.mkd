@@ -1,10 +1,11 @@
 Cont-xt CMS
 ===========
-[http://cont-xt.com](http://cont-xt.com)
+Website: [http://cont-xt.com](http://cont-xt.com)
+Author: [Vance Lucas](http://www.vancelucas.com)
 
 About
 -----
-An ambitious new open source content management system aimed to end the "backend" editing idea for good. All content editing is done directly in place and on-page through JavaScript and AJAX methods.
+Cont-xt is an ambitious new open source content management system aimed to end the "backend" editing idea for good. All content editing is done directly in place and on-page through JavaScript and AJAX methods.
 
 License
 -------
