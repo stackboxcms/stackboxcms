@@ -1,6 +1,13 @@
 Cont-xt CMS
 ===========
-
 [http://cont-xt.com](http://cont-xt.com)
 
+About
+-----
 An ambitious new open source content management system aimed to end the "backend" editing idea for good. All content editing is done directly in place and on-page through JavaScript and AJAX methods.
+
+License
+-------
+This project is open source MIT licensed.
+[MIT License Permissions](http://creativecommons.org/licenses/MIT/)
+[Full Legal Code](http://opensource.org/licenses/mit-license.php)
