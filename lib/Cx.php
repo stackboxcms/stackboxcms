@@ -169,10 +169,14 @@ class Cx extends AppKernel_Main
 	{
 		if(!isset($this->database[$name])) {
 			$cfg = $this->config('cx.database.' . $name);
-			if($this->load('phpDataMapper_Adapter_Mysql')) {
-				$this->database[$name] = new phpDataMapper_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
+			if($cfg) {
+				if($this->load('phpDataMapper_Adapter_Mysql')) {
+					$this->database[$name] = new phpDataMapper_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
+				} else {
+					throw new Exception("Unable to load database connection - Check to ensure the username and password are correct");
+				}
 			} else {
-				throw new Exception("Unable to load database connection - Check to ensure the username and password are correct");
+				throw new Exception("Unable to load database connection - Configuration settings for connection '" . $name . "' do not exist.");
 			}
 		}
 		return $this->database[$name];
@@ -220,6 +224,19 @@ class Cx extends AppKernel_Main
 			unset($this->binds[$eventName][$hookName]);
 		}
 		$this->trace('[Event] Hook callback removed: ' . $hookName);
+	}
+	
+	
+	/**
+	 * Generate URL from given params
+	 *
+	 * @todo Account for 'mod_rewrite' being turned OFF, return URL as query string in such cases
+	 * @param string $url
+	 * @return string
+	 */
+	public function url($routeName, array $params = array()) {
+		$fullUrl = $this->config('cx.url') . $this->router()->url($routeName, $params);
+		return $fullUrl;
 	}
 	
 	

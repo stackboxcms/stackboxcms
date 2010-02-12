@@ -103,7 +103,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request)
 	{
-		$pageUrl = $this->cx->router()->url('page', array('url' => '/'));
+		$pageUrl = $this->cx->url('page', array('url' => '/'));
 		return $this->formView()->method('post')->action($pageUrl);
 	}
 	
@@ -126,7 +126,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$mapper = $this->mapper();
 		$entity = $mapper->get()->data($request->post());
 		if($mapper->save($entity)) {
-			$pageUrl = $this->cx->router()->url('page', array('url' => $entity->url));
+			$pageUrl = $this->cx->url('page', array('url' => $entity->url));
 			if($request->format == 'html') {
 				return $this->cx->redirect($pageUrl);
 			} else {
