@@ -9,6 +9,6 @@ Cont-xt is an ambitious new open source content management system aimed to end t
 
 License
 -------
-This project is open source MIT licensed.
-[MIT License Permissions](http://creativecommons.org/licenses/MIT/)
-[Full Legal Code](http://opensource.org/licenses/mit-license.php)
+This project is open source MIT licensed.  
+[MIT License Permissions](http://creativecommons.org/licenses/MIT/)  
+[Full Legal Code](http://opensource.org/licenses/mit-license.php)  
