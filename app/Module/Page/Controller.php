@@ -75,6 +75,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		}
 		
 		// Template string content
+		$template->clean(); // Remove all unmatched tokens
 		$templateContent = $template->content();
 		
 		// Admin stuff for HTML format
@@ -83,8 +84,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 			// Add admin stuff to the page
 			// Admin toolbar, javascript, styles, etc.
 			if($userIsAdmin) {
-				$templateHeadContent = '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>';
-				$templateHeadContent = '<link type="text/css" href="' . $this->cx->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />';
+				$templateHeadContent = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->cx->config('cx.url_assets') . 'scripts/jquery.tools.min.js"></script>' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->cx->config('cx.url_assets_admin') . 'scripts/cx_admin.js"></script>' . "\n";
+				$templateHeadContent .= '<link type="text/css" href="' . $this->cx->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
 				$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
 				$templateBodyContent = $this->view('_adminBar');
 				$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
@@ -113,6 +116,17 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function editAction($request)
 	{
+		$cx = $this->cx;
+		
+		// Ensure page exists
+		$mapper = $this->mapper();
+		$page = $mapper->getPageByUrl($request->url);
+		if(!$page) {
+			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->url . "'");
+		}
+		
+		
+		
 		return $this->formView();
 	}
 	

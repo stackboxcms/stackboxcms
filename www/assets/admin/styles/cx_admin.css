@@ -2,13 +2,59 @@
  * Admin Styles for Cont-xt CMS
  */
 body {
-	padding-top: 30px;
+	padding-top: 40px;
 }
+
+/*
+ADMIN BAR
+================================================== */
 #cx_admin_bar {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 30px;
+	height: 40px;
 	background: #333;
+	font-family: Arial, Tahoma, sans-serif;
+	font-size: 12px;
 }
+	#cx_admin_bar_inside { padding: 2px 4px; }
+	/* Navigation */
+	#cx_admin_bar ul { list-style: none; margin: 4px 0 0 0; padding: 0; }
+	#cx_admin_bar ul li { float: left; margin: 0; padding: 4px; }
+	#cx_admin_bar ul li a { display: block; padding: 3px 10px 4px 10px; background-color: #111; font-weight: bold; color: #fff; text-decoration: none; border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; -khtml-border-radius: 5px; }
+	#cx_admin_bar ul li a:hover, #imNav li.active a { background-color: #AFAFAF; color: #000; }
+
+
+/*
+OVERLAY MODAL WINDOW
+================================================== */
+#cx_modal {
+    background: #333;
+	/*background-image: url(../images/tools/overlay/transparent.png);*/
+    display: none;
+    width: 640px;
+    padding: 0px;
+    text-align: left;
+    border: 2px solid #333;
+	z-index: 1000;
+	
+    opacity: 0.8;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -moz-box-shadow: 0 0 50px #ccc;
+    -webkit-box-shadow: 0 0 50px #ccc;
+}
+	#cx_modal_content {
+		padding: 35px;
+	}
+	/* close button positioned on upper right corner */
+	#cx_modal .close {
+		background-color: darkred;
+		position: absolute;
+		right: -5px;
+		top: -5px;
+		cursor: pointer;
+		height: 35px;
+		width: 35px;
+	}
