@@ -46,7 +46,7 @@ try {
 	$router->route('module_action', '<*url>/m_<#module_id>/<:module_action>(.<:format>)')
 		->defaults(array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
 	$router->route('index_action', '<:action>\.<:format>')
-		->defaults(array('module' => 'Page', 'url' => '/'));
+		->defaults(array('module' => 'Page', 'format' => 'html', 'url' => '/'));
 	$router->route('page_action', '<*url>/<:action>(.<:format>)')
 		->defaults(array('module' => 'Page', 'format' => 'html'));
 	$router->route('page', '<*url>')
