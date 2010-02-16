@@ -44,6 +44,32 @@ class Module_Page_Controller extends Cx_Module_Controller
 			}
 		}
 		
+		// Single module call?
+		// @todo Check against matched route name instead of general request params (? - may restict query string params from being used)
+		if($request->module_name && $request->module_id && $request->module_action) {
+			$moduleId = (int) $request->module_id;
+			$moduleName = $request->module_name;
+			$moduleAction = $request->module_action;
+			
+			// TESTING
+			$cx->dump($request->params());
+			
+			if($moduleId == 0) {
+				// Get new module entity, no ID supplied
+				// @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
+				$module = $mapper->get();
+			} else {
+				// Module belongs to current page
+				$module = $page->modules->where(array('module_id' => $moduleId));
+			}
+			
+			// Dispatch to single module
+			$moduleResponse = $cx->dispatch($moduleName, $moduleAction, array($request, $page, $module));
+			
+			// Return content immediately, currently not wrapped in template
+			return $moduleResponse;
+		}
+		
 		// Load page template
 		$activeTheme = ($page->theme) ? $page->theme : $cx->config('cx.default.theme');
 		$activeTemplate = ($page->template) ? $page->template : $cx->config('cx.default.theme_template');
