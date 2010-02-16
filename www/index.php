@@ -37,14 +37,14 @@ try {
 	$router = $cx->router();
 	$cx->trigger('cx_boot_router_before', array($router));
 	
-	$router->route('module_item', '<*url>/m_<#module_id>/<#module_item>(/<:module_action>)(.<:format>)')
-		->defaults(array('module' => 'Page', 'action' => 'index', 'module_action' => 'view', 'format' => 'html'))
+	$router->route('module_item', '<*url>/<:module_name>_<#module_id>/<#module_item>(/<:module_action>)(.<:format>)')
+		->defaults(array('url' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'view', 'format' => 'html'))
 		->get(array('module_action' => 'view'))
 		->post(array('module_action' => 'post'))
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
-	$router->route('module_action', '<*url>/m_<#module_id>/<:module_action>(.<:format>)')
-		->defaults(array('module' => 'Page', 'action' => 'index', 'format' => 'html'));
+	$router->route('module_action', '<*url>/<:module_name>_<#module_id>/<:module_action>(.<:format>)')
+		->defaults(array('url' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));
 	$router->route('index_action', '<:action>\.<:format>')
 		->defaults(array('module' => 'Page', 'format' => 'html', 'url' => '/'));
 	$router->route('page_action', '<*url>/<:action>(.<:format>)')
@@ -68,6 +68,7 @@ try {
 	$params = $router->match($requestMethod, $requestUrl);
 	// Set matched params back on request object
 	$request->setParams($params);
+	$request->route = $router->matchedRoute()->name();
 	
 	// Required params
 	$module = $params['module'];

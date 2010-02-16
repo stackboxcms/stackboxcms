@@ -39,13 +39,13 @@ OVERLAY MODAL WINDOW
     border: 2px solid #333;
 	z-index: 1000;
 	
-    opacity: 0.8;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     -moz-box-shadow: 0 0 50px #ccc;
     -webkit-box-shadow: 0 0 50px #ccc;
 }
 	#cx_modal_content {
+		background-color: #fff;
 		padding: 35px;
 	}
 	/* close button positioned on upper right corner */

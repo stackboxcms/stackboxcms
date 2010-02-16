@@ -5,6 +5,9 @@ $(function() {
 
 // Window onLoad
 $(window).load(function() {
+	/**
+	 * Open link in the admin bar in a modal window
+	 */
 	$('#cx_admin_bar a[rel]').overlay({
 		//effect: 'apple',
 		expose: {
@@ -19,5 +22,26 @@ $(window).load(function() {
             // load the page specified in the trigger
             wrap.load(this.getTrigger().attr("href"));
         }
+	});
+	
+	
+	/**
+	 * Handle forms within modal windows (AJAX)
+	 */
+	$('#cx_modal form').live('submit', function() {
+		var tForm = $(this);
+		$.ajax({
+			type: "POST",
+			url: tForm.attr('href'),
+			data: tForm.serialize(),
+			success: function(msg) {
+				alert("Data Saved: " + msg);
+				$.tools.overlay.close();
+			},
+			error: function(req) { // req = XMLHttpRequest object
+				alert("[ERROR] Unable to save data: " + req.responseText);
+			}
+		});
+		return false;
 	});
 });
