@@ -34,12 +34,17 @@ $(window).load(function() {
 			type: "POST",
 			url: tForm.attr('href'),
 			data: tForm.serialize(),
-			success: function(msg) {
+			success: function(msg, textStatus, req) {
 				alert("Data Saved: " + msg);
-				$.tools.overlay.close();
+				//$.tools.overlay.close();
 			},
 			error: function(req) { // req = XMLHttpRequest object
-				alert("[ERROR] Unable to save data: " + req.responseText);
+				// Validation error
+				if(req.status == 400){
+					alert("Validation errors");
+				} else {
+					alert("[ERROR] Unable to save data: " + req.responseText);
+				}
 			}
 		});
 		return false;

@@ -37,6 +37,11 @@ try {
 	$router = $cx->router();
 	$cx->trigger('cx_boot_router_before', array($router));
 	
+	// HTTP Errors
+	$router->route('http_error', 'error/<#errorCode>(.<:format>)')
+		->defaults(array('module' => 'Error', 'action' => 'display', 'format' => 'html', 'url' => '/'));
+	
+	// Normal Routes
 	$router->route('module_item', '<*url>/<:module_name>_<#module_id>/<#module_item>(/<:module_action>)(.<:format>)')
 		->defaults(array('url' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'view', 'format' => 'html'))
 		->get(array('module_action' => 'view'))
@@ -85,13 +90,14 @@ try {
 	
 	// Run/execute
 	$responseStatus = 200;
+	$response = $cx->response($responseStatus);
 	$content = "";
 	
-	$cx->trigger('cx_boot_dispatch_before', array(&$responseStatus, &$content));
+	$cx->trigger('cx_boot_dispatch_before', array(&$content));
 	
 	$content .= $cx->dispatch($module, $action, array($request));
 	
-	$cx->trigger('cx_boot_dispatch_after', array(&$responseStatus, &$content));
+	$cx->trigger('cx_boot_dispatch_after', array(&$content));
  
 // Authentication Error
 } catch(Cx_Exception_Auth $e) {
@@ -124,7 +130,7 @@ try {
 // Error handling through core error module
 if($cx && $content && $responseStatus >= 400) {
 	try {
-		$content = $cx->dispatch('Error', 'display', array($responseStatus, $content));
+		$content = $cx->dispatch('Error', 'displayAction', array($request, $responseStatus, $content));
 	} catch(Exception $e) {
 		$content = $e->getMessage();
 	}
@@ -132,13 +138,13 @@ if($cx && $content && $responseStatus >= 400) {
 
 // Send proper response
 if($cx) {
-	$cx->trigger('cx_response_before', array(&$responseStatus, &$content));
+	$cx->trigger('cx_response_before', array(&$content));
 	
 	// Set content and send response
-	$cx->response($responseStatus);
-	echo $content;
+	$response->content($content);
+	$response->send();
 	
-	$cx->trigger('cx_response_after', array(&$responseStatus));
+	$cx->trigger('cx_response_after');
 	$cx->trigger('cx_shutdown');
 	
 	// Debugging on?

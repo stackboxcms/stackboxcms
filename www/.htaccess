@@ -9,3 +9,4 @@
 </IfModule>
 
 ErrorDocument 404 /index.php?r=error/404
+ErrorDocument 500 /index.php?r=error/500

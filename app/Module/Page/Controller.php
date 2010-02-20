@@ -79,18 +79,33 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$template->path($cx->config('cx.path_themes') . $activeTheme . '/');
 		$template->parse();
 		
-		// Modules
+		// Template Region Defaults
 		$regionModules = array();
+		foreach($template->regions() as $regionName => $regionData) {
+			$regionModules[$regionName] = $regionData['content'];
+		}
+		
+		// Modules
 		foreach($page->modules as $module) {
 			// Loop over modules, building content for each region
 			$moduleResponse = $cx->dispatch($module->name, 'indexAction', array($request, $page, $module));
+			if(!is_array($regionModules[$module->region])) {
+				$regionModules[$module->region] = array();
+			}
 			$regionModules[$module->region][] = $this->regionModuleFormat($request, $module, $moduleResponse);
 		}
 		
 		// Replace region content
 		$cx->trigger('module_page_regions', array(&$regionModules));
 		foreach($regionModules as $region => $modules) {
-			$template->replaceRegion($region, implode("\n", $modules));
+			if(is_array($modules)) {
+				// Array = Region has modules
+				$regionContent = implode("\n", $modules);
+			} else {
+				// Use default content between tags in template (no other content)
+				$regionContent = (string) $modules;
+			}
+			$template->replaceRegion($region, $this->regionFormat($request, $region, $regionContent));
 		}
 		
 		// Replace template tags
@@ -173,7 +188,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 				return $this->cx->resource($entity)->status(201)->location($pageUrl);
 			}
 		} else {
-			$this->cx->response(400);
+			$this->cx->response(400); // Don't have time to properly handle this at the moment
 			return $this->formView()->errors($mapper->errors());
 		}
 	}
@@ -207,6 +222,19 @@ class Module_Page_Controller extends Cx_Module_Controller
 	}
 	
 	
+	
+	/**
+	 * Format region return content for display on page response
+	 */
+	protected function regionFormat($request, $regionName, $regionContent)
+	{
+		if('html' == $request->format) {
+			$content = '<div id="cx_region_' . $regionName . '" class="cx_region">' . $regionContent . '</div>';
+		}
+		return $content;
+	}
+	
+	
 	/**
 	 * Format module return content for display on page response
 	 */
@@ -214,7 +242,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	{
 		$content = "";
 		if(false !== $moduleResponse) {
-			if($request->format == 'html') {
+			if('html' == $request->format) {
 				$content = '<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">' . $moduleResponse . '</div>';
 			}
 		}
