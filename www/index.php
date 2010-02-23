@@ -23,7 +23,7 @@ try {
 		$cx->debug(true);
 		
 		// Show all errors
-		error_reporting(E_ALL | E_STRICT);
+		error_reporting(-1);
 		ini_set('display_errors', '1');
 	} else {
 		// Show NO errors
@@ -42,18 +42,29 @@ try {
 		->defaults(array('module' => 'Error', 'action' => 'display', 'format' => 'html', 'url' => '/'));
 	
 	// Normal Routes
+	$router->route('module', '<*url>/<:module_name>_<#module_id>.<:format>')
+		->defaults(array('url' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'index', 'format' => 'html'))
+		->get(array('module_action' => 'view'))
+		->post(array('module_action' => 'post'))
+		->put(array('module_action' => 'put'))
+		->delete(array('module_action' => 'delete'));
+		
 	$router->route('module_item', '<*url>/<:module_name>_<#module_id>/<#module_item>(/<:module_action>)(.<:format>)')
 		->defaults(array('url' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'view', 'format' => 'html'))
 		->get(array('module_action' => 'view'))
 		->post(array('module_action' => 'post'))
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
+		
 	$router->route('module_action', '<*url>/<:module_name>_<#module_id>/<:module_action>(.<:format>)')
 		->defaults(array('url' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));
+		
 	$router->route('index_action', '<:action>\.<:format>')
 		->defaults(array('module' => 'Page', 'format' => 'html', 'url' => '/'));
+		
 	$router->route('page_action', '<*url>/<:action>(.<:format>)')
 		->defaults(array('module' => 'Page', 'format' => 'html'));
+		
 	$router->route('page', '<*url>')
 		->defaults(array('module' => 'Page', 'action' => 'index', 'format' => 'html'))
 		->post(array('action' => 'post'))
@@ -77,11 +88,7 @@ try {
 	
 	// Required params
 	$module = $params['module'];
-	if(strtolower($requestMethod) == strtolower($params['action'])) {
-		$action = $params['action'] . 'Method'; // Append with 'Method' to limit scope to REST access only
-	} else {
-		$action = $params['action'] . 'Action'; // Append with 'Action' to limit scope of available functions from HTTP request
-	}
+	$action = $params['action'];
 	
 	// Set class load paths - works for all classes using the PEAR/Zend naming convention placed in 'lib'
 	$cx->addLoadPath($cx->config('cx.path_lib'));
@@ -95,7 +102,7 @@ try {
 	
 	$cx->trigger('cx_boot_dispatch_before', array(&$content));
 	
-	$content .= $cx->dispatch($module, $action, array($request));
+	$content .= $cx->dispatchRequest($request, $module, $action, array($request));
 	
 	$cx->trigger('cx_boot_dispatch_after', array(&$content));
  

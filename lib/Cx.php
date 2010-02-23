@@ -113,7 +113,7 @@ class Cx extends AppKernel_Main
 	 *
 	 * @return mixed String or object that has __toString method
 	 */
-	public function dispatch($module, $action = 'indexAction', array $params = array())
+	public function dispatch($module, $action = 'index', array $params = array())
 	{
 		// Get module
 		$sModuleObject = $this->module($module);
@@ -138,6 +138,37 @@ class Cx extends AppKernel_Main
 		$this->trigger('cx_dispatch_' . strtolower($module), array($sModuleObject, $action, $params, $result));
 		
 		return $result;
+	}
+	
+	
+	/**
+	 * Dispatch module action from HTTP request
+	 * Automatically limits call scope by appending 'Action' or 'Method' to module actions
+	 *
+	 * @param AppKernel_Request $request
+	 * @param string $moduleName Name of module to be called
+	 * @param optional string $action function name to call on module
+	 * @param optional array $params parameters to pass to module function
+	 *
+	 * @return mixed String or object that has __toString method
+	 */
+	public function dispatchRequest($request, $module, $action = 'indexAction', array $params = array())
+	{
+		$requestMethod = $request->method();
+		// Emulate REST for browsers
+		if($request->isPost() && $request->post('_method')) {
+			$requestMethod = $request->post('_method');
+		}
+		
+		// Append 'Action' or 'Method'
+		if(strtolower($requestMethod) == strtolower($action)) {
+			$action = $action . 'Method'; // Append with 'Method' to limit scope to REST access only
+		} else {
+			$action = $action . 'Action'; // Append with 'Action' to limit scope of available functions from HTTP request
+		}
+		
+		
+		return $this->dispatch($module, $action, $params);
 	}
 	
 	

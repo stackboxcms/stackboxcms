@@ -16,5 +16,5 @@ class Module_User_Controller extends Cx_Module_Controller
 	}
 	
 	public function editAction($request, Module_Page_Entity $page) {}
-	public function deleteAction($request, Module_Page_Entity $page) {}
+	public function deleteMethod($request, Module_Page_Entity $page) {}
 }

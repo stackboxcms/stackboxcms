@@ -39,7 +39,8 @@ abstract class Cx_Module_Controller
 	 */
 	public function name()
 	{
-		return str_replace("_Controller", "", get_class($this));
+		$name = str_replace("_Controller", "", get_class($this));
+		return str_replace("Module_", "", $name);
 	}
 	
 	
@@ -67,7 +68,7 @@ abstract class Cx_Module_Controller
 	{
 		// Append given name, if any
 		if(null === $mapperName) {
-			$mapperName = $this->name();
+			$mapperName = 'Module_' . $this->name();
 		}
 		
 		return $this->cx->mapper($mapperName);
