@@ -1,11 +1,7 @@
-<?php
-//$this->head()->scriptTag('assets/admin/scripts/jquery.event.drag-1.5.min.js');
-//$this->head()->scriptTag('assets/admin/scripts/jquery.event.drop-1.2.min.js');
-?>
 <div id="cx_admin_bar">
   <div id="cx_admin_bar_inside">
 	<ul>
-	  <li><a href="<?php echo $cx->url('index_action', array('action' => 'new')); ?>">New Page</a></li>
+	  <li><a href="<?php echo $kernel->url('index_action', array('action' => 'new')); ?>">New Page</a></li>
 	</ul>
   </div>
 </div>

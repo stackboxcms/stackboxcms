@@ -21,8 +21,8 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function viewUrl($url)
 	{
-		$cx = $this->cx;
-		$request = $cx->request();
+		$kernel = $this->kernel;
+		$request = $kernel->request();
 		
 		// Ensure page exists
 		$mapper = $this->mapper();
@@ -61,19 +61,19 @@ class Module_Page_Controller extends Cx_Module_Controller
 			}
 			
 			// Dispatch to single module
-			$moduleResponse = $cx->dispatchRequest($request, $moduleName, $moduleAction, array($request, $page, $module));
+			$moduleResponse = $kernel->dispatchRequest($request, $moduleName, $moduleAction, array($request, $page, $module));
 			
 			// Return content immediately, currently not wrapped in template
 			return $moduleResponse;
 		}
 		
 		// Load page template
-		$activeTheme = ($page->theme) ? $page->theme : $cx->config('cx.default.theme');
-		$activeTemplate = ($page->template) ? $page->template : $cx->config('cx.default.theme_template');
-		$themeUrl = $cx->config('cx.url_themes') . $activeTheme . '/';
+		$activeTheme = ($page->theme) ? $page->theme : $kernel->config('cx.default.theme');
+		$activeTemplate = ($page->template) ? $page->template : $kernel->config('cx.default.theme_template');
+		$themeUrl = $kernel->config('cx.url_themes') . $activeTheme . '/';
 		$template = new Module_Page_Template($activeTemplate);
 		$template->format($request->format);
-		$template->path($cx->config('cx.path_themes') . $activeTheme . '/');
+		$template->path($kernel->config('cx.path_themes') . $activeTheme . '/');
 		$template->parse();
 		
 		// Template Region Defaults
@@ -85,7 +85,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		// Modules
 		foreach($page->modules as $module) {
 			// Loop over modules, building content for each region
-			$moduleResponse = $cx->dispatch($module->name, 'indexAction', array($request, $page, $module));
+			$moduleResponse = $kernel->dispatch($module->name, 'indexAction', array($request, $page, $module));
 			if(!is_array($regionModules[$module->region])) {
 				$regionModules[$module->region] = array();
 			}
@@ -93,7 +93,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		}
 		
 		// Replace region content
-		$cx->trigger('module_page_regions', array(&$regionModules));
+		$kernel->trigger('module_page_regions', array(&$regionModules));
 		foreach($regionModules as $region => $modules) {
 			if(is_array($modules)) {
 				// Array = Region has modules
@@ -107,7 +107,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		
 		// Replace template tags
 		$tags = $page->toArray();
-		$cx->trigger('module_page_tags', array(&$tags));
+		$kernel->trigger('module_page_tags', array(&$tags));
 		foreach($tags as $tagName => $tagValue) {
 			$template->replaceTag($tagName, $tagValue);
 		}
@@ -123,9 +123,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 			// Admin toolbar, javascript, styles, etc.
 			if($userIsAdmin) {
 				$templateHeadContent = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->cx->config('cx.url_assets') . 'scripts/jquery.tools.min.js"></script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->cx->config('cx.url_assets_admin') . 'scripts/cx_admin.js"></script>' . "\n";
-				$templateHeadContent .= '<link type="text/css" href="' . $this->cx->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets') . 'scripts/jquery-ui.custom.min.js"></script>' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets_admin') . 'scripts/cx_admin.js"></script>' . "\n";
+				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets') . 'styles/jquery-ui/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />' . "\n";
+				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
 				$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
 				$templateBodyContent = $this->view('_adminBar');
 				$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
@@ -144,7 +145,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request)
 	{
-		$pageUrl = $this->cx->url('page', array('url' => '/'));
+		$pageUrl = $this->kernel->url('page', array('url' => '/'));
 		return $this->formView()->method('post')->action($pageUrl);
 	}
 	
@@ -154,7 +155,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function editAction($request)
 	{
-		$cx = $this->cx;
+		$kernel = $this->kernel;
 		
 		// Ensure page exists
 		$mapper = $this->mapper();
@@ -178,15 +179,17 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$mapper = $this->mapper();
 		$entity = $mapper->get()->data($request->post());
 		if($mapper->save($entity)) {
-			$pageUrl = $this->cx->url('page', array('url' => $entity->url));
+			$pageUrl = $this->kernel->url('page', array('url' => $entity->url));
 			if($request->format == 'html') {
-				return $this->cx->redirect($pageUrl);
+				return $this->kernel->redirect($pageUrl);
 			} else {
-				return $this->cx->resource($entity)->status(201)->location($pageUrl);
+				return $this->kernel->resource($entity)->status(201)->location($pageUrl);
 			}
 		} else {
-			$this->cx->response(400); // Don't have time to properly handle this at the moment
-			return $this->formView()->errors($mapper->errors());
+			$this->kernel->response(400);
+			return $this->formView()
+				->data($request->post())
+				->errors($mapper->errors());
 		}
 	}
 	
@@ -211,7 +214,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	protected function formView()
 	{
-		$view = new Cx_View_Generic_Form($this->cx);
+		$view = new Cx_View_Generic_Form('form');
 		$view->action("")
 			->fields($this->mapper()->fields())
 			->removeFields(array('id', 'date_created', 'date_modified'));

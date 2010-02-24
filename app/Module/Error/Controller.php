@@ -12,13 +12,13 @@ class Module_Error_Controller extends Cx_Module_Controller
 	 */
 	public function displayAction($request, $errorCode = 500, $errorMessage = null)
 	{
-		$cx = $this->cx;
+		$kernel = $this->kernel;
 		
 		// Use error code in request if found (custom HTTP error pages)
 		$errorCode = ($request->errorCode) ? $request->errorCode : $errorCode;
 		
 		// Send response status
-		$responseText = $cx->response()->status($errorCode);
+		$responseText = $kernel->response()->status($errorCode);
 		
 		// Custom error page titles
 		$title = 'Error ' . $errorCode . ' - ' . $responseText;

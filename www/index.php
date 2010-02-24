@@ -1,4 +1,8 @@
 <?php
+// Show all errors by default
+error_reporting(-1);
+ini_set('display_errors', '1');
+
 // PHP version must be 5.2 or greater
 if(version_compare(phpversion(), "5.2.0", "<")) {
 	exit("<b>Fatal Error:</b> PHP version must be 5.2.0 or greater to run in Cont-xt.");
@@ -8,19 +12,19 @@ if(version_compare(phpversion(), "5.2.0", "<")) {
 $cfg = require('../app/config.php');
 
 // Cont-xt Kernel
-require $cfg['cx']['path_lib'] . '/Cx.php';
+require $cfg['cx']['path_lib'] . '/Cx/Kernel.php';
 
 // Run!
-$cx = false;
+$kernel = false;
 try {
-	$cx = cx($cfg);
-	spl_autoload_register(array($cx, 'load'));
-	set_error_handler(array($cx, 'errorHandler'));
+	$kernel = cx($cfg);
+	spl_autoload_register(array($kernel, 'load'));
+	set_error_handler(array($kernel, 'errorHandler'));
 	
 	// Debug?
-	if($cx->config('cx.debug')) {
+	if($kernel->config('cx.debug')) {
 		// Enable debug mode
-		$cx->debug(true);
+		$kernel->debug(true);
 		
 		// Show all errors
 		error_reporting(-1);
@@ -31,11 +35,11 @@ try {
 		//ini_set('display_errors', '0');
 	}
 	
-	$cx->trigger('cx_boot');
+	$kernel->trigger('cx_boot');
 	
 	// Router - Add routes we want to match
-	$router = $cx->router();
-	$cx->trigger('cx_boot_router_before', array($router));
+	$router = $kernel->router();
+	$kernel->trigger('cx_boot_router_before', array($router));
 	
 	// HTTP Errors
 	$router->route('http_error', 'error/<#errorCode>(.<:format>)')
@@ -75,10 +79,10 @@ try {
 		->put(array('action' => 'put'))
 		->delete(array('action' => 'delete'));
 		
-	$cx->trigger('cx_boot_router_after', array($router));
+	$kernel->trigger('cx_boot_router_after', array($router));
 	
 	// Router - Match HTTP request and return named params
-	$request = $cx->request();
+	$request = $kernel->request();
 	$requestUrl = isset($_GET['r']) ? $_GET['r'] : '/';
 	$requestMethod = $request->method();
 	// Emulate REST for browsers
@@ -95,27 +99,27 @@ try {
 	$action = $params['action'];
 	
 	// Set class load paths - works for all classes using the PEAR/Zend naming convention placed in 'lib'
-	$cx->addLoadPath($cx->config('cx.path_lib'));
+	$kernel->addLoadPath($kernel->config('cx.path_lib'));
 	// Module paths
-	$cx->addLoadPath($cx->config('cx.path_modules'), 'Module_');
+	$kernel->addLoadPath($kernel->config('cx.path_modules'), 'Module_');
 	
 	// Run/execute
 	$responseStatus = 200;
-	$response = $cx->response($responseStatus);
+	$response = $kernel->response($responseStatus);
 	$content = "";
 	
-	$cx->trigger('cx_boot_dispatch_before', array(&$content));
+	$kernel->trigger('cx_boot_dispatch_before', array(&$content));
 	
-	$content .= $cx->dispatchRequest($request, $module, $action, array($request));
+	$content .= $kernel->dispatchRequest($request, $module, $action, array($request));
 	
-	$cx->trigger('cx_boot_dispatch_after', array(&$content));
+	$kernel->trigger('cx_boot_dispatch_after', array(&$content));
  
 // Authentication Error
 } catch(Cx_Exception_Auth $e) {
 	$responseStatus = 403;
 	$content = $e->getMessage();
-	$cx->response($responseStatus);
-	$cx->dispatch('user', 'loginAction', array($request));
+	$kernel->response($responseStatus);
+	$kernel->dispatch('user', 'loginAction', array($request));
  
 // 404 Errors
 } catch(Cx_Exception_FileNotFound $e) {
@@ -139,30 +143,30 @@ try {
 }
  
 // Error handling through core error module
-if($cx && $content && $responseStatus >= 400) {
+if($kernel && $content && $responseStatus >= 400) {
 	try {
-		$content = $cx->dispatch('Error', 'displayAction', array($request, $responseStatus, $content));
+		$content = $kernel->dispatch('Error', 'displayAction', array($request, $responseStatus, $content));
 	} catch(Exception $e) {
 		$content = $e->getMessage();
 	}
 }
 
 // Send proper response
-if($cx) {
-	$cx->trigger('cx_response_before', array(&$content));
+if($kernel) {
+	$kernel->trigger('cx_response_before', array(&$content));
 	
 	// Set content and send response
 	$response->content($content);
 	$response->send();
 	
-	$cx->trigger('cx_response_after');
-	$cx->trigger('cx_shutdown');
+	$kernel->trigger('cx_response_after');
+	$kernel->trigger('cx_shutdown');
 	
 	// Debugging on?
-	if($cx->config('cx.debug')) {
+	if($kernel->config('cx.debug')) {
 		echo "<hr />";
 		echo "<pre>";
-		print_r($cx->trace());
+		print_r($kernel->trace());
 		echo "</pre>";	
 	}
 	
