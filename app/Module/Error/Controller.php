@@ -27,13 +27,25 @@ class Module_Error_Controller extends Cx_Module_Controller
 				$errorMessage = 'The page or file you were looking for does not exist.';
 			}
 		}
+		if(empty($errorMessage)) {
+			$errorMessage = 'An error occured that has prevented this page from displaying properly.';
+		}
 		
-		// Assign template variables
-		return $this->view(__FUNCTION__)->set(array(
-			'title' => $title,
-			'errorCode' => $errorCode,
-			'errorMessage' => $errorMessage,
-			'responseText' => $responseText
-			));
+		if($request->format == 'json') {
+			return json_encode(array(
+				'error' => array(
+					'code' => $errorCode,
+					'message' => $errorMessage
+					)
+				));
+		} else {
+			// Assign template variables
+			return $this->view(__FUNCTION__)->set(array(
+				'title' => $title,
+				'errorCode' => $errorCode,
+				'errorMessage' => $errorMessage,
+				'responseText' => $responseText
+				));
+		}
 	}
 }
