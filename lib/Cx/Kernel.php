@@ -1,5 +1,5 @@
 <?php
-require dirname(__FILE__) . '/AppKernel/Main.php';
+require dirname(dirname(__FILE__)) . '/AppKernel/Main.php';
 /**
  * Cx Kernel
  *
@@ -9,7 +9,7 @@ require dirname(__FILE__) . '/AppKernel/Main.php';
  * @author Vance Lucas <vance@vancelucas.com>
  * @link http://cont-xt.com/
  */
-class Cx extends AppKernel_Main
+class Cx_Kernel extends AppKernel_Main
 {
 	protected $session;
 	protected $database = array();
@@ -393,6 +393,6 @@ class Cx extends AppKernel_Main
  * Custom function to ensure only one kernel instance
  */
 function cx(array $cfg = array()) {
-	$cx = Cx::getInstance($cfg);
+	$cx = Cx_Kernel::getInstance($cfg);
 	return $cx;
 }

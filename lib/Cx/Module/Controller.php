@@ -5,16 +5,16 @@
  */
 abstract class Cx_Module_Controller
 {
-	protected $cx;
+	protected $kernel;
 	protected $_file = __FILE__;
 	
 	
 	/**
 	 * Kernel to handle dependenies
 	 */
-	public function __construct(Cx $cx)
+	public function __construct(Cx_Kernel $kernel)
 	{
-		$this->cx = $cx;
+		$this->kernel = $kernel;
 	}
 	
 	
@@ -53,8 +53,8 @@ abstract class Cx_Module_Controller
 	public function view($template, $format = "html")
 	{
 		$view = new Cx_View($template, $format, $this->path() . "/views/");
-		$view->format($this->cx->request()->format);
-		$view->set('cx', $this->cx);
+		$view->format($this->kernel->request()->format);
+		$view->set('kernel', $this->kernel);
 		return $view;
 	}
 	
@@ -71,6 +71,6 @@ abstract class Cx_Module_Controller
 			$mapperName = 'Module_' . $this->name();
 		}
 		
-		return $this->cx->mapper($mapperName);
+		return $this->kernel->mapper($mapperName);
 	}
 }

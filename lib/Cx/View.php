@@ -31,7 +31,15 @@ class Cx_View
 	{
 		$this->template($template, $format);
 		$this->path($path);
+		
+		$this->init();
 	}
+	
+	
+	/**
+	 * Setup for view, used for extensibility without overriding constructor
+	 */
+	public function init() {}
 	
 	
 	/**
