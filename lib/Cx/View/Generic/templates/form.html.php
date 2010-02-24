@@ -20,7 +20,7 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
   <?php foreach($fields as $fieldName => $fieldOpts): ?>
 	<dt class="app_form_label"><label><?php echo $fieldName; ?></label></dt>
 	<dd class="app_form_value app_form_field_<?php echo strtolower($fieldOpts['type']); ?>">
-	  <?php echo $form->input($fieldOpts['type'], $fieldName, $request->$fieldName); ?>
+	  <?php echo $form->input($fieldOpts['type'], $fieldName, $this->data($fieldName)); ?>
 	</dd>
   <?php endforeach; ?>
   </dl>

@@ -7,23 +7,17 @@
  */
 class Cx_View_Generic_Form extends Cx_View
 {
-	protected $_cx;
 	protected $_fields = array();
+	protected $_fieldValues = array();
 	
 	
 	/**
-	 * Create form object
+	 * Setup form object
 	 */
-	public function __construct(Cx $cx)
+	public function init()
 	{
-		$this->_cx = $cx;
-		
-		// Setup default template vars
-		$this->set('request', $cx->request());
-		
-		// Pick template and set path
-		$this->template('form', 'html')
-			->path(dirname(__FILE__) . '/templates/');
+		// Use local path by default
+		$this->path(dirname(__FILE__) . '/templates/');
 	}
 	
 	
@@ -61,6 +55,24 @@ class Cx_View_Generic_Form extends Cx_View
 			return $this;
 		}
 		return $this->_fields;
+	}
+	
+	
+	/**
+	 * Value by field name
+	 */
+	public function data($field, $value = null)
+	{
+		if(null !== $value) {
+			$this->_fieldValues[$field] = $value;
+			return $this;
+		} elseif(is_array($field)) {
+			foreach($field as $fieldx => $val) {
+				$this->_fieldValues[$fieldx] = $val;
+			}
+			return $this;
+		}
+		return isset($this->_fieldValues[$field]) ? $this->_fieldValues[$field] : null;
 	}
 	
 	
