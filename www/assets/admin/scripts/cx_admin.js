@@ -49,4 +49,10 @@ $(window).load(function() {
 		});
 		return false;
 	});
+	
+	
+	/**
+	 * Module drag-n-drop, adding to page regions
+	 */
+	$('div.cx_admin_modules_module').live()
 });

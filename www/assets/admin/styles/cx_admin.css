@@ -22,8 +22,42 @@ ADMIN BAR
 	/* Navigation */
 	#cx_admin_bar ul { list-style: none; margin: 4px 0 0 0; padding: 0; }
 	#cx_admin_bar ul li { float: left; margin: 0; padding: 4px; }
-	#cx_admin_bar ul li a { display: block; padding: 3px 10px 4px 10px; background-color: #111; font-weight: bold; color: #fff; text-decoration: none; border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; -khtml-border-radius: 5px; }
+	#cx_admin_bar ul li a { display: block; padding: 3px 10px 4px 10px; background-color: #111; font-weight: bold; color: #fff; text-decoration: none; border-radius: 5px;  -webkit-border-radius: 5px; -khtml-border-radius: 5px; }
 	#cx_admin_bar ul li a:hover, #imNav li.active a { background-color: #AFAFAF; color: #000; }
+
+/*
+ADMIN PANES
+================================================== */
+div.cx_admin_pane {
+	position: fixed;
+	width: 175px;
+	background: #666;
+	font-family: Arial, Tahoma, sans-serif;
+	font-size: 12px;
+	opactity: 0.8;
+}
+	div.cx_admin_pane h2 {
+		margin: 0;
+		padding: 2px;
+		background: #333;
+		color: #fff;
+		font-size: 14px;
+	}
+	div.cx_admin_pane_content {
+		margin: 5px;
+	}
+
+#cx_admin_modules.cx_admin_pane {
+	top: 40px;
+	right: 0;
+}
+	.cx_admin_modules_module {
+		margin-bottom: 5px;
+		padding: 5px;
+		background: #fff;
+		border-radius: 10px;
+		-moz-border-radius: 10px;
+	}
 
 
 /*

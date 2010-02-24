@@ -41,6 +41,10 @@ try {
 	$router->route('http_error', 'error/<#errorCode>(.<:format>)')
 		->defaults(array('module' => 'Error', 'action' => 'display', 'format' => 'html', 'url' => '/'));
 	
+	// User reserved route
+	$router->route('user', 'user/<:action>')
+		->defaults(array('module' => 'User', 'action' => 'index', 'format' => 'html'));
+	
 	// Normal Routes
 	$router->route('module', '<*url>/<:module_name>_<#module_id>.<:format>')
 		->defaults(array('url' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'index', 'format' => 'html'))
