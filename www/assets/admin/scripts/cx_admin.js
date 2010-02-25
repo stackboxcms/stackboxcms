@@ -85,9 +85,9 @@ $(function() {
 			cx_regions.addClass('cx_region_highlight');
 		},
 		stop: function(e, ui) {
+			// Remove region highlight
 			cx_regions.removeClass('cx_region_highlight');
-		},
-		receive: function(e, ui) {
+			
 			var nRegion = $(e.target); // region will be drop target
 			var nRegionName = nRegion.attr('id').replace('cx_region_', '');
 			// Admin module, dragged from floating pane
