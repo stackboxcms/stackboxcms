@@ -26,7 +26,7 @@ $cfg['cx']['url_assets'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www']
 $cfg['cx']['url_assets_admin'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_assets_admin']);
 
 // Debug?
-$cfg['cx']['debug'] = true;
+$cfg['cx']['debug'] = false;
 
 // In Development Mode?
 $cfg['cx']['mode']['development'] = true;
