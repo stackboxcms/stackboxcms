@@ -6,16 +6,27 @@ class Module_Page_Mapper extends Cx_Mapper
 	
 	// Fields
 	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
+	public $parent_id = array('type' => 'int', 'key' => true, 'default' => 0);
 	public $title = array('type' => 'string', 'required' => true);
 	public $url = array('type' => 'string', 'required' => true, 'unique' => true);
 	public $meta_keywords = array('type' => 'string');
 	public $meta_description = array('type' => 'string');
 	public $theme = array('type' => 'string');
 	public $template = array('type' => 'string');
+	public $ordering = array('type' => 'int', 'length' => 3, 'default' => 0);
 	public $date_created = array('type' => 'datetime');
 	public $date_modified = array('type' => 'datetime');
 	
-	// Relations
+	// Subpages / hierarchy
+	public $children = array(
+		'type' => 'relation',
+		'relation' => 'HasMany',
+		'mapper' => 'Module_Page_Mapper',
+		'where' => array('parent_id' => 'entity.id'),
+		'order' => array('ordering' => 'ASC')
+		);
+	
+	// Modules in regions on page
 	public $modules = array(
 		'type' => 'relation',
 		'relation' => 'HasMany',
@@ -36,6 +47,29 @@ class Module_Page_Mapper extends Cx_Mapper
 	public function getPageByUrl($url)
 	{
 		return $this->first(array('url' => $this->formatPageUrl($url)));
+	}
+	
+	
+	/**
+	 * Return full tree of pages with all children nested properly
+	 *
+	 * @param string $url
+	 */
+	public function pageTree($startPage = null)
+	{
+		if(null === $startPage) {
+			$rootPages = $this->all(array('parent_id' => 0))->order(array('ordering' => 'ASC'));
+		} else {
+			if($startPage instanceof Module_Page_Entity) {
+				$rootPages = $startPage->children;
+			} else {
+				throw new Exception("Provided start page must be an instance of Module_Page_Entity");
+			}
+		}
+		
+		foreach($rootPages as $page) {
+			
+		}
 	}
 	
 	

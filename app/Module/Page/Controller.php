@@ -212,6 +212,29 @@ class Module_Page_Controller extends Cx_Module_Controller
 	
 	
 	/**
+	 * @method GET
+	 */
+	public function sitemapAction($request)
+	{
+		$kernel = $this->kernel;
+		
+		// Ensure page exists
+		$mapper = $this->mapper();
+		$page = $mapper->getPageByUrl($request->url);
+		if(!$page) {
+			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->url . "'");
+		}
+		
+		$pages = $mapper->pageTree();
+		
+		
+		return $this->view(__FUNCTION__)
+			->format($request->format)
+			->set(array('pages' => $pages));
+	}
+	
+	
+	/**
 	 * Return view object for the add/edit form
 	 */
 	protected function formView()
@@ -244,10 +267,11 @@ class Module_Page_Controller extends Cx_Module_Controller
 	{
 		$content = "";
 		if(false !== $moduleResponse) {
-			if(true === $moduleResponse) {
-				$moduleResponse = "&lt;Placeholder Text&gt;";
-			}
 			if('html' == $request->format) {
+				// Module placeholder
+				if(true === $moduleResponse) {
+					$moduleResponse = "<p>&lt;" . $module->name . " Placeholder&gt;</p>";
+				}
 				$content = '<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">' . $moduleResponse . '</div>';
 			}
 		}
