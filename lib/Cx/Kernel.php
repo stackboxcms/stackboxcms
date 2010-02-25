@@ -1,5 +1,6 @@
 <?php
 require dirname(dirname(__FILE__)) . '/AppKernel/Main.php';
+require dirname(__FILE__) . '/Exception/FileNotFound.php';
 /**
  * Cx Kernel
  *
