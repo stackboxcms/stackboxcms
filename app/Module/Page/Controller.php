@@ -12,23 +12,23 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function indexAction($request)
 	{
-		return $this->viewUrl($request->url);
+		return $this->viewUrl($request->page);
 	}
 	
 	
 	/**
 	 * View page by URL
 	 */
-	public function viewUrl($url)
+	public function viewUrl($pageUrl)
 	{
 		$kernel = $this->kernel;
 		$request = $kernel->request();
 		
 		// Ensure page exists
 		$mapper = $this->mapper();
-		$page = $mapper->getPageByUrl($url);
+		$pageUrl = $mapper->formatPageUrl($pageUrl);
+		$page = $mapper->getPageByUrl($pageUrl);
 		if(!$page) {
-			$pageUrl = $mapper->formatPageUrl($url);
 			if($pageUrl == '/') {
 				// Create new page for the homepage automatically if it does not exist
 				$page = $mapper->get();
@@ -46,7 +46,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		
 		// Single module call?
 		// @todo Check against matched route name instead of general request params (? - may restict query string params from being used)
-		if($request->module_name && $request->module_id && $request->module_action) {
+		if($request->module_name && $request->module_action) {
 			$moduleId = (int) $request->module_id;
 			$moduleName = $request->module_name;
 			$moduleAction = $request->module_action;
@@ -122,10 +122,12 @@ class Module_Page_Controller extends Cx_Module_Controller
 			// Add admin stuff to the page
 			// Admin toolbar, javascript, styles, etc.
 			if($userIsAdmin) {
-				$templateHeadContent = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets') . 'scripts/jquery-ui.custom.min.js"></script>' . "\n";
+				$templateHeadContent = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets') . 'scripts/jquery-ui.min.js"></script>' . "\n";
+				// Setup javascript variables for use
+				$templateHeadContent .= '<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $this->kernel->config('cx.url') . '", url_assets: "' . $this->kernel->config('cx.url_assets') . '", url_assets_admin: "' . $this->kernel->config('cx.url_assets_admin') . '"}};</script>' . "\n";
 				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets_admin') . 'scripts/cx_admin.js"></script>' . "\n";
-				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets') . 'styles/jquery-ui/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />' . "\n";
+				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets') . 'styles/jquery-ui/base/jquery-ui.css" rel="stylesheet" />' . "\n";
 				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
 				$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
 				$templateBodyContent = $this->view('_adminBar');
@@ -145,7 +147,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request)
 	{
-		$pageUrl = $this->kernel->url('page', array('url' => '/'));
+		$pageUrl = $this->kernel->url('page', array('page' => '/'));
 		return $this->formView()->method('post')->action($pageUrl);
 	}
 	
@@ -179,7 +181,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$mapper = $this->mapper();
 		$entity = $mapper->get()->data($request->post());
 		if($mapper->save($entity)) {
-			$pageUrl = $this->kernel->url('page', array('url' => $entity->url));
+			$pageUrl = $this->kernel->url('page', array('page' => $entity->url));
 			if($request->format == 'html') {
 				return $this->kernel->redirect($pageUrl);
 			} else {

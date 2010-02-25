@@ -6,9 +6,9 @@
   </div>
 </div>
 <div id="cx_admin_modules" class="cx_admin_pane">
-	<h2>Modules</h2>
-	<div class="cx_admin_pane_content">
-		<div class="cx_admin_modules_module"><a href="#">Text Module</a></div>
+  <h2>Modules</h2>
+  <div class="cx_admin_pane_content">
+	<div id="cx_module_tile_Text" class="cx_module_tile"><a href="#">Text Module</a></div>
   </div>
 </div>
 <div id="cx_modal"><div id="cx_modal_content"></div></div>
