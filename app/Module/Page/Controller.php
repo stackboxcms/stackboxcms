@@ -244,6 +244,9 @@ class Module_Page_Controller extends Cx_Module_Controller
 	{
 		$content = "";
 		if(false !== $moduleResponse) {
+			if(true === $moduleResponse) {
+				$moduleResponse = "&lt;Placeholder Text&gt;";
+			}
 			if('html' == $request->format) {
 				$content = '<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">' . $moduleResponse . '</div>';
 			}
