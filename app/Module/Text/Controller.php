@@ -8,13 +8,13 @@ class Module_Text_Controller extends Cx_Module_Controller
 	
 	
 	/**
-	 * GET
+	 * @method GET
 	 */
 	public function indexAction($request, $page, $module)
 	{
 		$text = $this->mapper()->first(array('module_id' => $module->id));
 		if(!$text) {
-			return false;
+			return true;
 		}
 		
 		// Return only content for HTML
@@ -30,7 +30,7 @@ class Module_Text_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request, $page)
 	{
-		$itemUrl = $this->cx->url('module', array('url' => $page->url, 'module_name' => $this->name(), 'module_id' => 0));
+		$itemUrl = $this->cx->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => 0));
 		return $this->formView()->method('post')->action($itemUrl);
 	}
 	
@@ -64,7 +64,7 @@ class Module_Text_Controller extends Cx_Module_Controller
 		$mapper = $this->mapper();
 		$entity = $mapper->get()->data($request->post());
 		if($mapper->save($entity)) {
-			$pageUrl = $this->cx->url('page', array('url' => $entity->url));
+			$pageUrl = $this->cx->url('page', array('page' => $entity->url));
 			if($request->format == 'html') {
 				return $this->cx->redirect($pageUrl);
 			} else {
