@@ -9,7 +9,14 @@ if(version_compare(phpversion(), "5.2.0", "<")) {
 }
 
 // Configuration settings
-$cfg = require('../app/config.php');
+$cfg = require(dirname(dirname(__FILE__)) . '/app/config.php');
+
+// Host-based config file for overriding default settings in different environments
+$cfgHostFile = dirname(dirname(__FILE__)) . '/app/config.' . strtolower(php_uname('n')) . '.php';
+if(file_exists($cfgHostFile)) {
+	$cfgHost = require($cfgHostFile);
+	$cfg = array_merge($cfg, $cfgHost);
+}
 
 // Cont-xt Kernel
 require $cfg['cx']['path_lib'] . '/Cx/Kernel.php';

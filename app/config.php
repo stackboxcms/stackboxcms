@@ -1,6 +1,4 @@
 <?php
-// @todo: Include different config files for each HOST (ex. 'localhost.cfg.php' and 'domain.com.cfg.php') for different environments
-
 // Configuration
 $cfg = array();
 $cfg['cx']['env']['https'] = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? false : true;
@@ -34,8 +32,8 @@ $cfg['cx']['mode']['development'] = true;
 // Error Reporting
 $cfg['cx']['error_reporting'] = true;
 
-// Use Apache's mod_rewrite on URLs?
-$cfg['cx']['mod_rewrite'] = true;
+// Use Apache/IIS rewrite on URLs?
+$cfg['cx']['url_rewrite'] = true;
 
 // Defaults
 $cfg['cx']['default']['module'] = 'page';
@@ -52,7 +50,7 @@ $cfg['cx']['database']['master']['dbname'] = 'cx_cms';
 $cfg['cx']['database']['master']['options'] = array(
 	PDO::ERRMODE_EXCEPTION => true,
 	PDO::ATTR_PERSISTENT => false,
-	PDO::ATTR_EMULATE_PREPARES=> true
+	PDO::ATTR_EMULATE_PREPARES => true
 	);
 
 // Session Settings
