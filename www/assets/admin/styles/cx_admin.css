@@ -51,10 +51,25 @@ div.cx_admin_pane {
 	top: 40px;
 	right: 0;
 }
-	.cx_admin_modules_module {
+	#cx_admin_modules .cx_module_tile {
 		margin-bottom: 5px;
 		padding: 5px;
 		background: #fff;
 		border-radius: 10px;
 		-moz-border-radius: 10px;
 	}
+
+/*
+REGION / MODULE UI
+============================= */
+.cx_region {
+	min-height: 10px;
+}
+.cx_region_highlight {
+	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.9);
+	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.9);
+}
+.cx_module_placeholder {
+	background: #ccc;
+	border: 2px solid #333;
+}

@@ -1,9 +1,15 @@
 // When DOM is ready
 $(function() {
 	/**
+	 * Initialize commonly referenced elements to avoid multiple DOM lookups
+	 */
+	cx_admin_bar = $('#cx_admin_bar');
+	cx_modal = $('#cx_modal');
+	cx_regions = $('div.cx_region');
+	
+	/**
 	 * Initialize dialog window
 	 */
-	cx_modal = $('#cx_modal');
 	cx_modal.dialog({
 		autoOpen: false,
 		modal: true,
@@ -14,7 +20,7 @@ $(function() {
 	/**
 	 * Open link in the admin bar in a modal window
 	 */
-	$('#cx_admin_bar a').live('click', function() {
+	$('a', cx_admin_bar).live('click', function() {
 		var tLink = $(this);
 		$.ajax({
 			type: "POST",
@@ -34,7 +40,7 @@ $(function() {
 	/**
 	 * Handle forms within modal windows (AJAX)
 	 */
-	$('#cx_modal form').live('submit', function() {
+	$('form', cx_modal).live('submit', function() {
 		var tForm = $(this);
 		$.ajax({
 			type: "POST",
@@ -60,15 +66,54 @@ $(function() {
 	/**
 	 * Module drag-n-drop, adding to page regions
 	 */
-	$('div.cx_admin_modules_module').draggable({
+	$('#cx_admin_modules div.cx_module_tile').draggable({
 		helper: 'clone',
-		connectToSortable: 'div.cx_region',
+		connectToSortable: cx_regions,
+		start: function(e, ui) {
+			cx_regions.addClass('cx_region_highlight');
+		},
 		stop: function(e, ui) {
-			alert('Dropped module - too bad saving is not yet implemented...');
+			cx_regions.removeClass('cx_region_highlight');
 		}
 	});
-	$('div.cx_region').sortable({
-		items: 'div.cx_module'
+	cx_regions.sortable({
+		items: 'div.cx_module, div.cx_module_tile',
+		connectWith: cx_regions,
+		placeholder: 'cx_module_placeholder',
+		forcePlaceholderSize: true,
+		start: function(e, ui) {
+			cx_regions.addClass('cx_region_highlight');
+		},
+		stop: function(e, ui) {
+			cx_regions.removeClass('cx_region_highlight');
+		},
+		receive: function(e, ui) {
+			var nRegion = $(e.target); // region will be drop target
+			var nRegionName = nRegion.attr('id').replace('cx_region_', '');
+			// Admin module, dragged from floating pane
+			if(ui.item.is('div.cx_module_tile')) {
+				nModule = ui.item;
+				nModuleName = nModule.attr('id').replace('cx_module_tile_', '');
+				$.ajax({
+					type: "POST",
+					url: cx.config.url + cx.page.url + 'm,Page_Module,0.html',
+					data: {'region': nRegionName, 'name': nModuleName},
+					success: function(msg, textStatus, req) {
+						alert("Data Saved: " + msg);
+					},
+					error: function(req) { // req = XMLHttpRequest object
+						// Validation error
+						if(req.status == 400){
+							alert("Validation errors");
+						} else {
+							alert("[ERROR "+req.status+"] Unable to save data:\n\n" + req.responseText);
+						}
+					}
+				});
+			}
+			// Serialize modules and save positions
+			console.log('Module Serialization: ' + cx_serializeRegionModules());
+		}
 	});
 	
 	/**
@@ -78,3 +123,17 @@ $(function() {
 		$(this).datepicker();
 	});
 });
+
+
+// Custom function to serialize module order in regions
+function cx_serializeRegionModules() {
+	var str = "";
+	cx_regions.each(function() {
+		var regionName = this.id.replace('cx_region_', '');
+		$('div.cx_module', this).not('.ui-helper').each(function() {
+			var moduleId = parseInt($(this).attr('id').replace('cx_module_', ''));
+			str += "&modules["+regionName+"][]="+moduleId+"";
+		});
+	});
+	return str;
+}
