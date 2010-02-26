@@ -14,17 +14,19 @@ $(function() {
 	cx_modal.dialog({
 		autoOpen: false,
 		modal: true,
-		minWidth: 400,
+		draggable: false,
+		resizeable: false,
+		minWidth: 500,
 		minHeight: 300
 	});
 	
 	/**
 	 * Open link in the admin bar in a modal window
 	 */
-	$('a', cx_admin_bar).live('click', function() {
+	$('#cx_admin_bar a, div.cx_admin_module_controls a').live('click', function() {
 		var tLink = $(this);
 		$.ajax({
-			type: "POST",
+			type: "GET",
 			url: tLink.attr('href'),
 			success: function(data, textStatus, req) {
 				$('#cx_modal_content', cx_modal).html(data);
@@ -45,11 +47,12 @@ $(function() {
 		var tForm = $(this);
 		$.ajax({
 			type: "POST",
-			url: tForm.attr('href'),
+			url: tForm.attr('action'),
 			data: tForm.serialize(),
-			success: function(msg, textStatus, req) {
-				alert("Data Saved: " + msg);
-				//$.tools.overlay.close();
+			success: function(data, textStatus, req) {
+				nData = $(data);
+				nModule = $('#' + nData.attr('id')).replaceWith(nData).effect("highlight", {color: '#FFFFCF'}, 2000);
+				//alert("Data Saved: " + data);
 			},
 			error: function(req) { // req = XMLHttpRequest object
 				// Validation error
@@ -81,7 +84,7 @@ $(function() {
 		items: 'div.cx_module, div.cx_module_tile',
 		connectWith: cx_regions,
 		placeholder: 'cx_module_placeholder',
-		forcePlaceholderSize: true,
+		forcePlaceholderSize: false,
 		start: function(e, ui) {
 			cx_regions.addClass('cx_region_highlight');
 		},
@@ -100,7 +103,7 @@ $(function() {
 					url: cx.config.url + cx.page.url + 'm,Page_Module,0.html',
 					data: {'region': nRegionName, 'name': nModuleName},
 					success: function(data, textStatus, req) {
-						nModule.replaceWith(data).fadeIn();
+						nModule.replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000);
 					},
 					error: function(req) { // req = XMLHttpRequest object
 						// Validation error

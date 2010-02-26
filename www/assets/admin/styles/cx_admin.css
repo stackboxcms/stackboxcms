@@ -6,6 +6,15 @@ body {
 }
 
 /*
+ADMIN UI
+================================================== */
+.cx_ui { 
+	font-size: 12px;
+	font-family: Arial, Tahoma, sans-serif;
+	line-height: 1;
+}
+
+/*
 ADMIN BAR
 ================================================== */
 #cx_admin_bar {
@@ -15,8 +24,6 @@ ADMIN BAR
 	width: 100%;
 	height: 40px;
 	background: #333;
-	font-family: Arial, Tahoma, sans-serif;
-	font-size: 12px;
 }
 	#cx_admin_bar_inside { padding: 2px 4px; }
 	/* Navigation */
@@ -34,7 +41,7 @@ div.cx_admin_pane {
 	background: #666;
 	font-family: Arial, Tahoma, sans-serif;
 	font-size: 12px;
-	opactity: 0.8;
+	opacity: 0.8;
 }
 	div.cx_admin_pane h2 {
 		margin: 0;
@@ -57,6 +64,7 @@ div.cx_admin_pane {
 		background: #fff;
 		border-radius: 10px;
 		-moz-border-radius: 10px;
+		cursor: move;
 	}
 
 /*
@@ -72,4 +80,27 @@ REGION / MODULE UI
 .cx_module_placeholder {
 	background: #ccc;
 	border: 2px solid #333;
+}
+/* Module admin controls */
+.cx_region .cx_module {
+	position: relative;
+}
+.cx_module .cx_admin_module_controls.cx_ui_hover {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 100%;
+	background-color: #333;
+	opacity: 0.3;
+}
+
+/*
+MODAL / DIALOG
+============================= */
+.ui-dialog {
+	width: 600px!important;
+}
+.ui-dialog-titlebar, .ui-dialog-title {
+	font-size: 12px;
+	font-weight: bold;
 }
