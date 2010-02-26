@@ -14,13 +14,42 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 </ul>
 <?php endif; ?>
 
-<?php if($this->fields && count($fields) >0): ?>
+<?php if($this->fields && count($this->fields) >0): ?>
 <form action="<?php echo $this->action; ?>" method="post">
   <dl class="app_form">
-  <?php foreach($fields as $fieldName => $fieldOpts): ?>
+  <?php foreach($this->fields as $fieldName => $fieldOpts): ?>
 	<dt class="app_form_label"><label><?php echo $fieldName; ?></label></dt>
 	<dd class="app_form_value app_form_field_<?php echo strtolower($fieldOpts['type']); ?>">
-	  <?php echo $form->input($fieldOpts['type'], $fieldName, $this->data($fieldName)); ?>
+	  <?php
+	  // Adjust field depending on field type
+	  switch($fieldOpts['type']) {
+		case 'text':
+		  echo $form->textarea($fieldName, $this->data($fieldName), array('rows' => 10, 'cols' => 60));
+		break;
+		
+		case 'bool':
+		case 'boolean':
+		  echo $form->checkbox($fieldName, (int) $this->data($fieldName));
+		break;
+		
+		case 'int':
+		case 'integer':
+		  echo $form->text($fieldName, $this->data($fieldName), array('size' => 10));
+		break;
+		
+		case 'string':
+		  echo $form->text($fieldName, $this->data($fieldName), array('size' => 45));
+		break;
+		
+		case 'select':
+		  $options = isset($fieldOpts['options']) ? $fieldOpts['options'] : array();
+		  echo $form->select($fieldName, $options, $this->data($fieldName));
+		break;
+		
+		default:
+		  echo $form->input($fieldOpts['type'], $fieldName, $this->data($fieldName));
+	  }
+	  ?>
 	</dd>
   <?php endforeach; ?>
   </dl>

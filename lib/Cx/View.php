@@ -249,11 +249,6 @@ class Cx_View
 		
 		// Include() and parse PHP code
 		if($parsePHP) {
-			// Extract allowed variables for template scope
-			if(is_array($this->_vars)) {
-				extract($this->_vars);
-			}
-			
 			ob_start();
 			include($vfile);
 			$templateContent = ob_get_contents();

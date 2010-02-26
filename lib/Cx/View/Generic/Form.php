@@ -59,6 +59,21 @@ class Cx_View_Generic_Form extends Cx_View
 	
 	
 	/**
+	 * Get params set on field
+	 *
+	 * @param string $field Name of the field to return data for
+	 */
+	public function field($field)
+	{
+		if(isset($this->_fields[$field])) {
+			return $this->_fields[$field];
+		} else {
+			return false;
+		}
+	}
+	
+	
+	/**
 	 * Value by field name
 	 */
 	public function data($field, $value = null)

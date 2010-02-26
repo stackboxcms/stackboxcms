@@ -18,6 +18,7 @@ class Cx_View_Helper_Form extends Cx_View_Helper
 			'string' => 'text',
 			'int' => 'text',
 			'integer' => 'text',
+			'number' => 'text',
 			'time' => 'text',
 			'date' => 'text',
 			'datetime' => 'text',
