@@ -295,7 +295,7 @@ class Cx_Kernel extends AppKernel_Main
 	 * @param string $word
 	 * @return string
 	 */
-	public function formatClassname($word) {
+	public function formatUnderscoreWord($word) {
 		return ucwords(str_replace('_', ' ', $word));
 	}
 	

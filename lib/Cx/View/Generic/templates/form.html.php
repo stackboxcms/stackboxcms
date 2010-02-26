@@ -17,8 +17,11 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 <?php if($this->fields && count($this->fields) >0): ?>
 <form action="<?php echo $this->action; ?>" method="post">
   <dl class="app_form">
-  <?php foreach($this->fields as $fieldName => $fieldOpts): ?>
-	<dt class="app_form_label"><label><?php echo $fieldName; ?></label></dt>
+  <?php
+	foreach($this->fields as $fieldName => $fieldOpts):
+	$fieldLabel = isset($fieldOpts['title']) ? $fieldOpts['title'] : ucwords(str_replace('_', ' ', $fieldName));
+  ?>
+	<dt class="app_form_label"><label><?php echo $fieldLabel; ?></label></dt>
 	<dd class="app_form_value app_form_field_<?php echo strtolower($fieldOpts['type']); ?>">
 	  <?php
 	  // Adjust field depending on field type
