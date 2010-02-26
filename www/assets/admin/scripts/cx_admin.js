@@ -3,10 +3,10 @@ $(function() {
 	/**
 	 * Initialize commonly referenced elements to avoid multiple DOM lookups
 	 */
-	cx_admin_bar = $('#cx_admin_bar');
-	cx_modal = $('#cx_modal');
-	cx_regions = $('div.cx_region');
-	cx_modules = $('div.cx_module');
+	var cx_admin_bar = $('#cx_admin_bar');
+	var cx_modal = $('#cx_modal');
+	var cx_regions = $('div.cx_region');
+	var cx_modules = $('div.cx_module');
 	
 	/**
 	 * Initialize dialog window
