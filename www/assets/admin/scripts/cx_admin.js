@@ -6,6 +6,7 @@ $(function() {
 	cx_admin_bar = $('#cx_admin_bar');
 	cx_modal = $('#cx_modal');
 	cx_regions = $('div.cx_region');
+	cx_modules = $('div.cx_module');
 	
 	/**
 	 * Initialize dialog window
@@ -98,8 +99,8 @@ $(function() {
 					type: "POST",
 					url: cx.config.url + cx.page.url + 'm,Page_Module,0.html',
 					data: {'region': nRegionName, 'name': nModuleName},
-					success: function(msg, textStatus, req) {
-						alert("Data Saved: " + msg);
+					success: function(data, textStatus, req) {
+						nModule.replaceWith(data).fadeIn();
 					},
 					error: function(req) { // req = XMLHttpRequest object
 						// Validation error
@@ -116,10 +117,26 @@ $(function() {
 		}
 	});
 	
+	
 	/**
-	 *
+	 * Module editing - display controls on hover
 	 */
-	$('form .app_form_field_datetime input').live(function() {
+	cx_modules.live('hover', function(e) {
+		nModule = $(this);
+		
+		// Note: 'hover' actually binds to custom events 'mouseenter' and 'mouseleave'
+		if(e.type == 'mouseenter') {
+			
+		} else if(e.type == 'mouseleave') {
+			
+		}
+	});
+	
+	
+	/**
+	 * 
+	 */
+	$('form .app_form_field_datetime input').live(function(e) {
 		$(this).datepicker();
 	});
 });
