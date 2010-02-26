@@ -64,7 +64,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			$moduleResponse = $kernel->dispatchRequest($request, $moduleName, $moduleAction, array($request, $page, $module));
 			
 			// Return content immediately, currently not wrapped in template
-			return $moduleResponse;
+			return $this->regionModuleFormat($request, $page, $module, $moduleResponse);
 		}
 		
 		// Load page template
@@ -89,7 +89,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			if(!is_array($regionModules[$module->region])) {
 				$regionModules[$module->region] = array();
 			}
-			$regionModules[$module->region][] = $this->regionModuleFormat($request, $module, $moduleResponse);
+			$regionModules[$module->region][] = $this->regionModuleFormat($request, $page, $module, $moduleResponse);
 		}
 		
 		// Replace region content
@@ -240,8 +240,15 @@ class Module_Page_Controller extends Cx_Module_Controller
 	protected function formView()
 	{
 		$view = new Cx_View_Generic_Form('form');
+		$fields = $this->mapper()->fields();
+		
+		// Override int 'parent_id' with option select box
+		$fields['parent_id']['type'] = 'select';
+		$fields['parent_id']['options'] = array(0 => '[None]') + $this->mapper()->all()->order(array('ordering' => 'ASC'))->toArray('id', 'title');
+		
+		// Prepare view
 		$view->action("")
-			->fields($this->mapper()->fields())
+			->fields($fields)
 			->removeFields(array('id', 'date_created', 'date_modified'));
 		return $view;
 	}
@@ -263,7 +270,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	/**
 	 * Format module return content for display on page response
 	 */
-	protected function regionModuleFormat($request, $module, $moduleResponse)
+	protected function regionModuleFormat($request, $page, $module, $moduleResponse)
 	{
 		$content = "";
 		if(false !== $moduleResponse) {
@@ -272,7 +279,16 @@ class Module_Page_Controller extends Cx_Module_Controller
 				if(true === $moduleResponse) {
 					$moduleResponse = "<p>&lt;" . $module->name . " Placeholder&gt;</p>";
 				}
-				$content = '<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">' . $moduleResponse . '</div>';
+				$content = '
+				<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">
+				  ' . $moduleResponse . '
+				  <div class="cx_admin_module_controls">
+					<ul>
+					  <li><a href="' . $this->kernel->url('module_action', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
+					  <li><a href="' . $this->kernel->url('module_action', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
+					</ul>
+				  </div>
+				</div>';
 			}
 		}
 		return $content;

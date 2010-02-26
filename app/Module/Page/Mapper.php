@@ -67,9 +67,7 @@ class Module_Page_Mapper extends Cx_Mapper
 			}
 		}
 		
-		foreach($rootPages as $page) {
-			
-		}
+		return $rootPages;
 	}
 	
 	
