@@ -1,4 +1,4 @@
-<h1><?php echo $title; ?></h1>
+<h1><?php echo $this->title; ?></h1>
 <?php if($this->errorMessage): ?>
 	<p><?php echo $this->errorMessage; ?></p>
 <?php else: ?>
