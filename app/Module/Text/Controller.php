@@ -12,25 +12,25 @@ class Module_Text_Controller extends Cx_Module_Controller
 	 */
 	public function indexAction($request, $page, $module)
 	{
-		$text = $this->mapper()->first(array('module_id' => $module->id));
-		if(!$text) {
+		$item = $this->mapper()->currentTextEntity($module);
+		if(!$item) {
 			return true;
 		}
 		
 		// Return only content for HTML
 		if($request->format == 'html') {
-			return $text->content;
+			return $item->content;
 		}
-		return $this->cx->resource($text);
+		return $this->kernel->resource($item);
 	}
 	
 	
 	/**
 	 * @method GET
 	 */
-	public function newAction($request, $page)
+	public function newAction($request, $page, $module)
 	{
-		$itemUrl = $this->cx->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => 0));
+		$itemUrl = $this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id));
 		return $this->formView()->method('post')->action($itemUrl);
 	}
 	
@@ -40,18 +40,18 @@ class Module_Text_Controller extends Cx_Module_Controller
 	 */
 	public function editAction($request, $page, $module)
 	{
-		$cx = $this->cx;
+		$form = $this->formView()
+			->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)))
+			->method('PUT');
 		
-		// Ensure page exists
-		$mapper = $this->mapper();
-		$page = $mapper->getPageByUrl($request->url);
-		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->url . "'");
+		if(!$module) {
+			$module = $this->mapper()->get();
+			$form->method('POST');
 		}
 		
+		$item = $this->mapper()->currentTextEntity($module);
 		
-		
-		return $this->formView();
+		return $form->data($item->data());
 	}
 	
 	
@@ -62,16 +62,46 @@ class Module_Text_Controller extends Cx_Module_Controller
 	public function postMethod($request, $page, $module)
 	{
 		$mapper = $this->mapper();
-		$entity = $mapper->get()->data($request->post());
-		if($mapper->save($entity)) {
-			$pageUrl = $this->cx->url('page', array('page' => $entity->url));
+		$item = $mapper->get()->data($request->post());
+		$item->module_id = $module->id;
+		if($mapper->save($item)) {
+			$itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
 			if($request->format == 'html') {
-				return $this->cx->redirect($pageUrl);
+				return $this->indexAction($request, $page, $module);
 			} else {
-				return $this->cx->resource($entity)->status(201)->location($pageUrl);
+				return $this->kernel->resource($item)->status(201)->location($itemUrl);
 			}
 		} else {
-			$this->cx->response(400);
+			$this->kernel->response(400);
+			return $this->formView()->errors($mapper->errors());
+		}
+	}
+	
+	
+	/**
+	 * Save over existing entry (from edit)
+	 * @method PUT
+	 */
+	public function putMethod($request, $page, $module)
+	{
+		$mapper = $this->mapper();
+		//$item = $mapper->get($request->module_item);
+		$item = $this->mapper()->currentTextEntity($module);
+		if(!$item) {
+			throw new Cx_Exception_FileNotFound($this->name() . " module item not found");
+		}
+		$item->data($request->post());
+		$item->module_id = $module->id;
+		
+		if($mapper->save($item)) {
+			$itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
+			if($request->format == 'html') {
+				return $this->indexAction($request, $page, $module);
+			} else {
+				return $this->kernel->resource($item)->status(201)->location($itemUrl);
+			}
+		} else {
+			$this->kernel->response(400);
 			return $this->formView()->errors($mapper->errors());
 		}
 	}
@@ -82,13 +112,11 @@ class Module_Text_Controller extends Cx_Module_Controller
 	 */
 	public function deleteMethod($request, $page, $module)
 	{
-		// Ensure page exists
-		$page = $this->mapper()->getPageByUrl($request->url);
-		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($url) . "'");
+		$item = $mapper->get($request->module_item);
+		if(!$item) {
+			throw new Cx_Exception_FileNotFound($this->name() . " module item not found");
 		}
-		
-		$this->mapper()->delete($page);
+		return $this->mapper()->delete($item);
 	}
 	
 	
@@ -97,10 +125,10 @@ class Module_Text_Controller extends Cx_Module_Controller
 	 */
 	protected function formView()
 	{
-		$view = new Cx_View_Generic_Form($this->cx);
+		$view = new Cx_View_Generic_Form('form');
 		$view->action("")
 			->fields($this->mapper()->fields())
-			->removeFields(array('id', 'date_created', 'date_modified'));
+			->removeFields(array('id', 'module_id', 'date_created', 'date_modified'));
 		return $view;
 	}
 }

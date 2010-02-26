@@ -54,10 +54,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 			if($moduleId == 0) {
 				// Get new module entity, no ID supplied
 				// @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
-				$module = $mapper->get();
+				$module = $this->mapper('Module_Page_Modules')->get();
 			} else {
 				// Module belongs to current page
-				$module = $page->modules->where(array('module_id' => $moduleId))->first();
+				$module = $page->modules->where(array('id' => $moduleId))->first();
 			}
 			
 			// Dispatch to single module
@@ -276,7 +276,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		if(false !== $moduleResponse) {
 			if('html' == $request->format) {
 				// Module placeholder
-				if(true === $moduleResponse) {
+				if(true === $moduleResponse || empty($moduleResponse)) {
 					$moduleResponse = "<p>&lt;" . $module->name . " Placeholder&gt;</p>";
 				}
 				$content = '
@@ -284,8 +284,8 @@ class Module_Page_Controller extends Cx_Module_Controller
 				  ' . $moduleResponse . '
 				  <div class="cx_admin_module_controls">
 					<ul>
-					  <li><a href="' . $this->kernel->url('module_action', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
-					  <li><a href="' . $this->kernel->url('module_action', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
+					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
+					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
 					</ul>
 				  </div>
 				</div>';

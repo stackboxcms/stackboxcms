@@ -13,4 +13,17 @@ class Module_Text_Mapper extends Cx_Module_Mapper
 	
 	// Custom entity class
 	protected $_entityClass = 'Module_Text_Entity';
+	
+	
+	/**
+	 * Get current text entity
+	 */
+	public function currentTextEntity(Module_Page_Module_Entity $module)
+	{
+		$item = $this->all(array('module_id' => $module->id))->order(array('id' => 'DESC'))->first();
+		if(!$item) {
+			$item = $this->get();
+		}
+		return $item;
+	}
 }
