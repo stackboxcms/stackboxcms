@@ -66,7 +66,7 @@ try {
 		->defaults(array('module' => 'Page_Admin', 'format' => 'html'));
 	
 	// Normal Routes
-	$router->route('module', $pageRouteItem . 'm,<:module_name>,<#module_id>(.<:format>)')
+	$router->route('module', $pageRouteItem . 'm,<:module_name>,<#module_id>(/<:module_action>)(.<:format>)')
 		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'index', 'format' => 'html'))
 		->get(array('module_action' => 'index'))
 		->post(array('module_action' => 'post'))
@@ -82,9 +82,9 @@ try {
 		->post(array('module_action' => 'post'))
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
-		
+	/*
 	$router->route('module_action', $pageRouteItem . 'm,<:module_name>,<#module_id>(/<:module_action>)(.<:format>)')
-		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));
+		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));*/
 		
 	$router->route('index_action', '<:action>\.<:format>')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
