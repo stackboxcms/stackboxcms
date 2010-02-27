@@ -50,7 +50,7 @@ try {
 	
 	// Router - Add routes we want to match
 	$router = $kernel->router();
-	$pageRouteItem = '<:page|[^m,]*>';
+	$pageRouteItem = '<*page>';
 	$kernel->trigger('cx_boot_router_before', array($router));
 	
 	// HTTP Errors
@@ -82,9 +82,6 @@ try {
 		->post(array('module_action' => 'post'))
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
-	/*
-	$router->route('module_action', $pageRouteItem . 'm,<:module_name>,<#module_id>(/<:module_action>)(.<:format>)')
-		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));*/
 		
 	$router->route('index_action', '<:action>\.<:format>')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));

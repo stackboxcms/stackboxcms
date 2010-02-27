@@ -5,6 +5,7 @@ $(function() {
 	 */
 	var cx_admin_bar = $('#cx_admin_bar');
 	var cx_modal = $('#cx_modal');
+	var cx_modal_content = $('#cx_modal_content');
 	var cx_regions = $('div.cx_region');
 	var cx_modules = $('div.cx_module');
 	
@@ -29,8 +30,7 @@ $(function() {
 			type: "GET",
 			url: tLink.attr('href'),
 			success: function(data, textStatus, req) {
-				$('#cx_modal_content', cx_modal).html(data);
-				cx_modal.dialog('open');
+				cx_modalContent(data);
 			},
 			error: function(req) { // req = XMLHttpRequest object
 				alert("[ERROR] Unable to load URL: " + req.responseText);
@@ -52,12 +52,12 @@ $(function() {
 			success: function(data, textStatus, req) {
 				nData = $(data);
 				nModule = $('#' + nData.attr('id')).replaceWith(nData).effect("highlight", {color: '#FFFFCF'}, 2000);
-				//alert("Data Saved: " + data);
+				cx_modalClose();
 			},
 			error: function(req) { // req = XMLHttpRequest object
-				// Validation error
 				if(req.status == 400){
-					alert("Validation errors");
+					// Validation error ("Bad Request")
+					cx_modalContent(req.responseText);
 				} else {
 					alert("[ERROR] Unable to save data: " + req.responseText);
 				}
@@ -106,12 +106,7 @@ $(function() {
 						nModule.replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000);
 					},
 					error: function(req) { // req = XMLHttpRequest object
-						// Validation error
-						if(req.status == 400){
-							alert("Validation errors");
-						} else {
-							alert("[ERROR "+req.status+"] Unable to save data:\n\n" + req.responseText);
-						}
+						alert("[ERROR "+req.status+"] Unable to save data:\n\n" + req.responseText);
 					}
 				});
 			}
@@ -142,13 +137,31 @@ $(function() {
 	$('form .app_form_field_datetime input').live(function(e) {
 		$(this).datepicker();
 	});
-});
+	
+	
+	
+	/**
+	 * Custom admin functions
+	 */
+	// Fill modal window with specified content
+	function cx_modalContent(data) {
+		cx_modal.dialog('open');
+		cx_modal_content.html(data);
+	}
+	// Close modal windows
+	function cx_modalClose() {
+		cx_modal.dialog('close');
+		cx_modal_content.html(cx_modalLoadingMessage());
+	}
+	// Modal window loading message displayed
+	function cx_modalLoadingMessage() {
+		cx_modal_content.html('Loading...');
+	}
 
-
-// Custom function to serialize module order in regions
-function cx_serializeRegionModules() {
+	// Custom function to serialize module order in regions
+	function cx_serializeRegionModules() {
 	var str = "";
-	cx_regions.each(function() {
+	$('div.cx_region').each(function() {
 		var regionName = this.id.replace('cx_region_', '');
 		$('div.cx_module', this).not('.ui-helper').each(function() {
 			var moduleId = parseInt($(this).attr('id').replace('cx_module_', ''));
@@ -156,4 +169,5 @@ function cx_serializeRegionModules() {
 		});
 	});
 	return str;
-}
+	}
+});

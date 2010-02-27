@@ -13,6 +13,58 @@ ADMIN UI
 	font-family: Arial, Tahoma, sans-serif;
 	line-height: 1;
 }
+	/* FORM styles */
+	.cx_ui form {
+		margin: 0;
+		padding: 0;
+	}
+	.cx_ui form input, .cx_ui form textarea, .cx_ui form button, .cx_ui form input {
+		font-size: 14px;
+		padding: 4px;
+		font-family: Arial, Helvetica, sans-serif;
+		border-radius: 10px;
+		-webkit-border-radius: 10px;
+		-moz-border-radius: 10px;
+	}
+	.cx_ui form ol {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		list-style: none;
+	}
+	.cx_ui form li {
+		display: block;
+		margin: 5px 0;
+		padding: 3px;
+		clear: both;
+	}
+	.cx_ui form li label {
+		display: block;
+		margin: 0;
+		padding: 5px 10px 0 10px;
+		width: 100px;
+		float: left;
+		text-align: right;
+		cursor: pointer;
+		font-size: 14px;
+	}
+	.cx_ui form li.app_form_field_text label {
+		float: none;
+		text-align: left;
+	}
+	.cx_ui form li span {
+		display: block;
+		margin: 0;
+		padding: 0;
+		float: left;
+	}
+	.cx_ui form li.app_form_hidden {
+		display: none;
+	}
+	.cx_ui form li.app_form_actions {
+		padding-top: 20px;
+		padding-left: 120px;
+	}
 
 /*
 ADMIN BAR
@@ -63,6 +115,7 @@ div.cx_admin_pane {
 		padding: 5px;
 		background: #fff;
 		border-radius: 10px;
+		-webkit-border-radius: 10px;
 		-moz-border-radius: 10px;
 		cursor: move;
 	}

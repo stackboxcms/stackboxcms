@@ -16,16 +16,18 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 
 <?php if($this->fields && count($this->fields) >0): ?>
 <form action="<?php echo $this->action; ?>" method="post">
-  <dl class="app_form">
+  <ol class="app_form">
   <?php
-	foreach($this->fields as $fieldName => $fieldOpts):
+  foreach($this->fields as $fieldName => $fieldOpts):
 	$fieldLabel = isset($fieldOpts['title']) ? $fieldOpts['title'] : ucwords(str_replace('_', ' ', $fieldName));
-  ?>
-	<dt class="app_form_label"><label><?php echo $fieldLabel; ?></label></dt>
-	<dd class="app_form_value app_form_field_<?php echo strtolower($fieldOpts['type']); ?>">
+	$fieldType = isset($fieldOpts['type']) ? $fieldOpts['type'] : 'string';
+    ?>
+	<li class="app_form_field app_form_field_<?php echo strtolower($fieldOpts['type']); ?>">
+	  <label><?php echo $fieldLabel; ?></label></dt>
+	  <span>
 	  <?php
 	  // Adjust field depending on field type
-	  switch($fieldOpts['type']) {
+	  switch($fieldType) {
 		case 'text':
 		  echo $form->textarea($fieldName, $this->data($fieldName), array('rows' => 10, 'cols' => 60));
 		break;
@@ -41,7 +43,7 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 		break;
 		
 		case 'string':
-		  echo $form->text($fieldName, $this->data($fieldName), array('size' => 45));
+		  echo $form->text($fieldName, $this->data($fieldName), array('size' => 40));
 		break;
 		
 		case 'select':
@@ -53,17 +55,18 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 		  echo $form->input($fieldOpts['type'], $fieldName, $this->data($fieldName));
 	  }
 	  ?>
-	</dd>
+	  </span>
+	</li>
   <?php endforeach; ?>
-  </dl>
-  <div class="app_form_hidden">
-	<?php if($formMethodRest): ?>
-	<input type="hidden" name="_method" value="<?php echo $formMethodRest; ?>" />
-	<?php endif; ?>
-  </div>
-  <div class="app_form_actions">
-	<button type="submit" class="app_action_primary">Save</button>
-	<a href="#" class="app_action_cancel">Cancel</a>
-  </div>
+	<li class="app_form_hidden">
+	  <?php if($formMethodRest): ?>
+	  <input type="hidden" name="_method" value="<?php echo $formMethodRest; ?>" />
+	  <?php endif; ?>
+	</li>
+	<li class="app_form_actions">
+	  <button type="submit" class="app_action_primary">Save</button>
+	  <a href="#" class="app_action_cancel">Cancel</a>
+    </li>
+  </ol>
 </form>
 <?php endif; ?>

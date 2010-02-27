@@ -54,7 +54,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			if($moduleId == 0) {
 				// Get new module entity, no ID supplied
 				// @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
-				$module = $this->mapper('Module_Page_Modules')->get();
+				$module = $this->mapper('Module_Page_Module')->get();
 			} else {
 				// Module belongs to current page
 				$module = $page->modules->where(array('id' => $moduleId))->first();
@@ -147,8 +147,9 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request)
 	{
-		$pageUrl = $this->kernel->url('page', array('page' => '/'));
-		return $this->formView()->method('post')->action($pageUrl);
+		return $this->formView()
+			->method('post')
+			->action($this->kernel->url('page', array('page' => '/')));
 	}
 	
 	
@@ -180,6 +181,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 	{
 		$mapper = $this->mapper();
 		$entity = $mapper->get()->data($request->post());
+		// Auto-genereate URL if not filled in
+		if(!$request->url) {
+			$entity->url = $this->kernel->formatUrl($request->title);
+		}
 		if($mapper->save($entity)) {
 			$pageUrl = $this->kernel->url('page', array('page' => $entity->url));
 			if($request->format == 'html') {
@@ -189,7 +194,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			}
 		} else {
 			$this->kernel->response(400);
-			return $this->formView()
+			return $this->newAction($request)
 				->data($request->post())
 				->errors($mapper->errors());
 		}
@@ -245,11 +250,12 @@ class Module_Page_Controller extends Cx_Module_Controller
 		// Override int 'parent_id' with option select box
 		$fields['parent_id']['type'] = 'select';
 		$fields['parent_id']['options'] = array(0 => '[None]') + $this->mapper()->all()->order(array('ordering' => 'ASC'))->toArray('id', 'title');
+		$fields['parent_id']['title'] = 'Parent Page';
 		
 		// Prepare view
 		$view->action("")
 			->fields($fields)
-			->removeFields(array('id', 'date_created', 'date_modified'));
+			->removeFields(array('id', 'theme', 'template', 'ordering', 'date_created', 'date_modified'));
 		return $view;
 	}
 	
