@@ -73,19 +73,21 @@ try {
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
 	
+	/*
 	$router->route('module_item_action', $pageRouteItem . 'm,<:module_name>,<#module_id>/<#module_item>/<:module_action>(.<:format>)')
 		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));
+	/*/
 		
-	$router->route('module_item', $pageRouteItem . 'm,<:module_name>,<#module_id>/<#module_item>(.<:format>)')
-		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'))
+	$router->route('module_item', $pageRouteItem . 'm,<:module_name>,<#module_id>/<#module_item>(/<:module_action>)(.<:format>)')
+		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'view', 'format' => 'html'))
 		->get(array('module_action' => 'view'))
 		->post(array('module_action' => 'post'))
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
-		
+	
 	$router->route('index_action', '<:action>\.<:format>')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
-		
+	
 	$router->route('page_action', $pageRouteItem . '/<:action>(.<:format>)')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
 	
@@ -153,7 +155,7 @@ try {
 // Generic Error
 } catch(Exception $e) {
 	$responseStatus = 500;
-	$content = $e->getMessage();
+	$content = $e;
 }
  
 // Error handling through core error module
