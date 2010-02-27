@@ -9,6 +9,7 @@ class Cx_View_Generic_Form extends Cx_View
 {
 	protected $_fields = array();
 	protected $_fieldValues = array();
+	protected $_submitButtonText = 'Save';
 	
 	
 	/**
@@ -76,17 +77,27 @@ class Cx_View_Generic_Form extends Cx_View
 	/**
 	 * Value by field name
 	 */
-	public function data($field, $value = null)
+	public function data($field = null, $value = null)
 	{
+		// Return data array
+		if(null === $field) {
+			return $this->_fieldValues;
+		}
+		
+		// Set data for single field
 		if(null !== $value) {
 			$this->_fieldValues[$field] = $value;
 			return $this;
+		
+		// Set data from array for many fields
 		} elseif(is_array($field)) {
 			foreach($field as $fieldx => $val) {
 				$this->_fieldValues[$fieldx] = $val;
 			}
 			return $this;
 		}
+		
+		// Return data for given field
 		return isset($this->_fieldValues[$field]) ? $this->_fieldValues[$field] : null;
 	}
 	
@@ -103,6 +114,22 @@ class Cx_View_Generic_Form extends Cx_View
 			if(isset($this->_fields[$field])) {
 				unset($this->_fields[$field]);
 			}
+		}
+		return $this;
+	}
+	
+	
+	/**
+	 * Set the text for the submit button
+	 *
+	 * @param string $text Text to display on the button
+	 */
+	public function submitButtonText($text = null)
+	{
+		if(null === $text) {
+			return $this->_submitButtonText;
+		} else {
+			$this->_submitButtonText = $text;
 		}
 		return $this;
 	}
