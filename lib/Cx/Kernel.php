@@ -262,12 +262,16 @@ class Cx_Kernel extends AppKernel_Main
 	/**
 	 * Generate URL from given params
 	 *
-	 * @todo Account for 'mod_rewrite' being turned OFF, return URL as query string in such cases
 	 * @param string $url
 	 * @return string
 	 */
 	public function url($routeName, array $params = array()) {
-		$fullUrl = $this->config('cx.url') . $this->router()->url($routeName, $params);
+		$urlBase = $this->config('cx.url');
+		// Use query string if URL rewriting is not enabled
+		if(!$this->config('cx.url_rewrite')) {
+			$urlBase .= "?r=";
+		}
+		$fullUrl = $urlBase . ltrim($this->router()->url($routeName, $params), '/');
 		return $fullUrl;
 	}
 	
