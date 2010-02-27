@@ -42,7 +42,7 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	 * Create a new resource with the given parameters
 	 * @method POST
 	 */
-	public function postMethod($request, $page, $module)
+	public function postMethod($request, $page, Module_Page_Module_Entity $module)
 	{
 		$kernel = $this->kernel;
 		
@@ -55,8 +55,10 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 			'date_created' => date($mapper->adapter()->dateTimeFormat())
 			));
 		if($mapper->save($entity)) {
-			$pageUrl = $this->kernel->url('page', array('page' => $entity->url));
+			$pageUrl = $this->kernel->url('page', array('page' => $page->url));
 			if($request->format == 'html') {
+				// Set module data for return content
+				$module->data($entity->data());
 				// Dispatch to return module content
 				return $kernel->dispatch($entity->name, 'indexAction', array($request, $page, $entity));
 			} else {
@@ -80,7 +82,9 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 			$view = new Cx_View_Generic_Form('form');
 			$form = $view
 				->method('delete')
-				->action($this->kernel->url('module_item', array('page' => '/', 'module_name' => $this->name(), 'module_id' => 0, 'module_item' => $request->module_item)));
+				->action($this->kernel->url('module_item', array('page' => '/', 'module_name' => $this->name(), 'module_id' => 0, 'module_item' => $request->module_item)))
+				->data(array('item_dom_id' => 'cx_module_' . $request->module_item))
+				->submitButtonText('Delete');
 			return "<p>Are you sure you want to delete this module?</p>" . $form;
 		}
 	}

@@ -55,6 +55,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 				// Get new module entity, no ID supplied
 				// @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
 				$module = $this->mapper('Module_Page_Module')->get();
+				$module->name = $request->name;
 			} else {
 				// Module belongs to current page
 				$module = $page->modules->where(array('id' => $moduleId))->first();
@@ -276,7 +277,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	/**
 	 * Format module return content for display on page response
 	 */
-	protected function regionModuleFormat($request, $page, $module, $moduleResponse)
+	protected function regionModuleFormat($request, $page, $module, $moduleResponse, $includeControls = true)
 	{
 		$content = "";
 		if(false !== $moduleResponse) {
@@ -289,12 +290,12 @@ class Module_Page_Controller extends Cx_Module_Controller
 				<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">
 				  ' . $moduleResponse;
 				// Show controls only for requests that are not AJAX
-				if(!$request->isAjax()) {
+				if($includeControls) {
 				$content .= '
 				  <div class="cx_ui cx_ui_controls">
 					<ul>
-					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
-					  <li><a href="' . $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => 'Page_Module', 'module_id' => 0, 'module_item' => $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
+					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
+					  <li><a href="' . $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => 'Page_Module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
 					</ul>
 				  </div>';
 				}
