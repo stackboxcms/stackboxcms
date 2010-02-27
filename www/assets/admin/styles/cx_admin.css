@@ -87,37 +87,47 @@ ADMIN BAR
 /*
 ADMIN PANES
 ================================================== */
-div.cx_admin_pane {
+div.cx_ui_pane {
 	position: fixed;
-	width: 175px;
+	width: 225px;
 	background: #666;
 	font-family: Arial, Tahoma, sans-serif;
 	font-size: 12px;
 	opacity: 0.8;
 }
-	div.cx_admin_pane h2 {
+	div.cx_ui_pane h2 {
 		margin: 0;
-		padding: 2px;
+		padding: 6px 10px;
 		background: #333;
 		color: #fff;
 		font-size: 14px;
 	}
-	div.cx_admin_pane_content {
+	div.cx_ui_pane_info {
+		margin: 1px;
+		padding: 5px;
+		background-color: #ffff99;
+		color: #000;
+	}
+	div.cx_ui_pane_content {
 		margin: 5px;
 	}
 
-#cx_admin_modules.cx_admin_pane {
+#cx_admin_modules.cx_ui_pane {
 	top: 40px;
 	right: 0;
 }
 	#cx_admin_modules .cx_module_tile {
 		margin-bottom: 5px;
-		padding: 5px;
+		padding: 10px;
 		background: #fff;
 		border-radius: 10px;
 		-webkit-border-radius: 10px;
 		-moz-border-radius: 10px;
 		cursor: move;
+		font-weight: bold;
+	}
+	#cx_admin_modules .cx_module_tile:hover {
+		background: #CFE9FF;
 	}
 
 /*
@@ -133,19 +143,48 @@ REGION / MODULE UI
 .cx_module_placeholder {
 	background: #ccc;
 	border: 2px solid #333;
+	opacity: 0.6;
 }
 /* Module admin controls */
 .cx_region .cx_module {
 	position: relative;
 }
-.cx_module .cx_admin_module_controls.cx_ui_hover {
+.cx_module .cx_ui_controls {
 	position: absolute;
 	top: 0;
 	right: 0;
 	width: 100%;
-	background-color: #333;
-	opacity: 0.3;
 }
+.cx_module.cx_ui_hover {
+	outline: 1px solid #ccc;
+}
+.cx_module.cx_ui_hover .cx_ui_controls {
+	display: block!important;
+}
+.cx_module .cx_ui_controls ul {
+	float: right;
+	list-style: none;
+	margin: 0px 0 0 0;
+	padding: 0;
+}
+	/* Module Controls */
+	.cx_module .cx_ui_controls ul li {
+		float: left;
+		margin: 0;
+		padding: 1px;
+	}
+	.cx_module .cx_ui_controls ul li a {
+		display: block;
+		padding: 2px;
+		background-color: #111;
+		font-weight: bold;
+		color: #fff;
+		text-decoration: none;
+	}
+	.cx_module .cx_ui_controls ul li a:hover, #imNav li.active a {
+		background-color: #AFAFAF;
+		color: #000;
+	}
 
 /*
 MODAL / DIALOG
@@ -157,3 +196,7 @@ MODAL / DIALOG
 	font-size: 12px;
 	font-weight: bold;
 }
+	/* never show admin controls in dialog */
+	#cx_modal .cx_ui_controls {
+		display: none!important;
+	}

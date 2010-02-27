@@ -21,10 +21,11 @@ $(function() {
 		minHeight: 300
 	});
 	
+	
 	/**
 	 * Open link in the admin bar in a modal window
 	 */
-	$('#cx_admin_bar a, div.cx_admin_module_controls a').live('click', function() {
+	$('#cx_admin_bar a, div.cx_ui_controls a').live('click', function() {
 		var tLink = $(this);
 		$.ajax({
 			type: "GET",
@@ -43,28 +44,45 @@ $(function() {
 	/**
 	 * Handle forms within modal windows (AJAX)
 	 */
-	$('form', cx_modal).live('submit', function() {
-		var tForm = $(this);
-		$.ajax({
-			type: "POST",
-			url: tForm.attr('action'),
-			data: tForm.serialize(),
-			success: function(data, textStatus, req) {
-				nData = $(data);
-				nModule = $('#' + nData.attr('id')).replaceWith(nData).effect("highlight", {color: '#FFFFCF'}, 2000);
-				cx_modalClose();
-			},
-			error: function(req) { // req = XMLHttpRequest object
-				if(req.status == 400){
-					// Validation error ("Bad Request")
-					cx_modalContent(req.responseText);
-				} else {
-					alert("[ERROR] Unable to save data: " + req.responseText);
+	function cx_modalFormBind() {
+		$('#cx_modal form').submit(function(e) {
+			var tForm = $(this);
+			
+			// Assemble form data into object for use below
+			formData = tForm.serializeArray();
+			tData = {};
+			jQuery.each(formData, function(i, field){
+				tData[field.name] = field.value;
+			});
+			
+			$.ajax({
+				type: "POST",
+				url: tForm.attr('action'),
+				data: tForm.serialize(),
+				success: function(data, textStatus, req) {
+					nData = $(data);
+					if(tData._method == 'DELETE') {
+						if(tData.item_dom_id) {
+							nModule = $('#' + tData.item_dom_id).remove();
+						}
+					} else {
+						nModule = $('#' + nData.attr('id')).replaceWith(nData).effect("highlight", {color: '#FFFFCF'}, 2000);
+					}
+					cx_modalClose();
+				},
+				error: function(req) { // req = XMLHttpRequest object
+					if(req.status == 400){
+						// Validation error ("Bad Request")
+						cx_modalContent(req.responseText);
+					} else {
+						alert("[ERROR] Unable to save data: " + req.responseText);
+					}
 				}
-			}
+			});
+			e.preventDefault();
+			return false;
 		});
-		return false;
-	});
+	}
 	
 	
 	/**
@@ -84,7 +102,7 @@ $(function() {
 		items: 'div.cx_module, div.cx_module_tile',
 		connectWith: cx_regions,
 		placeholder: 'cx_module_placeholder',
-		forcePlaceholderSize: false,
+		forcePlaceholderSize: true,
 		start: function(e, ui) {
 			cx_regions.addClass('cx_region_highlight');
 		},
@@ -111,7 +129,7 @@ $(function() {
 				});
 			}
 			// Serialize modules and save positions
-			console.log('Module Serialization: ' + cx_serializeRegionModules());
+			//console.log('Module Serialization: ' + cx_serializeRegionModules());
 		}
 	});
 	
@@ -119,25 +137,34 @@ $(function() {
 	/**
 	 * Module editing - display controls on hover
 	 */
+	/*
 	cx_modules.live('hover', function(e) {
 		nModule = $(this);
-		
 		// Note: 'hover' actually binds to custom events 'mouseenter' and 'mouseleave'
-		if(e.type == 'mouseenter') {
-			
-		} else if(e.type == 'mouseleave') {
-			
+		if(e.type == 'mouseover') {
+			nModule.addClass('cx_ui_hover');
+		} else {
+			nModule.removeClass('cx_ui_hover');
 		}
 	});
+	*/
 	
 	
 	/**
 	 * 
 	 */
-	$('form .app_form_field_datetime input').live(function(e) {
-		$(this).datepicker();
+	$('form .app_form_field_datetime input').live('click', function(e) {
+		$(this).datepicker({showOn:'focus'}).focus();
 	});
 	
+	
+	/**
+	 * Close modal window on 'cancel'
+	 */
+	$('a.app_action_cancel', cx_modal).live('click', function() {
+		cx_modalClose();
+		return false;
+	});
 	
 	
 	/**
@@ -147,6 +174,7 @@ $(function() {
 	function cx_modalContent(data) {
 		cx_modal.dialog('open');
 		cx_modal_content.html(data);
+		cx_modalFormBind();
 	}
 	// Close modal windows
 	function cx_modalClose() {
