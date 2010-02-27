@@ -30,8 +30,9 @@ class Module_Text_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request, $page, $module)
 	{
-		$itemUrl = $this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id));
-		return $this->formView()->method('post')->action($itemUrl);
+		return $this->formView()
+			->method('post')
+			->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)));
 	}
 	
 	

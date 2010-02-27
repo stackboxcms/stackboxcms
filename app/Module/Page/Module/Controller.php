@@ -21,8 +21,9 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	 */
 	public function newAction($request, $page, $module)
 	{
-		$pageUrl = $this->kernel->url('page', array('page' => '/'));
-		return $this->formView()->method('post')->action($pageUrl);
+		return $this->formView()
+			->method('post')
+			->action($this->kernel->url('page', array('page' => '/')));
 	}
 	
 	
@@ -32,15 +33,6 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	public function editAction($request, $page, $module)
 	{
 		$kernel = $this->kernel;
-		
-		// Ensure page exists
-		$mapper = $this->mapper();
-		$page = $mapper->getPageByUrl($request->url);
-		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->url . "'");
-		}
-		
-		
 		
 		return $this->formView();
 	}
@@ -54,8 +46,7 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	{
 		$kernel = $this->kernel;
 		
-		// Attempt to load module
-		
+		// @todo Attempt to load module before saving it so we know it will work
 		
 		// Save it
 		$mapper = $this->mapper();
@@ -81,17 +72,32 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	
 	
 	/**
+	 * @method GET
+	 */
+	public function deleteAction($request, $page, $module)
+	{
+		if($request->format == 'html') {
+			$view = new Cx_View_Generic_Form('form');
+			$form = $view
+				->method('delete')
+				->action($this->kernel->url('module_item', array('page' => '/', 'module_name' => $this->name(), 'module_id' => 0, 'module_item' => $request->module_item)));
+			return "<p>Are you sure you want to delete this module?</p>" . $form;
+		}
+	}
+	
+	
+	/**
 	 * @method DELETE
 	 */
 	public function deleteMethod($request, $page, $module)
 	{
-		// Ensure page exists
-		$page = $this->mapper()->getPageByUrl($request->url);
-		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($url) . "'");
+		$item = $this->mapper()->get($request->module_item);
+		if($item) {
+			$this->mapper()->delete($item);
+			return true;
+		} else {
+			throw new Exception_FileNotFound("Requested module not found");
 		}
-		
-		$this->mapper()->delete($page);
 	}
 	
 	

@@ -287,14 +287,18 @@ class Module_Page_Controller extends Cx_Module_Controller
 				}
 				$content = '
 				<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">
-				  ' . $moduleResponse . '
-				  <div class="cx_admin_module_controls">
+				  ' . $moduleResponse;
+				// Show controls only for requests that are not AJAX
+				if(!$request->isAjax()) {
+				$content .= '
+				  <div class="cx_ui cx_ui_controls">
 					<ul>
 					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
-					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => $module->name, 'module_id' => $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
+					  <li><a href="' . $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => 'Page_Module', 'module_id' => 0, 'module_item' => $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
 					</ul>
-				  </div>
-				</div>';
+				  </div>';
+				}
+				$content .= '</div>';
 			}
 		}
 		return $content;
