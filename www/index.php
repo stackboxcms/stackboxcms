@@ -85,10 +85,10 @@ try {
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
 	
-	$router->route('index_action', '<:action>\.<:format>')
+	$router->route('page_action', $pageRouteItem . '/<:action>(.<:format>)')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
 	
-	$router->route('page_action', $pageRouteItem . '/<:action>(.<:format>)')
+	$router->route('index_action', '<:action>\.<:format>')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
 	
 	$router->route('page', $pageRouteItem)
@@ -146,7 +146,12 @@ try {
 } catch(Cx_Exception_Method $e) {
 	$responseStatus = 405; // 405 - Method Not Allowed
 	$content = $e->getMessage();
- 
+
+// HTTP Exception
+} catch(Cx_Exception_Http $e) {
+	$responseStatus = $e->getCode(); 
+	$content = $e->getMessage();
+
 // Module/Action Error
 } catch(Cx_Exception $e) {
 	$responseStatus = 500;
@@ -159,7 +164,7 @@ try {
 }
  
 // Error handling through core error module
-if($kernel && $content && $responseStatus >= 400) {
+if($kernel && $content && $responseStatus >= 400 && !$request->isAjax()) {
 	try {
 		$content = $kernel->dispatch('Error', 'displayAction', array($request, $responseStatus, $content));
 	} catch(Exception $e) {
@@ -172,6 +177,7 @@ if($kernel) {
 	$kernel->trigger('cx_response_before', array(&$content));
 	
 	// Set content and send response
+	$response->status($responseStatus);
 	$response->content($content);
 	$response->send();
 	
