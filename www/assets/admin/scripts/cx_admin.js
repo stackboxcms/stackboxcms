@@ -101,6 +101,7 @@ $(function() {
 	cx_regions.sortable({
 		items: 'div.cx_module, div.cx_module_tile',
 		connectWith: cx_regions,
+		handle: 'div.cx_ui_modulebar',
 		placeholder: 'cx_module_placeholder',
 		forcePlaceholderSize: true,
 		start: function(e, ui) {
@@ -137,7 +138,6 @@ $(function() {
 	/**
 	 * Module editing - display controls on hover
 	 */
-	/*
 	cx_modules.live('hover', function(e) {
 		nModule = $(this);
 		// Note: 'hover' actually binds to custom events 'mouseenter' and 'mouseleave'
@@ -147,7 +147,6 @@ $(function() {
 			nModule.removeClass('cx_ui_hover');
 		}
 	});
-	*/
 	
 	
 	/**

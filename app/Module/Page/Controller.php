@@ -32,6 +32,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			if($pageUrl == '/') {
 				// Create new page for the homepage automatically if it does not exist
 				$page = $mapper->get();
+				$page->parent_id = 0;
 				$page->title = "Home";
 				$page->url = $pageUrl;
 				$page->date_created = date($mapper->adapter()->dateTimeFormat());
@@ -131,7 +132,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets') . 'styles/jquery-ui/base/jquery-ui.css" rel="stylesheet" />' . "\n";
 				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
 				$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
-				$templateBodyContent = $this->view('_adminBar');
+				$templateBodyContent = $this->view('_adminBar')->set('page', $page);
 				$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
 			}
 			
@@ -168,9 +169,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->url . "'");
 		}
 		
-		
-		
-		return $this->formView();
+		return $this->formView()->data($page->data());
 	}
 	
 	
@@ -182,6 +181,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	{
 		$mapper = $this->mapper();
 		$entity = $mapper->get()->data($request->post());
+		$entity->parent_id = (int) $request->parent_id;
 		// Auto-genereate URL if not filled in
 		if(!$request->url) {
 			$entity->url = $this->kernel->formatUrl($request->title);
@@ -292,6 +292,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 				// Show controls only for requests that are not AJAX
 				if($includeControls) {
 				$content .= '
+				  <div class="cx_ui cx_ui_modulebar"><span>' . $module->name . ' Module</span></div>
 				  <div class="cx_ui cx_ui_controls">
 					<ul>
 					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit')) . '">Edit</a></li>

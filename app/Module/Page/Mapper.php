@@ -58,7 +58,7 @@ class Module_Page_Mapper extends Cx_Mapper
 	public function pageTree($startPage = null)
 	{
 		if(null === $startPage) {
-			$rootPages = $this->all(array('parent_id' => 0))->order(array('ordering' => 'ASC'));
+			$rootPages = $this->all(array('parent_id <' => 1))->order(array('ordering' => 'ASC'));
 		} else {
 			if($startPage instanceof Module_Page_Entity) {
 				$rootPages = $startPage->children;

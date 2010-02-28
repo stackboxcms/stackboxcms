@@ -155,8 +155,26 @@ REGION / MODULE UI
 	right: 0;
 	width: 100%;
 }
+.cx_module .cx_ui_modulebar {
+	display: none;
+	position: absolute;
+	top: -20px;
+	left: 0;
+	height: 20px;
+	overflow: hidden;
+	background-color: #B7B7B7;
+	cursor: move;
+}
+	.cx_module .cx_ui_modulebar span {
+		display: block;
+		padding: 3px 6px;
+		font-weight: bold;
+	}
 .cx_module.cx_ui_hover {
-	outline: 1px solid #ccc;
+	background-color: #EFEFEF;
+}
+.cx_module.cx_ui_hover .cx_ui_modulebar {
+	display: block!important;
 }
 .cx_module.cx_ui_hover .cx_ui_controls {
 	display: block!important;
@@ -198,5 +216,11 @@ MODAL / DIALOG
 }
 	/* never show admin controls in dialog */
 	#cx_modal .cx_ui_controls {
+		display: none!important;
+	}
+	#cx_modal .cx_module.cx_ui_hover {
+		background-color: transparent!important;
+	}
+	#cx_modal .cx_module.cx_ui_modulebar {
 		display: none!important;
 	}
