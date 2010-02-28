@@ -126,9 +126,14 @@ class Module_Text_Controller extends Cx_Module_Controller
 	 */
 	protected function formView()
 	{
+		$fields = $this->mapper()->fields();
+		
+		// Set text 'content' as type 'editor' to get WYSIWYG
+		$fields['content']['type'] = 'editor';
+		
 		$view = new Cx_View_Generic_Form('form');
 		$view->action("")
-			->fields($this->mapper()->fields())
+			->fields($fields)
 			->removeFields(array('id', 'module_id', 'date_created', 'date_modified'));
 		return $view;
 	}

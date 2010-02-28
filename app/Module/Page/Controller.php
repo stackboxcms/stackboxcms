@@ -129,8 +129,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 				// Setup javascript variables for use
 				$templateHeadContent .= '<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $this->kernel->config('cx.url') . '", url_assets: "' . $this->kernel->config('cx.url_assets') . '", url_assets_admin: "' . $this->kernel->config('cx.url_assets_admin') . '"}};</script>' . "\n";
 				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets_admin') . 'scripts/cx_admin.js"></script>' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js"></script>' . "\n";
 				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets') . 'styles/jquery-ui/base/jquery-ui.css" rel="stylesheet" />' . "\n";
 				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
+				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets_admin') . 'jHtmlArea/styles/jHtmlArea.css" rel="stylesheet" />' . "\n";
 				$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
 				$templateBodyContent = $this->view('_adminBar')->set('page', $page);
 				$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);

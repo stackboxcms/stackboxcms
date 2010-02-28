@@ -13,12 +13,15 @@ ADMIN UI
 	font-family: Arial, Tahoma, sans-serif;
 	line-height: 1;
 }
+	.cx_ui div.jHtmlArea, .cx_ui iframe {
+		border: 1px solid #ddd;
+	}
 	/* FORM styles */
 	.cx_ui form {
 		margin: 0;
 		padding: 0;
 	}
-	.cx_ui form input, .cx_ui form textarea, .cx_ui form button, .cx_ui form input {
+	.cx_ui form ol.app_form input, .cx_ui form ol.app_form textarea, .cx_ui form ol.app_form button, .cx_ui form ol.app_form input {
 		font-size: 14px;
 		padding: 4px;
 		font-family: Arial, Helvetica, sans-serif;
@@ -26,19 +29,19 @@ ADMIN UI
 		-webkit-border-radius: 10px;
 		-moz-border-radius: 10px;
 	}
-	.cx_ui form ol {
+	.cx_ui form ol.app_form {
 		margin: 0;
 		padding: 0;
 		border: 0;
 		list-style: none;
 	}
-	.cx_ui form li {
+	.cx_ui form li.app_form_field {
 		display: block;
 		margin: 5px 0;
 		padding: 3px;
 		clear: both;
 	}
-	.cx_ui form li label {
+	.cx_ui form li.app_form_field label {
 		display: block;
 		margin: 0;
 		padding: 5px 10px 0 10px;
@@ -48,11 +51,12 @@ ADMIN UI
 		cursor: pointer;
 		font-size: 14px;
 	}
-	.cx_ui form li.app_form_field_text label {
+	.cx_ui form li.app_form_field_text label, .cx_ui form li.app_form_field_editor label {
 		float: none;
 		text-align: left;
+		padding: 0 10px;
 	}
-	.cx_ui form li span {
+	.cx_ui form li.app_form_field span {
 		display: block;
 		margin: 0;
 		padding: 0;
@@ -62,6 +66,7 @@ ADMIN UI
 		display: none;
 	}
 	.cx_ui form li.app_form_actions {
+		clear: both:
 		padding-top: 20px;
 		padding-left: 120px;
 	}

@@ -173,6 +173,11 @@ $(function() {
 	function cx_modalContent(data) {
 		cx_modal.dialog('open');
 		cx_modal_content.html(data);
+		
+		// Load jHTMLArea in editor fields
+		$("form li.app_form_field_editor textarea").htmlarea();
+		
+		// Re-bind form submit in modal (live 'submit' not working in IE8)
 		cx_modalFormBind();
 	}
 	// Close modal windows

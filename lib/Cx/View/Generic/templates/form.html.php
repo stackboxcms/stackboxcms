@@ -29,7 +29,9 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 	  // Adjust field depending on field type
 	  switch($fieldType) {
 		case 'text':
-		  echo $form->textarea($fieldName, $this->data($fieldName), array('rows' => 10, 'cols' => 60));
+		case 'editor':
+		  $attrs = array('rows' => 10, 'cols' => 60);
+		  echo $form->textarea($fieldName, $this->data($fieldName), $attrs);
 		break;
 		
 		case 'bool':
