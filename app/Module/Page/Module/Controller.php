@@ -106,6 +106,29 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	
 	
 	/**
+	 * Save module sorting
+	 * @method POST
+	 */
+	public function saveSortAction($request, $page, $module)
+	{
+		if($request->modules && is_array($request->modules)) {
+			$mapper = $this->mapper();
+			foreach($request->modules as $regionName => $modules) {
+				foreach($modules as $orderIndex => $moduleId) {
+					$item = $mapper->get($moduleId);
+					if($item) {
+						$item->region = $regionName;
+						$item->ordering = $orderIndex;
+						$mapper->save($item);
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	
+	/**
 	 * Return view object for the add/edit form
 	 */
 	protected function formView()

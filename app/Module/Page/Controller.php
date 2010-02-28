@@ -166,9 +166,9 @@ class Module_Page_Controller extends Cx_Module_Controller
 		
 		// Ensure page exists
 		$mapper = $this->mapper();
-		$page = $mapper->getPageByUrl($request->url);
+		$page = $mapper->getPageByUrl($request->page);
 		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->url . "'");
+			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->page . "'");
 		}
 		
 		return $this->formView()->data($page->data());

@@ -129,8 +129,18 @@ $(function() {
 					}
 				});
 			}
-			// Serialize modules and save positions
-			//console.log('Module Serialization: ' + cx_serializeRegionModules());
+			// Serialize modules to save module/region positions
+			$.ajax({
+				type: "GET",
+				url: cx.config.url + cx.page.url + 'm,Page_Module,0/saveSort.html',
+				data: 'ajax=1' + cx_serializeRegionModules(),
+				success: function(data, textStatus, req) {
+					// Do nothing for now, eventually might show some sort of activity notice in UI, etc.
+				},
+				error: function(req) { // req = XMLHttpRequest object
+					alert("[ERROR] Unable to load URL: " + req.responseText);
+				}
+			});
 		}
 	});
 	
