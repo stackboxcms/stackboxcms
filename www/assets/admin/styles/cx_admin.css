@@ -158,7 +158,8 @@ REGION / MODULE UI
 	position: absolute;
 	top: 0;
 	right: 0;
-	width: 100%;
+	width: 100px;
+	overflow: visible;
 }
 .cx_module .cx_ui_modulebar {
 	display: none;
