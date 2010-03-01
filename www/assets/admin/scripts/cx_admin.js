@@ -25,7 +25,7 @@ $(function() {
 	/**
 	 * Open link in the admin bar in a modal window
 	 */
-	$('#cx_admin_bar a, div.cx_ui_controls a').live('click', function() {
+	$('#cx_admin_bar a[rel=modal], div.cx_ui_controls a').live('click', function() {
 		var tLink = $(this);
 		$.ajax({
 			type: "GET",
@@ -37,6 +37,18 @@ $(function() {
 				alert("[ERROR] Unable to load URL: " + req.responseText);
 			}
 		});
+		return false;
+	});
+	
+	
+	/**
+	 * Clieck 'ADD CONTENT' button
+	 */
+	$('#cx_admin_bar_addContent').toggle(function() {
+		$('#cx_admin_modules').slideDown();
+		return false;
+	}, function() {
+		$('#cx_admin_modules').slideUp();
 		return false;
 	});
 	

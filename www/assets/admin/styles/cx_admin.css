@@ -88,6 +88,12 @@ ADMIN BAR
 	#cx_admin_bar ul li { float: left; margin: 0; padding: 4px; }
 	#cx_admin_bar ul li a { display: block; padding: 3px 10px 4px 10px; background-color: #111; font-weight: bold; color: #fff; text-decoration: none; border-radius: 5px;  -webkit-border-radius: 5px; -khtml-border-radius: 5px; }
 	#cx_admin_bar ul li a:hover, #imNav li.active a { background-color: #AFAFAF; color: #000; }
+	/* add content button */
+	#cx_admin_bar ul li#cx_admin_bar_addContent a {
+		text-transform: uppercase;
+		background-color: #C7EFB3;
+		color: #000;
+	}
 
 /*
 ADMIN PANES
@@ -121,6 +127,7 @@ div.cx_ui_pane {
 #cx_admin_modules.cx_ui_pane {
 	top: 40px;
 	right: 0;
+	display: none;
 }
 	#cx_admin_modules .cx_module_tile {
 		margin-bottom: 5px;

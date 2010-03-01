@@ -1,11 +1,12 @@
 <div id="cx_admin_bar" class="cx_ui">
   <div id="cx_admin_bar_inside">
 	<ul>
-	  <li><a href="<?php echo $this->kernel->url('index_action', array('action' => 'new')); ?>">New Page</a></li>
+	  <li id="cx_admin_bar_addContent"><a href="#">+ Add Content</a></li>
+	  <li><a href="<?php echo $this->kernel->url('index_action', array('action' => 'new')); ?>" rel="modal">New Page</a></li>
 	  <?php if('/' == $this->page->url): // ugly hack until routes are fixed for good ?>
-		<li><a href="<?php echo $this->kernel->url('index_action', array('action' => 'edit')); ?>">Edit Page</a></li>
+		<li><a href="<?php echo $this->kernel->url('index_action', array('action' => 'edit')); ?>" rel="modal">Edit Page</a></li>
 	  <?php else: ?>
-		<li><a href="<?php echo $this->kernel->url('page_action', array('page' => $this->page->url, 'action' => 'edit')); ?>">Edit Page</a></li>
+		<li><a href="<?php echo $this->kernel->url('page_action', array('page' => $this->page->url, 'action' => 'edit')); ?>" rel="modal">Edit Page</a></li>
 	  <?php endif; ?>
 	</ul>
   </div>
