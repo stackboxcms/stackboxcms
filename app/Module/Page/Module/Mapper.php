@@ -10,7 +10,7 @@ class Module_Page_Module_Mapper extends Cx_Mapper
 	// Fields
 	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
 	public $page_id = array('type' => 'int', 'key' => true, 'required' => true);
-	public $module_id = array('type' => 'int', 'key' => true, 'required' => true);
+	public $module_id = array('type' => 'int', 'default' => 0);
 	public $region = array('type' => 'string', 'required' => true);
 	public $name = array('type' => 'string', 'required' => true);
 	public $ordering = array('type' => 'int', 'default' => 0);
