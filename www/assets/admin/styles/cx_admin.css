@@ -94,7 +94,8 @@ ADMIN PANES
 ================================================== */
 div.cx_ui_pane {
 	position: fixed;
-	width: 225px;
+	left: 0;
+	width: 150px;
 	background: #666;
 	font-family: Arial, Tahoma, sans-serif;
 	font-size: 12px;
@@ -142,6 +143,7 @@ REGION / MODULE UI
 	min-height: 10px;
 }
 .cx_region_highlight {
+	background-color: #DFEBFF;
 	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.9);
 	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.9);
 }
