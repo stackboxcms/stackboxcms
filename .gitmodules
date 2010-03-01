@@ -1,6 +1,6 @@
 [submodule "lib/AppKernel"]
 	path = lib/AppKernel
-	url = git@github.com:vlucas/AppKernel.git
+	url = http://github.com/vlucas/AppKernel.git
 [submodule "lib/phpDataMapper"]
 	path = lib/phpDataMapper
-	url = git@github.com:vlucas/phpDataMapper.git
+	url = http://github.com/vlucas/phpDataMapper.git
