@@ -184,6 +184,9 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$mapper = $this->mapper();
 		$entity = $mapper->get()->data($request->post());
 		$entity->parent_id = (int) $request->parent_id;
+		$entity->date_created = date($mapper->adapter()->dateTimeFormat());
+		$entity->date_modified = $entity->date_created;
+		
 		// Auto-genereate URL if not filled in
 		if(!$request->url) {
 			$entity->url = $this->kernel->formatUrl($request->title);
