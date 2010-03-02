@@ -94,8 +94,8 @@ class Cx_Kernel extends AppKernel_Main
 			// Create new mapper, passing in adapter connection
 			$mapper = new $mapperName($this->database());
 			
-			// Auto-Migrations when in debug mode
-			if($this->config('cx.mode.development')) {
+			// Auto-Migrations when in development mode
+			if($this->config('cx.mode.development') === true) {
 				$mapper->migrate();
 			}
 			
