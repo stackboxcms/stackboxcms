@@ -1,7 +1,7 @@
 <?php
 // Show all errors by default
 error_reporting(-1);
-ini_set('display_errors', '1');
+ini_set('display_errors', 'On');
 
 // PHP version must be 5.2 or greater
 if(version_compare(phpversion(), "5.2.0", "<")) {
@@ -35,11 +35,11 @@ try {
 		
 		// Show all errors
 		error_reporting(-1);
-		ini_set('display_errors', '1');
+		ini_set('display_errors', 'On');
 	} else {
 		// Show NO errors
 		//error_reporting(0);
-		//ini_set('display_errors', '0');
+		//ini_set('display_errors', 'Off');
 	}
 	
 	$kernel->trigger('cx_boot');
@@ -133,36 +133,36 @@ try {
 // Authentication Error
 } catch(Cx_Exception_Auth $e) {
 	$responseStatus = 403;
-	$content = $e->getMessage();
-	$kernel->response($responseStatus);
+	$content = $e;
 	$kernel->dispatch('user', 'loginAction', array($request));
  
 // 404 Errors
 } catch(Cx_Exception_FileNotFound $e) {
 	$responseStatus = 404;
-	$content = $e->getMessage();
+	$content = $e;
 
 // Method Not Allowed
 } catch(Cx_Exception_Method $e) {
 	$responseStatus = 405; // 405 - Method Not Allowed
-	$content = $e->getMessage();
+	$content = $e;
 
 // HTTP Exception
 } catch(Cx_Exception_Http $e) {
 	$responseStatus = $e->getCode(); 
-	$content = $e->getMessage();
+	$content = $e;
 
 // Module/Action Error
 } catch(Cx_Exception $e) {
 	$responseStatus = 500;
-	$content = $e->getMessage();
+	$content = $e;
  
 // Generic Error
 } catch(Exception $e) {
 	$responseStatus = 500;
 	$content = $e;
 }
- 
+
+/*
 // Error handling through core error module
 if($kernel && $content && $responseStatus >= 400 && !$request->isAjax()) {
 	try {
@@ -171,13 +171,26 @@ if($kernel && $content && $responseStatus >= 400 && !$request->isAjax()) {
 		// Let original error go through and be displayed
 	}
 }
+//*/
+
+// Exception detail depending on mode
+if($content instanceof Exception) {
+	$content = "[ERROR] " . $e->getMessage();
+	// Show debugging info?
+	if($cfg['cx']['debug']) {
+		$content .= "<p>File: " . $e->getFile() . " (" . $e->getLine() . ")</p>";
+		$content .= "<pre>" . $e->getTraceAsString() . "</pre>";
+	}
+}
 
 // Send proper response
 if($kernel) {
 	$kernel->trigger('cx_response_before', array(&$content));
 	
 	// Set content and send response
-	$response->status($responseStatus);
+	if($responseStatus != 200) {
+		$response->status($responseStatus);
+	}
 	$response->content($content);
 	$response->send();
 	
