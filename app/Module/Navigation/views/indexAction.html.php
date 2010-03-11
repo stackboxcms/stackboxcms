@@ -5,6 +5,7 @@
  * @todo Fix this garbage and replace with view helpers and proper decorators, etc.
  */
 $kernel = $this->kernel; // Get object inside function context (ugly hack alert)
+if(!function_exists('renderNavigation')) { // Can't even believe I am doing this...
 function renderNavigation($pages) {
 	global $kernel;
 	if(!$pages || count($pages) == 0) {
@@ -26,6 +27,7 @@ function renderNavigation($pages) {
 <?php endforeach; ?>
 </ul>
 <?php
+}
 }
 
 // Render navigation
