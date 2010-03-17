@@ -2,7 +2,7 @@
 /**
  * Base Module Mapper
  */
-abstract class Cx_Module_Mapper extends Cx_Mapper
+abstract class Cx_Module_Mapper extends Alloy_Module_Mapper
 {
-	// Used for future extensibility for global module changes
+	
 }
