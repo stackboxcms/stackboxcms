@@ -62,19 +62,25 @@ try {
 	
 	// Router - Add routes we want to match
 	$router = $kernel->router();
-	$pageRouteItem = '<*page>';
+	$pageRouteItem = '/<*page>';
 	$kernel->trigger('cx_boot_router_before', array($router));
 	
+	// User Login
+	$router->route('login', '/login')
+		->defaults(array('module' => 'User_Session', 'action' => 'new', 'format' => 'html'));
+	$router->route('logout', '/logout')
+		->defaults(array('module' => 'User_Session', 'action' => 'delete', 'format' => 'html'));
+		
 	// HTTP Errors
-	$router->route('http_error', 'error/<#errorCode>(.<:format>)')
+	$router->route('http_error', '/error/<#errorCode>(.<:format>)')
 		->defaults(array('module' => 'Error', 'action' => 'display', 'format' => 'html', 'page' => '/'));
 	
 	// User reserved route
-	$router->route('user', 'user/<:action>(.<:format>)')
+	$router->route('user', '/user/<:action>(.<:format>)')
 		->defaults(array('module' => 'User', 'format' => 'html'));
-	
+		
 	// Admin reserved route
-	$router->route('admin', 'admin/<:action>(.<:format>)')
+	$router->route('admin', '/admin/<:action>(.<:format>)')
 		->defaults(array('module' => 'Page_Admin', 'format' => 'html'));
 	
 	// Normal Routes
@@ -100,7 +106,7 @@ try {
 	$router->route('page_action', $pageRouteItem . '/<:action>(.<:format>)')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
 	
-	$router->route('index_action', '<:action>\.<:format>')
+	$router->route('index_action', '/<:action>\.<:format>')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
 	
 	$router->route('page', $pageRouteItem)
