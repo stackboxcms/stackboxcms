@@ -7,7 +7,7 @@
  * @package Cont-xt
  * @link http://cont-xt.com/
  */
-class Module_Page_Template extends Cx_View
+class Module_Page_Template extends Alloy_View
 {
 	// Extension type (inherited from Cx_View)
 	protected $_default_format = 'html';

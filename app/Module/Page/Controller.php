@@ -38,10 +38,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 				$page->date_created = date($mapper->adapter()->dateTimeFormat());
 				$page->date_modified = $page->date_created;
 				if(!$mapper->save($page)) {
-					throw new Cx_Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
+					throw new Alloy_Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
 				}
 			} else {
-				throw new Cx_Exception_FileNotFound("Page not found: '" . $pageUrl . "'");
+				throw new Alloy_Exception_FileNotFound("Page not found: '" . $pageUrl . "'");
 			}
 		}
 		
@@ -70,12 +70,12 @@ class Module_Page_Controller extends Cx_Module_Controller
 		}
 		
 		// Load page template
-		$activeTheme = ($page->theme) ? $page->theme : $kernel->config('cx.default.theme');
-		$activeTemplate = ($page->template) ? $page->template : $kernel->config('cx.default.theme_template');
-		$themeUrl = $kernel->config('cx.url_themes') . $activeTheme . '/';
+		$activeTheme = ($page->theme) ? $page->theme : $kernel->config('default.theme');
+		$activeTemplate = ($page->template) ? $page->template : $kernel->config('default.theme_template');
+		$themeUrl = $kernel->config('url.themes') . $activeTheme . '/';
 		$template = new Module_Page_Template($activeTemplate);
 		$template->format($request->format);
-		$template->path($kernel->config('cx.path_themes') . $activeTheme . '/');
+		$template->path($kernel->config('path.themes') . $activeTheme . '/');
 		$template->parse();
 		
 		// Template Region Defaults
@@ -125,14 +125,14 @@ class Module_Page_Controller extends Cx_Module_Controller
 			// Admin toolbar, javascript, styles, etc.
 			if($userIsAdmin) {
 				$templateHeadContent = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets') . 'scripts/jquery-ui.min.js"></script>' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('url.assets') . 'scripts/jquery-ui.min.js"></script>' . "\n";
 				// Setup javascript variables for use
-				$templateHeadContent .= '<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $this->kernel->config('cx.url') . '", url_assets: "' . $this->kernel->config('cx.url_assets') . '", url_assets_admin: "' . $this->kernel->config('cx.url_assets_admin') . '"}};</script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets_admin') . 'scripts/cx_admin.js"></script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('cx.url_assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js"></script>' . "\n";
-				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets') . 'styles/jquery-ui/base/jquery-ui.css" rel="stylesheet" />' . "\n";
-				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
-				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('cx.url_assets_admin') . 'jHtmlArea/styles/jHtmlArea.css" rel="stylesheet" />' . "\n";
+				$templateHeadContent .= '<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $this->kernel->config('url.root') . '", url_assets: "' . $this->kernel->config('url.assets') . '", url_assets_admin: "' . $this->kernel->config('url.assets_admin') . '"}};</script>' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('url.assets_admin') . 'scripts/cx_admin.js"></script>' . "\n";
+				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('url.assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js"></script>' . "\n";
+				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('url.assets') . 'styles/jquery-ui/base/jquery-ui.css" rel="stylesheet" />' . "\n";
+				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('url.assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
+				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('url.assets_admin') . 'jHtmlArea/styles/jHtmlArea.css" rel="stylesheet" />' . "\n";
 				$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
 				$templateBodyContent = $this->view('_adminBar')->set('page', $page);
 				$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
@@ -168,7 +168,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$mapper = $this->mapper();
 		$page = $mapper->getPageByUrl($request->page);
 		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->page . "'");
+			throw new Alloy_Exception_FileNotFound("Page not found: '" . $request->page . "'");
 		}
 		
 		return $this->formView()->data($page->data());
@@ -215,7 +215,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		// Ensure page exists
 		$page = $this->mapper()->getPageByUrl($request->url);
 		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($url) . "'");
+			throw new Alloy_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($url) . "'");
 		}
 		
 		$this->mapper()->delete($page);
@@ -233,7 +233,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$mapper = $this->mapper();
 		$page = $mapper->getPageByUrl($request->url);
 		if(!$page) {
-			throw new Cx_Exception_FileNotFound("Page not found: '" . $request->url . "'");
+			throw new Alloy_Exception_FileNotFound("Page not found: '" . $request->url . "'");
 		}
 		
 		$pages = $mapper->pageTree();
@@ -250,7 +250,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	protected function formView()
 	{
-		$view = new Cx_View_Generic_Form('form');
+		$view = new Alloy_View_Generic_Form('form');
 		$fields = $this->mapper()->fields();
 		
 		// Override int 'parent_id' with option select box

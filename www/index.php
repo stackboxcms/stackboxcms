@@ -19,14 +19,15 @@ if(file_exists($cfgHostFile)) {
 }
 
 // Cont-xt Kernel
-require $cfg['cx']['path_lib'] . '/Cx/Kernel.php';
+require $cfg['path']['lib'] . '/Alloy/Kernel.php';
 
 // Run!
 $kernel = false;
 try {
-	$kernel = cx($cfg);
+	$kernel = Alloy($cfg);
 	spl_autoload_register(array($kernel, 'load'));
 	set_error_handler(array($kernel, 'errorHandler'));
+	session_start();
 	
 	// Debug?
 	if($kernel->config('cx.debug')) {
@@ -41,6 +42,17 @@ try {
 		//error_reporting(0);
 		//ini_set('display_errors', 'Off');
 	}
+	
+	// Host-based config file for overriding default settings in different environments
+	$cfgHostFile = dirname(dirname(__FILE__)) . '/app/config.' . strtolower(php_uname('n')) . '.php';
+	if(file_exists($cfgHostFile)) {
+		$cfgHost = require($cfgHostFile);
+		$kernel->config($cfgHost);
+	}
+	
+	// Global setup based on config settings
+	date_default_timezone_set($cfg['i18n']['timezone']);
+	ini_set("session.gc_maxlifetime", $cfg['session']['lifetime']);
 	
 	$kernel->trigger('cx_boot');
 	
@@ -117,9 +129,9 @@ try {
 	$action = $params['action'];
 	
 	// Set class load paths - works for all classes using the PEAR/Zend naming convention placed in 'lib'
-	$kernel->addLoadPath($kernel->config('cx.path_lib'));
+	$kernel->addLoadPath($kernel->config('path.lib'));
 	// Module paths
-	$kernel->addLoadPath($kernel->config('cx.path_modules'), 'Module_');
+	$kernel->addLoadPath($kernel->config('path.modules'), 'Module_');
 	
 	// Run/execute
 	$content = "";
@@ -137,22 +149,22 @@ try {
 	$kernel->dispatch('user', 'loginAction', array($request));
  
 // 404 Errors
-} catch(Cx_Exception_FileNotFound $e) {
+} catch(Alloy_Exception_FileNotFound $e) {
 	$responseStatus = 404;
 	$content = $e;
 
 // Method Not Allowed
-} catch(Cx_Exception_Method $e) {
+} catch(Alloy_Exception_Method $e) {
 	$responseStatus = 405; // 405 - Method Not Allowed
 	$content = $e;
 
 // HTTP Exception
-} catch(Cx_Exception_Http $e) {
+} catch(Alloy_Exception_Http $e) {
 	$responseStatus = $e->getCode(); 
 	$content = $e;
 
 // Module/Action Error
-} catch(Cx_Exception $e) {
+} catch(Alloy_Exception $e) {
 	$responseStatus = 500;
 	$content = $e;
  
@@ -177,7 +189,7 @@ if($kernel && $content && $responseStatus >= 400 && !$request->isAjax()) {
 if($content instanceof Exception) {
 	$content = "[ERROR] " . $e->getMessage();
 	// Show debugging info?
-	if($cfg['cx']['debug']) {
+	if($cfg['debug']) {
 		$content .= "<p>File: " . $e->getFile() . " (" . $e->getLine() . ")</p>";
 		$content .= "<pre>" . $e->getTraceAsString() . "</pre>";
 	}

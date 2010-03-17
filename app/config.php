@@ -1,68 +1,66 @@
 <?php
 // Configuration
 $cfg = array();
-$cfg['cx']['env']['https'] = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? false : true;
-$cfg['cx']['request'] = (isset($_GET['url']) ? urldecode($_GET['url']) : '' );
-$cfg['cx']['path_root'] = dirname(dirname(__FILE__));
+$cfg['env']['https'] = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? false : true;
 
-$cfg['cx']['dir_www'] = '/www/';
-$cfg['cx']['dir_assets'] = $cfg['cx']['dir_www'] . 'assets/';
-$cfg['cx']['dir_assets_admin'] = $cfg['cx']['dir_assets'] . 'admin/';
-$cfg['cx']['dir_lib'] = '/lib/';
-$cfg['cx']['dir_modules'] = '/app/';
-$cfg['cx']['dir_themes'] = $cfg['cx']['dir_www'] . 'themes/';
+$cfg['path']['root'] = dirname(dirname(__FILE__));
 
-$cfg['cx']['path_app'] = dirname(__FILE__);
-$cfg['cx']['path_lib'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_lib'];
-$cfg['cx']['path_modules'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_modules'];
-$cfg['cx']['path_public'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_www'];
-$cfg['cx']['path_themes'] = $cfg['cx']['path_root'] . $cfg['cx']['dir_themes'];
+$cfg['dir']['www'] = '/www/';
+$cfg['dir']['assets'] = $cfg['dir']['www'] . 'assets/';
+$cfg['dir']['assets_admin'] = $cfg['dir']['assets'] . 'admin/';
+$cfg['dir']['lib'] = '/lib/';
+$cfg['dir']['modules'] = '/app/';
+$cfg['dir']['themes'] = $cfg['dir']['www'] . 'themes/';
 
-$cfg['cx']['url'] = 'http' . (($cfg['cx']['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . str_replace('\\', '/', substr($cfg['cx']['path_root'] . $cfg['cx']['dir_www'], strlen($_SERVER['DOCUMENT_ROOT'])+1));
-$cfg['cx']['url_themes'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_themes']);
-$cfg['cx']['url_assets'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_assets']);
-$cfg['cx']['url_assets_admin'] = $cfg['cx']['url'] . str_replace($cfg['cx']['dir_www'], '', $cfg['cx']['dir_assets_admin']);
+$cfg['path']['app'] = dirname(__FILE__);
+$cfg['path']['lib'] = $cfg['path']['root'] . $cfg['dir']['lib'];
+$cfg['path']['modules'] = $cfg['path']['root'] . $cfg['dir']['modules'];
+$cfg['path']['public'] = $cfg['path']['root'] . $cfg['dir']['www'];
+$cfg['path']['themes'] = $cfg['path']['root'] . $cfg['dir']['themes'];
 
-// Debug?
-$cfg['cx']['debug'] = false;
-
-// In Development Mode?
-$cfg['cx']['mode']['development'] = true;
-
-// Error Reporting
-$cfg['cx']['error_reporting'] = true;
+// URLs
+$cfg['url']['request'] = (isset($_GET['url']) ? urldecode($_GET['url']) : '' );
+$cfg['url']['root'] = 'http' . (($cfg['env']['https']) ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . '/' . str_replace('\\', '/', substr($cfg['path']['root'] . $cfg['dir']['www'], strlen($_SERVER['DOCUMENT_ROOT'])+1));
+$cfg['url']['themes'] = $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['dir']['themes']);
+$cfg['url']['assets'] = $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['dir']['assets']);
+$cfg['url']['assets_admin'] = $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['dir']['assets_admin']);
 
 // Use Apache/IIS rewrite on URLs?
-$cfg['cx']['url_rewrite'] = true;
+$cfg['url']['rewrite'] = true;
+
+// Debug?
+$cfg['debug'] = false;
+
+// In Development Mode?
+$cfg['mode']['development'] = true;
+
+// Error Reporting
+$cfg['errors']['display'] = true;
 
 // Defaults
-$cfg['cx']['default']['module'] = 'page';
-$cfg['cx']['default']['action'] = 'index';
-$cfg['cx']['default']['theme'] = 'default';
-$cfg['cx']['default']['theme_template'] = 'index';
+$cfg['default']['module'] = 'page';
+$cfg['default']['action'] = 'index';
+$cfg['default']['theme'] = 'default';
+$cfg['default']['theme_template'] = 'index';
 
 // Database - Param names to match Zend_Config
-$cfg['cx']['database']['master']['adapter'] = 'MySQL';
-$cfg['cx']['database']['master']['host'] = 'localhost';
-$cfg['cx']['database']['master']['username'] = 'test';
-$cfg['cx']['database']['master']['password'] = 'password';
-$cfg['cx']['database']['master']['dbname'] = 'cx_cms';
-$cfg['cx']['database']['master']['options'] = array(
+$cfg['database']['master']['adapter'] = 'MySQL';
+$cfg['database']['master']['host'] = 'localhost';
+$cfg['database']['master']['username'] = 'root';
+$cfg['database']['master']['password'] = '';
+$cfg['database']['master']['dbname'] = 'cx_cms';
+$cfg['database']['master']['options'] = array(
 	PDO::ERRMODE_EXCEPTION => true,
 	PDO::ATTR_PERSISTENT => false,
 	PDO::ATTR_EMULATE_PREPARES => true
 	);
 
 // Session Settings
-$cfg['cx']['session']['lifetime'] = 28000;
+$cfg['session']['lifetime'] = 28000;
 
 // Locale Settings
-$cfg['cx']['i18n']['charset'] = 'UTF-8';
-$cfg['cx']['i18n']['language'] = 'en_US';
-$cfg['cx']['i18n']['timezone'] = 'America/Chicago';
-
-// Global setup
-date_default_timezone_set($cfg['cx']['i18n']['timezone']);
-ini_set("session.gc_maxlifetime", $cfg['cx']['session']['lifetime']);
+$cfg['i18n']['charset'] = 'UTF-8';
+$cfg['i18n']['language'] = 'en_US';
+$cfg['i18n']['timezone'] = 'America/Chicago';
 
 return $cfg;

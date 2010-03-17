@@ -1,5 +1,5 @@
 <?php
-class Module_Page_Mapper extends Cx_Mapper
+class Module_Page_Mapper extends Alloy_Mapper
 {
 	// Table
 	protected $source = "pages";

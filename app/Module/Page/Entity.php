@@ -1,5 +1,5 @@
 <?php
-class Module_Page_Entity extends Cx_Mapper_Entity
+class Module_Page_Entity extends Cx_Module_Entity
 {
 	/**
 	 * Setter override: 'url'

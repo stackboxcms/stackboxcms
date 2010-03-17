@@ -1,5 +1,5 @@
 <?php
-class Module_Page_Module_Mapper extends Cx_Mapper
+class Module_Page_Module_Mapper extends Alloy_Mapper
 {
 	// Custom row class
 	protected $_entityClass = 'Module_Page_Module_Entity';
@@ -20,7 +20,7 @@ class Module_Page_Module_Mapper extends Cx_Mapper
 
 
 // Custom entity object
-class Module_Page_Module_Entity extends Cx_Mapper_Entity
+class Module_Page_Module_Entity extends Cx_Module_Entity
 {
 	
 }
