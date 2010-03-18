@@ -67,7 +67,8 @@ try {
 	
 	// User Login
 	$router->route('login', '/login')
-		->defaults(array('module' => 'User_Session', 'action' => 'new', 'format' => 'html'));
+		->defaults(array('module' => 'User_Session', 'action' => 'new', 'format' => 'html'))
+		->post(array('action' => 'post'));
 	$router->route('logout', '/logout')
 		->defaults(array('module' => 'User_Session', 'action' => 'delete', 'format' => 'html'));
 		
@@ -138,6 +139,7 @@ try {
 	$kernel->addLoadPath($kernel->config('path.lib'));
 	// Module paths
 	$kernel->addLoadPath($kernel->config('path.modules'), 'Module_');
+	$kernel->addLoadPath($kernel->config('path.cx_modules'), 'Module_');
 	
 	// Run/execute
 	$content = "";

@@ -10,11 +10,13 @@ $cfg['dir']['assets'] = $cfg['dir']['www'] . 'assets/';
 $cfg['dir']['assets_admin'] = $cfg['dir']['assets'] . 'admin/';
 $cfg['dir']['lib'] = '/lib/';
 $cfg['dir']['modules'] = '/app/';
+$cfg['dir']['cx_modules'] = $cfg['dir']['www'] . 'content/';
 $cfg['dir']['themes'] = $cfg['dir']['www'] . 'themes/';
 
 $cfg['path']['app'] = dirname(__FILE__);
 $cfg['path']['lib'] = $cfg['path']['root'] . $cfg['dir']['lib'];
 $cfg['path']['modules'] = $cfg['path']['root'] . $cfg['dir']['modules'];
+$cfg['path']['cx_modules'] = $cfg['path']['root'] . $cfg['dir']['cx_modules'];
 $cfg['path']['public'] = $cfg['path']['root'] . $cfg['dir']['www'];
 $cfg['path']['themes'] = $cfg['path']['root'] . $cfg['dir']['themes'];
 

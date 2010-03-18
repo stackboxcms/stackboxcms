@@ -89,7 +89,7 @@ class Module_Text_Controller extends Cx_Module_Controller
 		//$item = $mapper->get($request->module_item);
 		$item = $this->mapper()->currentTextEntity($module);
 		if(!$item) {
-			throw new Cx_Exception_FileNotFound($this->name() . " module item not found");
+			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
 		}
 		$item->data($request->post());
 		$item->module_id = $module->id;
@@ -115,7 +115,7 @@ class Module_Text_Controller extends Cx_Module_Controller
 	{
 		$item = $mapper->get($request->module_item);
 		if(!$item) {
-			throw new Cx_Exception_FileNotFound($this->name() . " module item not found");
+			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
 		}
 		return $this->mapper()->delete($item);
 	}
@@ -131,7 +131,7 @@ class Module_Text_Controller extends Cx_Module_Controller
 		// Set text 'content' as type 'editor' to get WYSIWYG
 		$fields['content']['type'] = 'editor';
 		
-		$view = new Cx_View_Generic_Form('form');
+		$view = new Alloy_View_Generic_Form('form');
 		$view->action("")
 			->fields($fields)
 			->removeFields(array('id', 'module_id', 'date_created', 'date_modified'));
