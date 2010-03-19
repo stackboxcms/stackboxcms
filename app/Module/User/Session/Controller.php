@@ -34,10 +34,8 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 		$userMapper = $this->mapper('Module_User');
 		
 		// Get user by username first so we can get salt for hashing encrypted password
-		$userTest = $userMapper->first(array(
-			'username' => $request->username
-			));
-		if(!$userTest) {
+		$userTest = $userMapper->first(array('username' => $request->username));
+		if(!$userTest || !$request->password) {
 			$this->kernel->response(401);
 			return $this->formView()->errors(array('username' => array('Incorrect username/password combination provided')));
 		}
