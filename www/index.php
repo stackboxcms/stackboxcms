@@ -84,22 +84,22 @@ try {
 	$router->route('admin', '/admin/<:action>(.<:format>)')
 		->defaults(array('module' => 'Page_Admin', 'format' => 'html'));
 	
-	// Normal Routes
-	$router->route('module', $pageRouteItem . 'm,<:module_name>,<#module_id>(/<:module_action>)(.<:format>)')
-		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'index', 'format' => 'html'))
-		->get(array('module_action' => 'index'))
-		->post(array('module_action' => 'post'))
-		->put(array('module_action' => 'put'))
-		->delete(array('module_action' => 'delete'));
-	
 	/*
 	$router->route('module_item_action', $pageRouteItem . 'm,<:module_name>,<#module_id>/<#module_item>/<:module_action>(.<:format>)')
 		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));
 	/*/
-		
+	
+	// Normal Routes
 	$router->route('module_item', $pageRouteItem . 'm,<:module_name>,<#module_id>/<#module_item>(/<:module_action>)(.<:format>)')
 		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'view', 'format' => 'html'))
 		->get(array('module_action' => 'view'))
+		->post(array('module_action' => 'post'))
+		->put(array('module_action' => 'put'))
+		->delete(array('module_action' => 'delete'));
+		
+	$router->route('module', $pageRouteItem . 'm,<:module_name>,<#module_id>(/<:module_action>)(.<:format>)')
+		->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'module_action' => 'index', 'format' => 'html'))
+		->get(array('module_action' => 'index'))
 		->post(array('module_action' => 'post'))
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
