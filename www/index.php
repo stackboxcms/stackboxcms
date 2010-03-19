@@ -141,6 +141,21 @@ try {
 	$kernel->addLoadPath($kernel->config('path.modules'), 'Module_');
 	$kernel->addLoadPath($kernel->config('path.cx_modules'), 'Module_');
 	
+	// User - Custom user code for authentication
+	// ==================================
+	if(isset($_SESSION['user']['session'])) {
+		$user = $kernel->dispatch('User_Session', 'authenticate', array($_SESSION['user']['session']));
+		if($user) {
+			$kernel->user($user);
+		} else {
+			// Invalid user key
+			unset($_SESSION['user']['session']);
+		}
+	}
+	// ==================================
+	
+	//var_dump($kernel->user());
+	
 	// Run/execute
 	$content = "";
 	

@@ -26,7 +26,7 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 	
 	
 	/**
-	 * Create a new resource with the given parameters
+	 * Create a new user session
 	 * @method POST
 	 */
 	public function postMethod($request)
@@ -59,6 +59,10 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 		$session->date_created = date($sessionMapper->adapter()->dateTimeFormat());
 		
 		if($sessionMapper->save($session)) {
+			// Set session cookie and user object on Kernel
+			$_SESSION['user']['session'] = $user->id . ":" . $session->session_id;
+			$this->kernel->user($user);
+			
 			// Redirect to index
 			return $this->kernel->redirect($this->kernel->url('page', array('page' => '/')));
 		} else {
@@ -84,11 +88,30 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 	{
 		$user = $this->kernel->user();
 		if(!$user) {
-			throw new Cx_Exception_FileNotFound("Unable to logout. User not logged in");
+			throw new Alloy_Exception_FileNotFound("Unable to logout. User not logged in");
 		}
 		
 		// Delete all sessions matched for current user
 		return $this->mapper()->delete(array('user_id' => $user->id));
+	}
+	
+	
+	/**
+	 * Authenticate user for given session key
+	 */
+	public function authenticate($sessionKey)
+	{
+		$userSessionMapper = $this->mapper();
+		$userMapper = $this->mapper('Module_User');
+		$user = false;
+		if(strpos($sessionKey, ':')) {
+			list($userId, $userSession) = explode(':', $sessionKey);
+			$userSession = $userSessionMapper->first(array('user_id' => $userId, 'session_id' => $userSession));
+			if($userSession) {
+				return $userMapper->get($userSession->user_id);
+			}
+		}
+		return false;
 	}
 	
 	
