@@ -11,13 +11,6 @@ if(version_compare(phpversion(), "5.2.0", "<")) {
 // Configuration settings
 $cfg = require(dirname(dirname(__FILE__)) . '/app/config.php');
 
-// Host-based config file for overriding default settings in different environments
-$cfgHostFile = dirname(dirname(__FILE__)) . '/app/config.' . strtolower(php_uname('n')) . '.php';
-if(file_exists($cfgHostFile)) {
-	$cfgHost = require($cfgHostFile);
-	$cfg = array_merge($cfg, $cfgHost);
-}
-
 // Cont-xt Kernel
 require $cfg['path']['lib'] . '/Alloy/Kernel.php';
 
@@ -28,6 +21,13 @@ try {
 	spl_autoload_register(array($kernel, 'load'));
 	set_error_handler(array($kernel, 'errorHandler'));
 	session_start();
+	
+	// Host-based config file for overriding default settings in different environments
+	$cfgHostFile = dirname(dirname(__FILE__)) . '/app/config.' . strtolower(php_uname('n')) . '.php';
+	if(file_exists($cfgHostFile)) {
+		$cfgHost = require($cfgHostFile);
+		$cfg = $kernel->config($cfgHost);
+	}
 	
 	// Debug?
 	if($kernel->config('cx.debug')) {
@@ -51,8 +51,8 @@ try {
 	}
 	
 	// Global setup based on config settings
-	date_default_timezone_set($cfg['i18n']['timezone']);
-	ini_set("session.gc_maxlifetime", $cfg['session']['lifetime']);
+	date_default_timezone_set($kernel->config('i18n.timezone'));
+	ini_set("session.gc_maxlifetime", $kernel->config('session.lifetime'));
 	
 	$kernel->trigger('cx_boot');
 	
