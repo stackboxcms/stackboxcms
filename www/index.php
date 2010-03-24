@@ -30,7 +30,7 @@ try {
 	}
 	
 	// Debug?
-	if($kernel->config('cx.debug')) {
+	if($kernel->config('debug')) {
 		// Enable debug mode
 		$kernel->debug(true);
 		
@@ -212,7 +212,7 @@ if($kernel && $content && $responseStatus >= 400 && !$request->isAjax()) {
 if($content instanceof Exception) {
 	$content = "[ERROR] " . $e->getMessage();
 	// Show debugging info?
-	if($cfg['debug']) {
+	if($kernel->config('debug')) {
 		$content .= "<p>File: " . $e->getFile() . " (" . $e->getLine() . ")</p>";
 		$content .= "<pre>" . $e->getTraceAsString() . "</pre>";
 	}
