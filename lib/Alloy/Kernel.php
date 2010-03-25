@@ -63,6 +63,9 @@ class Alloy_Kernel extends AppKernel_Main
 	{
 		// Clean module name to prevent possible security vulnerabilities
 		$sModule = preg_replace('/[^a-zA-Z0-9_]/', '', $module);
+		
+		// Upper-case beginning of each word
+		$sModule = str_replace(' ', '_', ucwords(str_replace('_', ' ', $sModule)));
 		$sModuleClass = 'Module_' . $sModule . '_Controller';
 		
 		// Replace underscores with folder slashes

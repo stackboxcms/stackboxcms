@@ -79,7 +79,7 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	public function deleteAction($request, $page, $module)
 	{
 		if($request->format == 'html') {
-			$view = new Cx_View_Generic_Form('form');
+			$view = new Alloy_View_Generic_Form('form');
 			$form = $view
 				->method('delete')
 				->action($this->kernel->url('module_item', array('page' => '/', 'module_name' => $this->name(), 'module_id' => 0, 'module_item' => $request->module_item)))
@@ -133,7 +133,7 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	 */
 	protected function formView()
 	{
-		$view = new Cx_View_Generic_Form('form');
+		$view = new Alloy_View_Generic_Form('form');
 		$view->action("")
 			->fields($this->mapper()->fields())
 			->removeFields(array('id', 'date_created', 'date_modified'));
