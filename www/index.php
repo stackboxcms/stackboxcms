@@ -30,7 +30,7 @@ try {
 	}
 	
 	// Debug?
-	if($kernel->config('cx.debug')) {
+	if($kernel->config('debug')) {
 		// Enable debug mode
 		$kernel->debug(true);
 		
