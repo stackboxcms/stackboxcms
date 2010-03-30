@@ -8,11 +8,11 @@ abstract class Cx_Module_Controller extends Alloy_Module_Controller
 	/**
 	 * Access control list for controller methods
 	 */
-	public function acl($action)
+	public function acl()
 	{
 		return array(
 			'view' => array('indexAction', 'viewAction', 'getMethod'),
-			'edit' => array('postMethod', 'putMethod', 'deleteMethod')
+			'edit' => array('newAction', 'editAction', 'deleteAction', 'postMethod', 'putMethod', 'deleteMethod')
 			);
 	}
 	

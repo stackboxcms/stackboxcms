@@ -99,19 +99,27 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 	/**
 	 * Authenticate user for given session key
 	 */
-	public function authenticate($sessionKey)
+	public function authenticate($sessionKey = null)
 	{
 		$userSessionMapper = $this->mapper();
 		$userMapper = $this->mapper('Module_User');
 		$user = false;
-		if(strpos($sessionKey, ':')) {
+		
+		// Return user based on session key, if valid
+		if($sessionKey && strpos($sessionKey, ':')) {
 			list($userId, $userSession) = explode(':', $sessionKey);
 			$userSession = $userSessionMapper->first(array('user_id' => $userId, 'session_id' => $userSession));
 			if($userSession) {
 				return $userMapper->get($userSession->user_id);
 			}
 		}
-		return false;
+		
+		// Return empty 'guest' user object
+		if(!$user) {
+			$user = $userMapper->get();
+		}
+		
+		return $user;
 	}
 	
 	

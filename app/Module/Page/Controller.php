@@ -23,6 +23,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	{
 		$kernel = $this->kernel;
 		$request = $kernel->request();
+		$user = $kernel->user();
 		
 		// Ensure page exists
 		$mapper = $this->mapper();
@@ -62,11 +63,19 @@ class Module_Page_Controller extends Cx_Module_Controller
 				$module = $page->modules->where(array('id' => $moduleId))->first();
 			}
 			
+			// Load requested module
+			$moduleObject = $kernel->module($moduleName);
+			
+			// Ensure user can execute requested action
+			if(!$moduleObject->userCanExecute($user, $moduleAction)) {
+				throw new Alloy_Exception_Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+			}
+			
 			// Dispatch to single module
-			$moduleResponse = $kernel->dispatchRequest($request, $moduleName, $moduleAction, array($request, $page, $module));
+			$moduleResponse = $kernel->dispatchRequest($request, $moduleObject, $moduleAction, array($request, $page, $module));
 			
 			// Return content immediately, currently not wrapped in template
-			return $this->regionModuleFormat($request, $page, $module, $moduleResponse);
+			return $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
 		}
 		
 		// Load page template
@@ -91,7 +100,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			if(!is_array($regionModules[$module->region])) {
 				$regionModules[$module->region] = array();
 			}
-			$regionModules[$module->region][] = $this->regionModuleFormat($request, $page, $module, $moduleResponse);
+			$regionModules[$module->region][] = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
 		}
 		
 		// Replace region content
@@ -119,11 +128,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$templateContent = $template->content();
 		
 		// Admin stuff for HTML format
-		$userIsAdmin = true; // @todo Implement the user authentication stuff...
 		if($template->format() == 'html') {
 			// Add admin stuff to the page
 			// Admin toolbar, javascript, styles, etc.
-			if($userIsAdmin) {
+			if($user->isAdmin()) {
 				$templateHeadContent = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>' . "\n";
 				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('url.assets') . 'scripts/jquery-ui.min.js"></script>' . "\n";
 				// Setup javascript variables for use
@@ -138,7 +146,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 				$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
 			}
 			
-			// Prepend asset path to beginning of elements
+			// Prepend asset path to beginning of HEAD elements prefixed with '@'
 			$templateContent = preg_replace("/<link(.*?)href=\"@([^\"|:]+)\"([^>]*>)/i", "<link$1href=\"".$themeUrl."$2\"$3", $templateContent);
 			$templateContent = preg_replace("/<script(.*?)src=\"@([^\"|:]+)\"([^>]*>)/i", "<script$1src=\"".$themeUrl."$2\"$3", $templateContent);
 		}
@@ -282,7 +290,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 	/**
 	 * Format module return content for display on page response
 	 */
-	protected function regionModuleFormat($request, $page, $module, $moduleResponse, $includeControls = true)
+	protected function regionModuleFormat($request, $page, $module, $user, $moduleResponse, $includeControls = true)
 	{
 		$content = "";
 		if(false !== $moduleResponse) {
@@ -294,9 +302,9 @@ class Module_Page_Controller extends Cx_Module_Controller
 				$content = '
 				<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">
 				  ' . $moduleResponse;
-				// Show controls only for requests that are not AJAX
-				if($includeControls) {
-				$content .= '
+				// Show controls only for authorized users and requests that are not AJAX
+				if($includeControls && $user->isAdmin()) {
+					$content .= '
 				  <div class="cx_ui cx_ui_modulebar"><span>' . $module->name . ' Module</span></div>
 				  <div class="cx_ui cx_ui_controls">
 					<ul>

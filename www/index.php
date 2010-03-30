@@ -142,16 +142,19 @@ try {
 	$kernel->addLoadPath($kernel->config('path.cx_modules'), 'Module_');
 	
 	// User - Custom user code for authentication
+	// @todo Move this code to plugin or event hook instead of bootstrap file
 	// ==================================
+	$sessionKey = null;
 	if(isset($_SESSION['user']['session'])) {
-		$user = $kernel->dispatch('User_Session', 'authenticate', array($_SESSION['user']['session']));
-		if($user) {
-			$kernel->user($user);
-		} else {
-			// Invalid user key
-			unset($_SESSION['user']['session']);
-		}
+		$sessionKey = $_SESSION['user']['session'];
 	}
+	$user = $kernel->dispatch('User_Session', 'authenticate', array($sessionKey));
+	if(!$user->isLoggedin() && isset($_SESSION['user']['session'])) {
+		// Unset invalid user key
+		unset($_SESSION['user']['session']);
+	}
+	// Set user object on Kernel so it is available everywhere
+	$kernel->user($user);
 	// ==================================
 	
 	//var_dump($kernel->user());
