@@ -11,8 +11,8 @@ abstract class Cx_Module_Controller extends Alloy_Module_Controller
 	public function acl()
 	{
 		return array(
-			'view' => array('indexAction', 'viewAction', 'getMethod'),
-			'edit' => array('newAction', 'editAction', 'deleteAction', 'postMethod', 'putMethod', 'deleteMethod')
+			'view' => array('index', 'view', 'get', 'indexAction', 'viewAction', 'getMethod'),
+			'edit' => array('new', 'edit', 'delete', 'post', 'put', 'newAction', 'editAction', 'deleteAction', 'postMethod', 'putMethod', 'deleteMethod')
 			);
 	}
 	
@@ -27,9 +27,8 @@ abstract class Cx_Module_Controller extends Alloy_Module_Controller
 		
 		// Add roles for current user
 		if($user && $user->isLoggedIn()) {
-			$roles += array('edit');
 			if($user->isAdmin()) {
-				$roles += array('admin');
+				$roles = array('view', 'edit', 'admin');
 			}
 		}
 		

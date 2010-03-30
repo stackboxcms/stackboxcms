@@ -68,7 +68,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			
 			// Ensure user can execute requested action
 			if(!$moduleObject->userCanExecute($user, $moduleAction)) {
-				throw new Alloy_Exception_Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+				throw new Alloy_Exception_Auth("User does not have sufficient permissions to execute requested action (" . $moduleAction . "). Please login and try again.");
 			}
 			
 			// Dispatch to single module
@@ -129,9 +129,9 @@ class Module_Page_Controller extends Cx_Module_Controller
 		
 		// Admin stuff for HTML format
 		if($template->format() == 'html') {
-			// Add admin stuff to the page
-			// Admin toolbar, javascript, styles, etc.
+			// Add user and admin stuff to the page
 			if($user->isAdmin()) {
+				// Admin toolbar, javascript, styles, etc.
 				$templateHeadContent = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>' . "\n";
 				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('url.assets') . 'scripts/jquery-ui.min.js"></script>' . "\n";
 				// Setup javascript variables for use

@@ -91,6 +91,12 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 			throw new Alloy_Exception_FileNotFound("Unable to logout. User not logged in");
 		}
 		
+		// Clear all session values for 'user'
+		if(isset($_SESSION['user'])) {
+			unset($_SESSION['user']);
+			session_write_close();
+		}
+		
 		// Delete all sessions matched for current user
 		return $this->mapper()->delete(array('user_id' => $user->id));
 	}

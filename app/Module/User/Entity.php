@@ -1,9 +1,10 @@
 <?php
-// Custom entity object
 class Module_User_Entity extends Cx_Module_Entity
 {
 	/**
 	 * Is user logged-in?
+	 *
+	 * @return boolean
 	 */
 	public function isLoggedIn()
 	{
@@ -13,10 +14,12 @@ class Module_User_Entity extends Cx_Module_Entity
 	
 	/**
 	 * Is user admin? (Has all rights)
+	 *
+	 * @return boolean
 	 */
 	public function isAdmin()
 	{
-		return $this->is_admin ? true : false;
+		return (boolean) $this->is_admin;
 	}
 	
 	

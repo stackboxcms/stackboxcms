@@ -10,6 +10,7 @@ class Module_User_Mapper extends Alloy_Module_Mapper
 	public $password = array('type' => 'password', 'required' => true);
 	public $salt = array('type' => 'string', 'length' => 20, 'required' => true);
 	public $email = array('type' => 'string', 'required' => true);
+	public $is_admin = array('type' => 'boolean', 'default' => 0);
 	public $date_created = array('type' => 'datetime');
 	
 	// Custom entity class

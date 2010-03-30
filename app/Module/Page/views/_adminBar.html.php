@@ -8,6 +8,7 @@
 	  <?php else: ?>
 		<li><a href="<?php echo $this->kernel->url('page_action', array('page' => $this->page->url, 'action' => 'edit')); ?>" rel="modal">Edit Page</a></li>
 	  <?php endif; ?>
+	  <li><a href="<?php echo $this->kernel->url('logout'); ?>">Logout</a></li>
 	</ul>
   </div>
 </div>
