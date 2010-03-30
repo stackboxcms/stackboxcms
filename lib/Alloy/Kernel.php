@@ -55,7 +55,7 @@ class Alloy_Kernel extends AppKernel_Main
 	/**
 	 * Load and return instantiated module class
 	 *
-	 * @param $className string Name of the class
+	 * @param string $className Name of the class
 	 * @return object
 	 * @throws Alloy_Exception_FileNotFound
 	 */
@@ -71,17 +71,17 @@ class Alloy_Kernel extends AppKernel_Main
 		// Replace underscores with folder slashes
 		$sModule = str_replace('_', '/', $sModule);
 		
-		// Load module file, call function on it
+		// Load module file
 		$loaded = $this->load($sModuleClass);
 		if(!$loaded) {
 			throw new Alloy_Exception_FileNotFound("Module '" . $sModule . "' not found (class " . $sModuleClass . ")");
 		}
 		
-		// Instantiate class and call method
+		// Instantiate module class
 		$sModuleObject = new $sModuleClass($this);
 		
 		// Run init() setup only if supported
-		if(is_callable(array($sModuleObject, 'init'))) {
+		if(method_exists($sModuleObject, 'init')) {
 			$sModuleObject->init();
 		}
 		
@@ -125,10 +125,15 @@ class Alloy_Kernel extends AppKernel_Main
 	 */
 	public function dispatch($module, $action = 'index', array $params = array())
 	{
-		// Get module
-		$sModuleObject = $this->module($module);
+		if($module instanceof Alloy_Module_Controller) {
+			// Use current module instance
+			$sModuleObject = $module;
+		} else {
+			// Get module instance
+			$sModuleObject = $this->module($module);
+		}
 		
-		// Run module action
+		// Module action callable (includes __call magic function if method missing)?
 		if(!is_callable(array($sModuleObject, $action))) {
 			throw new Alloy_Exception_FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
 		}
