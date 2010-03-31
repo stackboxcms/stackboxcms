@@ -15,7 +15,9 @@
 <div id="cx_admin_modules" class="cx_ui cx_ui_pane">
   <h2>Modules</h2>
   <div class="cx_ui_pane_content">
+	<!-- @todo: Make this dynamically generted from installed modules -->
 	<div id="cx_module_tile_Text" class="cx_module_tile">Text Module</div>
+	<div id="cx_module_tile_Code" class="cx_module_tile">Code Module</div>
 	<div id="cx_module_tile_Navigation" class="cx_module_tile">Navigation Module</div>
   </div>
   <div class="cx_ui_pane_info">
