@@ -236,7 +236,7 @@ if($kernel) {
 	$kernel->trigger('cx_shutdown');
 	
 	// Debugging on?
-	if($kernel->config('cx.debug')) {
+	if($kernel->config('debug')) {
 		echo "<hr />";
 		echo "<pre>";
 		print_r($kernel->trace());
