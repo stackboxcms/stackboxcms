@@ -28,6 +28,7 @@ abstract class Cx_Module_Controller extends Alloy_Module_Controller
 		// Add roles for current user
 		if($user && $user->isLoggedIn()) {
 			if($user->isAdmin()) {
+				return true; // Admin users can always do everything
 				$roles = array('view', 'edit', 'admin');
 			}
 		}

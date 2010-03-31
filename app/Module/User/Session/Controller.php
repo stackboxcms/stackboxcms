@@ -98,7 +98,8 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 		}
 		
 		// Delete all sessions matched for current user
-		return $this->mapper()->delete(array('user_id' => $user->id));
+		$this->mapper()->delete(array('user_id' => $user->id));
+		return $this->kernel->redirect($this->kernel->url('page', array('page' => '/')));
 	}
 	
 	
