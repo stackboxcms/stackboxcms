@@ -104,7 +104,7 @@ try {
 		->put(array('module_action' => 'put'))
 		->delete(array('module_action' => 'delete'));
 	
-	$router->route('page_action', $pageRouteItem . '/<:action>(.<:format>)')
+	$router->route('page_action', $pageRouteItem . '/<:action>\.<:format>')
 		->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
 	
 	$router->route('index_action', '/<:action>\.<:format>')
@@ -130,6 +130,8 @@ try {
 	// Set matched params back on request object
 	$request->setParams($params);
 	$request->route = $router->matchedRoute()->name();
+	
+	$kernel->dump($request->route, $router->matchedRoute()->regexp(), $params);
 	
 	// Required params
 	$module = $params['module'];
