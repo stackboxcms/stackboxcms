@@ -131,8 +131,6 @@ try {
 	$request->setParams($params);
 	$request->route = $router->matchedRoute()->name();
 	
-	$kernel->dump($request->route, $router->matchedRoute()->regexp(), $params);
-	
 	// Required params
 	$module = $params['module'];
 	$action = $params['action'];
