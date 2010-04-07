@@ -125,32 +125,44 @@ class Module_Page_Controller extends Cx_Module_Controller
 		
 		// Template string content
 		$template->clean(); // Remove all unmatched tokens
-		$templateContent = $template->content();
+		$templateHead = $template->head();
 		
 		// Admin stuff for HTML format
 		if($template->format() == 'html') {
 			// Add user and admin stuff to the page
 			if($user->isAdmin()) {
 				// Admin toolbar, javascript, styles, etc.
-				$templateHeadContent = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('url.assets') . 'scripts/jquery-ui.min.js"></script>' . "\n";
+				$templateHead->script('http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
+				$templateHead->script('jquery-ui.min.js');
+				
 				// Setup javascript variables for use
-				$templateHeadContent .= '<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $this->kernel->config('url.root') . '", url_assets: "' . $this->kernel->config('url.assets') . '", url_assets_admin: "' . $this->kernel->config('url.assets_admin') . '"}};</script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('url.assets_admin') . 'scripts/cx_admin.js"></script>' . "\n";
-				$templateHeadContent .= '<script type="text/javascript" src="' . $this->kernel->config('url.assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js"></script>' . "\n";
-				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('url.assets') . 'styles/jquery-ui/base/jquery-ui.css" rel="stylesheet" />' . "\n";
-				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('url.assets_admin') . 'styles/cx_admin.css" rel="stylesheet" />' . "\n";
-				$templateHeadContent .= '<link type="text/css" href="' . $this->kernel->config('url.assets_admin') . 'jHtmlArea/styles/jHtmlArea.css" rel="stylesheet" />' . "\n";
-				$templateContent = str_replace("</head>", $templateHeadContent . "</head>", $templateContent);
+				$templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $this->kernel->config('url.root') . '", url_assets: "' . $this->kernel->config('url.assets') . '", url_assets_admin: "' . $this->kernel->config('url.assets_admin') . '"}};</script>' . "\n");
+				$templateHead->script($this->kernel->config('url.assets_admin') . 'scripts/cx_admin.js');
+				$templateHead->script($this->kernel->config('url.assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js');
+				$templateHead->stylesheet('jquery-ui/base/jquery-ui.css');
+				$templateHead->stylesheet($this->kernel->config('url.assets_admin') . 'styles/cx_admin.css');
+				$templateHead->stylesheet($this->kernel->config('url.assets_admin') . 'jHtmlArea/styles/jHtmlArea.css');
+				
+				// Grab template contents
+				$template = $template->content();
+				
+				// Render head
+				$template = str_replace("</head>", $templateHead->content() . "\n</head>", $template);
+				
+				// Admin bar and edit controls
 				$templateBodyContent = $this->view('_adminBar')->set('page', $page);
-				$templateContent = str_replace("</body>", $templateBodyContent . "\n</body>", $templateContent);
+				$template = str_replace("</body>", $templateBodyContent . "\n</body>", $template);
 			}
 			
 			// Prepend asset path to beginning of HEAD elements prefixed with '@'
-			$templateContent = preg_replace("/<link(.*?)href=\"@([^\"|:]+)\"([^>]*>)/i", "<link$1href=\"".$themeUrl."$2\"$3", $templateContent);
-			$templateContent = preg_replace("/<script(.*?)src=\"@([^\"|:]+)\"([^>]*>)/i", "<script$1src=\"".$themeUrl."$2\"$3", $templateContent);
+			$template = preg_replace("/<link(.*?)href=\"@([^\"|:]+)\"([^>]*>)/i", "<link$1href=\"".$themeUrl."$2\"$3", $template);
+			$template = preg_replace("/<script(.*?)src=\"@([^\"|:]+)\"([^>]*>)/i", "<script$1src=\"".$themeUrl."$2\"$3", $template);
+		} else {
+			// Other output formats not supported at this time
+			throw new Alloy_Exception_FileNotFound("Page not found");
 		}
-		return $templateContent;
+		
+		return $template;
 	}
 	
 	

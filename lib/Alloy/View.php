@@ -43,6 +43,15 @@ class Alloy_View
 	
 	
 	/**
+	 * HTML Head helper object
+	 */
+	public function head()
+	{
+		return $this->helper('Head');
+	}
+	
+	
+	/**
 	 * Gets a view variable
 	 *
 	 * Surpress notice errors for variables not found to

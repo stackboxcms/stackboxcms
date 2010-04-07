@@ -13,8 +13,8 @@ class Alloy_View_Helper_Asset extends Alloy_View_Helper
 	 */
 	public function stylesheet($file, $media = 'screen', $extra = '')
 	{
-		if(!strpos('://', $file)) {
-			$file = Alloy()->config('alloy.url_assets') . 'styles/' . $file;
+		if(strpos($file, '://') === false) {
+			$file = Alloy()->config('url.assets') . 'styles/' . $file;
 		}
 		$tag = '<link type="text/css" href="' . $file . '" media="' . $media . '" rel="stylesheet"' . $this->listExtra($extra) . ' />';
 		return $tag;
@@ -26,8 +26,8 @@ class Alloy_View_Helper_Asset extends Alloy_View_Helper
 	 */
 	public function script($file, $extra = '')
 	{
-		if(!strpos('://', $file)) {
-			$file = Alloy()->config('alloy.url_assets') . 'scripts/' . $file;
+		if(strpos($file, '://') === false) {
+			$file = Alloy()->config('url.assets') . 'scripts/' . $file;
 		}
 		$tag = '<script type="text/javascript" src="' . $file . '"' . $this->listExtra($extra) . '></script>';
 		return $tag;
@@ -39,8 +39,8 @@ class Alloy_View_Helper_Asset extends Alloy_View_Helper
 	 */
 	public function image($file, $alt = '', $extra = '')
 	{
-		if(!strpos('://', $file)) {
-			$file = Alloy()->config('alloy.url_assets') . 'images/' . $file;
+		if(strpos($file, '://') === false) {
+			$file = Alloy()->config('url.assets') . 'images/' . $file;
 		}
 		$tag = '<img src="' . $file . '" alt="' . $alt . '"' . $this->listExtra($extra) . ' />';
 		return $tag;
