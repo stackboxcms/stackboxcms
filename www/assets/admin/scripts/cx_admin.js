@@ -78,7 +78,7 @@ $(function() {
 							nModule = $('#' + tData.item_dom_id).remove();
 						}
 					} else {
-						nModule = $('#' + nData.attr('id')).replaceWith(nData).effect("highlight", {color: '#FFFFCF'}, 2000);
+						nModule = $('#' + nData.attr('id')).replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000);
 					}
 					cx_modalClose();
 				},
@@ -87,7 +87,7 @@ $(function() {
 						// Validation error ("Bad Request")
 						cx_modalContent(req.responseText);
 					} else {
-						alert("[ERROR] Unable to save data: " + req.responseText);
+						alert("[ERROR] Unable to save data: \n" + req.responseText);
 					}
 				}
 			});
@@ -127,14 +127,14 @@ $(function() {
 			var nRegionName = nRegion.attr('id').replace('cx_region_', '');
 			// Admin module, dragged from floating pane
 			if(ui.item.is('div.cx_module_tile')) {
-				nModule = ui.item;
-				nModuleName = nModule.attr('id').replace('cx_module_tile_', '');
+				var nModule = $('#' + ui.item.context.id);
+				var nModuleName = nModule.attr('id').replace('cx_module_tile_', '');
 				$.ajax({
 					type: "POST",
 					url: cx.config.url + cx.page.url + 'm,Page_Module,0.html',
 					data: {'region': nRegionName, 'name': nModuleName},
 					success: function(data, textStatus, req) {
-						nModule.replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000);
+						nModule.replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000).css({border: '1px solid red'});
 					},
 					error: function(req) { // req = XMLHttpRequest object
 						alert("[ERROR "+req.status+"] Unable to save data:\n\n" + req.responseText);
@@ -150,7 +150,7 @@ $(function() {
 					// Do nothing for now, eventually might show some sort of activity notice in UI, etc.
 				},
 				error: function(req) { // req = XMLHttpRequest object
-					alert("[ERROR] Unable to load URL: " + req.responseText);
+					alert("[ERROR] Unable to load URL: \n" + req.responseText);
 				}
 			});
 		}
@@ -214,14 +214,14 @@ $(function() {
 
 	// Custom function to serialize module order in regions
 	function cx_serializeRegionModules() {
-	var str = "";
-	$('div.cx_region').each(function() {
-		var regionName = this.id.replace('cx_region_', '');
-		$('div.cx_module', this).not('.ui-helper').each(function() {
-			var moduleId = parseInt($(this).attr('id').replace('cx_module_', ''));
-			str += "&modules["+regionName+"][]="+moduleId+"";
+		var str = "";
+		$('div.cx_region').each(function() {
+			var regionName = this.id.replace('cx_region_', '');
+			$('div.cx_module', this).not('.ui-helper').each(function() {
+				var moduleId = parseInt($(this).attr('id').replace('cx_module_', ''));
+				str += "&modules["+regionName+"][]="+moduleId+"";
+			});
 		});
-	});
-	return str;
+		return str;
 	}
 });

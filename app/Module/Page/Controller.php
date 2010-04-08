@@ -139,7 +139,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 				$templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $this->kernel->config('url.root') . '", url_assets: "' . $this->kernel->config('url.assets') . '", url_assets_admin: "' . $this->kernel->config('url.assets_admin') . '"}};</script>' . "\n");
 				$templateHead->script($this->kernel->config('url.assets_admin') . 'scripts/cx_admin.js');
 				$templateHead->script($this->kernel->config('url.assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js');
-				$templateHead->stylesheet('jquery-ui/base/jquery-ui.css');
+				$templateHead->stylesheet('jquery-ui/base/jquery.ui.all.css');
 				$templateHead->stylesheet($this->kernel->config('url.assets_admin') . 'styles/cx_admin.css');
 				$templateHead->stylesheet($this->kernel->config('url.assets_admin') . 'jHtmlArea/styles/jHtmlArea.css');
 				

@@ -162,6 +162,7 @@ REGION / MODULE UI
 /* Module admin controls */
 .cx_region .cx_module {
 	position: relative;
+	min-height: 20px;
 }
 .cx_module .cx_ui_controls {
 	position: absolute;
