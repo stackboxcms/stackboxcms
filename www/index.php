@@ -20,6 +20,8 @@ try {
 	$kernel = Alloy($cfg);
 	spl_autoload_register(array($kernel, 'load'));
 	set_error_handler(array($kernel, 'errorHandler'));
+	ini_set("session.cookie_httponly", true); // Mitigate XSS javascript cookie attacks for browers that support it
+	ini_set("session.use_only_cookies", true); // Don't allow session_id in URLs
 	session_start();
 	
 	// Host-based config file for overriding default settings in different environments
