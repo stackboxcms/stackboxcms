@@ -94,7 +94,8 @@ class Module_Page_Controller extends Cx_Module_Controller
 		}
 		
 		// Modules
-		foreach($page->modules as $module) {
+		$modules = $page->modules->orWhere(array('region' => $template->regionsType('global')));
+		foreach($modules as $module) {
 			// Loop over modules, building content for each region
 			$moduleResponse = $kernel->dispatch($module->name, 'indexAction', array($request, $page, $module));
 			if(!is_array($regionModules[$module->region])) {

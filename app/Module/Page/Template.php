@@ -22,6 +22,7 @@ class Module_Page_Template extends Alloy_View
 	protected $_tags = array();
 	protected $_tokenRegionType = 'region';
 	protected $_regions = array();
+	protected $_regionsType = array();
 	
 	
 	/**
@@ -108,7 +109,9 @@ class Module_Page_Template extends Alloy_View
 				} else {
 					$tokenName = $ti++;
 				}
+				$regionType = isset($tagAttributes['type']) ? $tagAttributes['type'] : 'page';
 				$this->_regions[$tokenName] = $token;
+				$this->_regionsType[$regionType][] = $tokenName;
 			}
 			
 			$tokens[] = $token;
@@ -164,6 +167,22 @@ class Module_Page_Template extends Alloy_View
 		}
 		
 		return $this->_regions;
+	}
+	
+	
+	/**
+	 * Get all found global regions
+	 * 
+	 * @return array
+	 */
+	public function regionsType($type)
+	{
+		// Parse template if is has not been parsed already
+		if(!$this->_regionsType) {
+			$this->parse();
+		}
+		
+		return isset($this->_regionsType[$type]) ? $this->_regionsType[$type] : array();
 	}
 	
 	
