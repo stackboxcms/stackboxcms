@@ -5,10 +5,11 @@ class Module_Page_Module_Mapper extends Alloy_Mapper
 	protected $_entityClass = 'Module_Page_Module_Entity';
 	
 	// Setup table and fields
-	protected $source = "page_modules";
+	protected $_datasource = "page_modules";
 	
 	// Fields
 	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
+	public $site_id = array('type' => 'int', 'index' => true, 'default' => 0);
 	public $page_id = array('type' => 'int', 'key' => true, 'required' => true);
 	public $module_id = array('type' => 'int', 'default' => 0);
 	public $region = array('type' => 'string', 'required' => true);
