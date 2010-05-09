@@ -212,8 +212,8 @@ class Alloy_Kernel extends AppKernel_Main
 		if(!isset($this->database[$name])) {
 			$cfg = $this->config('database.' . $name);
 			if($cfg) {
-				if($this->load('phpDataMapper_Adapter_Mysql')) {
-					$this->database[$name] = new phpDataMapper_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
+				if($this->load('Spot_Adapter_Mysql')) {
+					$this->database[$name] = new Spot_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
 				} else {
 					throw new Exception("Unable to load database connection - Check to ensure the username and password are correct");
 				}
