@@ -30,7 +30,8 @@ class Alloy_View_Helper_Head extends Alloy_View_Helper
 	 */
 	public function stylesheet()
 	{
-		$this->_styles[] = call_user_func_array(array($this->_assetHelper, __FUNCTION__), func_get_args());
+		$args = func_get_args();
+		$this->_styles[] = call_user_func_array(array($this->_assetHelper, __FUNCTION__), $args);
 	}
 	
 	
@@ -39,7 +40,8 @@ class Alloy_View_Helper_Head extends Alloy_View_Helper
 	 */
 	public function script()
 	{
-		$this->_scripts[] = call_user_func_array(array($this->_assetHelper, __FUNCTION__), func_get_args());
+		$args = func_get_args();
+		$this->_scripts[] = call_user_func_array(array($this->_assetHelper, __FUNCTION__), $args);
 	}
 	
 	
