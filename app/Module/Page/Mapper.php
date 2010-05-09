@@ -22,8 +22,8 @@ class Module_Page_Mapper extends Alloy_Mapper
 	public $children = array(
 		'type' => 'relation',
 		'relation' => 'HasMany',
-		'mapper' => 'Module_Page_Mapper',
-		'where' => array('parent_id' => 'entity.id'),
+		'mapper' => ':self',
+		'where' => array('parent_id' => ':entity.id'),
 		'order' => array('ordering' => 'ASC')
 		);
 	
@@ -32,7 +32,7 @@ class Module_Page_Mapper extends Alloy_Mapper
 		'type' => 'relation',
 		'relation' => 'HasMany',
 		'mapper' => 'Module_Page_Module_Mapper',
-		'where' => array('page_id' => 'entity.id'),
+		'where' => array('page_id' => ':entity.id'),
 		'order' => array('ordering' => 'ASC')
 		);
 	

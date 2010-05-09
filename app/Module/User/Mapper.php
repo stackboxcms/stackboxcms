@@ -20,7 +20,7 @@ class Module_User_Mapper extends Cx_Module_Mapper
 		'type' => 'relation',
 		'relation' => 'HasOne',
 		'mapper' => 'Module_User_Session_Mapper',
-		'where' => array('user_id' => 'entity.id'),
+		'where' => array('user_id' => ':entity.id'),
 		'order' => array('date_created' => 'DESC')
 	);
 }

@@ -14,6 +14,6 @@ class Module_User_Session_Mapper extends Cx_Module_Mapper
 		'type' => 'relation',
 		'relation' => 'HasOne', // Actually a 'BelongsTo', but that is currently not implemented in phpDataMapper
 		'mapper' => 'Module_User_Mapper',
-		'where' => array('id' => 'entity.user_id')
+		'where' => array('id' => ':entity.user_id')
 	);
 }

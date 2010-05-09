@@ -3,9 +3,9 @@
  * Base mapper entity for individual items
  * 
  * Dependencies:
- *	- phpDataMapper
+ *	- Spot
  */
-class Alloy_Module_Entity extends phpDataMapper_Entity
+class Alloy_Module_Entity extends Spot_Entity
 {
 	
 }

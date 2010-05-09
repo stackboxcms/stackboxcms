@@ -3,9 +3,9 @@
  * Base Mapper that module mappers will extend
  * 
  * Dependencies:
- *	- phpDataMapper
+ *	- Spot
  */
-abstract class Alloy_Mapper extends phpDataMapper_Base
+abstract class Alloy_Mapper extends Spot_Mapper_Abstract
 {
 	protected static $_migrateDone = array();
 
@@ -15,7 +15,7 @@ abstract class Alloy_Mapper extends phpDataMapper_Base
 	public function init()
 	{
 			// Hack for MySQL to support UTF-8 properly
-			if($this->adapter() instanceof phpDataMapper_Adapter_Mysql) {
+			if($this->adapter() instanceof Spot_Adapter_Mysql) {
 				$this->adapter()->connection()->exec("SET NAMES 'utf8'");
 			}
 			

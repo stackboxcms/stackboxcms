@@ -2,7 +2,7 @@
 class Module_Text_Mapper extends Cx_Module_Mapper
 {
 	// Table
-	protected $source = "module_text";
+	protected $_datasource = "module_text";
 	
 	// Fields
 	public $content = array('type' => 'text', 'required' => true);
