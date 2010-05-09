@@ -1,12 +1,11 @@
 <?php
-class Module_Page_Mapper extends Alloy_Mapper
+class Module_Page_Mapper extends Cx_Mapper_Abstract
 {
 	// Table
 	protected $_datasource = "pages";
 	
 	// Fields
 	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
-	public $site_id = array('type' => 'int', 'index' => true, 'default' => 0);
 	public $parent_id = array('type' => 'int', 'key' => true, 'default' => 0);
 	public $title = array('type' => 'string', 'required' => true);
 	public $url = array('type' => 'string', 'required' => true, 'unique' => true);

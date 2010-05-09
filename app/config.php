@@ -30,6 +30,10 @@ $cfg['url']['assets_admin'] = $cfg['url']['root'] . str_replace($cfg['dir']['www
 // Use Apache/IIS rewrite on URLs?
 $cfg['url']['rewrite'] = true;
 
+// SITE config
+$cfg['site']['id'] = 1;
+$cfg['site']['title'] = '';
+
 // Debug?
 $cfg['debug'] = false;
 
