@@ -49,4 +49,18 @@ abstract class Cx_Module_Controller extends Alloy_Module_Controller
 		
 		return false;
 	}
+	
+	
+	/**
+	 * Return view object for the add/edit form
+	 */
+	protected function formView()
+	{
+		$fields = $this->mapper()->fields();
+		$view = new Alloy_View_Generic_Form('form');
+		$view->action("")
+			->fields($fields)
+			->removeFields(array('id', 'site_id', 'module_id', 'date_created', 'date_modified'));
+		return $view;
+	}
 }

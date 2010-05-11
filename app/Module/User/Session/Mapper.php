@@ -1,10 +1,11 @@
 <?php
-class Module_User_Session_Mapper extends Cx_Module_Mapper
+class Module_User_Session_Mapper extends Cx_Mapper_Abstract
 {
 	// Table
 	protected $_datasource = "user_session";
 	
 	// Fields
+	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
 	public $user_id = array('type' => 'int', 'key' => true, 'required' => true);
 	public $session_id = array('type' => 'string', 'required' => true, 'key' => true);
 	public $date_created = array('type' => 'datetime');

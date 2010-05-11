@@ -135,8 +135,6 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 	 */
 	protected function formView()
 	{
-		$fields = $this->mapper('Module_User')->fields();
-		
 		$view = new Alloy_View_Generic_Form('form');
 		$view->action($this->kernel->url('login'))
 			->method('post')

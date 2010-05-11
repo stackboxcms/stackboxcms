@@ -120,19 +120,4 @@ class Module_Code_Controller extends Cx_Module_Controller
 		}
 		return $this->mapper()->delete($item);
 	}
-	
-	
-	/**
-	 * Return view object for the add/edit form
-	 */
-	protected function formView()
-	{
-		$fields = $this->mapper()->fields();
-		
-		$view = new Alloy_View_Generic_Form('form');
-		$view->action("")
-			->fields($fields)
-			->removeFields(array('id', 'module_id', 'date_created', 'date_modified'));
-		return $view;
-	}
 }

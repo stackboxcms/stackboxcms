@@ -26,20 +26,19 @@ class Module_User_Entity extends Cx_Module_Entity
 	/**
 	 * Return existing salt or generate new random salt if not set
 	 */
-	public function salt()
+	public function randomSalt()
 	{
-		if(!$this->salt) {
-			$length = 20;
-			$string = "";
-			$possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()-_+=";
-			 
-			for($i=0;$i < $length;$i++) {
-				$char = $possible[mt_rand(0, strlen($possible)-1)];
-				$string .= $char;
-			}
-			$this->salt = $string;
+		$length = 20;
+		$string = "";
+		$possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()[]{}<>-_+=|\/;:,.";
+		$possibleLen = strlen($possible);
+		 
+		for($i=0;$i < $length;$i++) {
+			$char = $possible[mt_rand(0, $possibleLen-1)];
+			$string .= $char;
 		}
-		return $this->salt;
+		
+		return $string;
 	}
 	
 	
@@ -51,7 +50,7 @@ class Module_User_Entity extends Cx_Module_Entity
 	 */
 	public function encryptedPassword($pass)
 	{
-		// Hash = <salt>:<password>:<id>
-		return sha1($this->salt() . ':' . $pass . ':' . $this->id);
+		// Hash = <salt>:<password>
+		return sha1($this->salt . ':' . $pass);
 	}
 }

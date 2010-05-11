@@ -37,7 +37,7 @@ class Module_User_Controller extends Cx_Module_Controller
 	 * Index listing
 	 * @method GET
 	 */
-	public function indexAction($request, $page, $module)
+	public function indexAction($request)
 	{
 		return false;
 	}
@@ -51,7 +51,7 @@ class Module_User_Controller extends Cx_Module_Controller
 	{
 		return $this->formView()
 			->method('post')
-			->action($this->kernel->url('user', array('action' => 'new')));
+			->action($this->kernel->url('user', array('action' => 'post')));
 	}
 	
 	
@@ -83,9 +83,7 @@ class Module_User_Controller extends Cx_Module_Controller
 	{
 		$mapper = $this->mapper();
 		$item = $mapper->get()->data($request->post());
-		$item->module_id = 0;
 		$item->site_id = 0;
-		$item->salt = $item->salt();
 		if($mapper->save($item)) {
 			$itemUrl = $this->kernel->url('page', array('page' => '/'));
 			if($request->format == 'html') {
@@ -95,7 +93,8 @@ class Module_User_Controller extends Cx_Module_Controller
 			}
 		} else {
 			$this->kernel->response(400);
-			return $this->formView()->errors($mapper->errors());
+			var_dump($mapper->errors());
+			return $this->formView()->errors($mapper->errors())->data($request->post());
 		}
 	}
 	
@@ -113,7 +112,6 @@ class Module_User_Controller extends Cx_Module_Controller
 			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
 		}
 		$item->data($request->post());
-		$item->module_id = 0;
 		$item->site_id = 0;
 		
 		if($mapper->save($item)) {
@@ -148,12 +146,6 @@ class Module_User_Controller extends Cx_Module_Controller
 	 */
 	protected function formView()
 	{
-		$fields = $this->mapper()->fields();
-		
-		$view = new Alloy_View_Generic_Form('form');
-		$view->action("")
-			->fields($fields)
-			->removeFields(array('id', 'salt', 'site_id', 'module_id', 'date_created', 'date_modified'));
-		return $view;
+		return parent::formView()->removeFields(array('salt'));
 	}
 }

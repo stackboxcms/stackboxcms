@@ -1,6 +1,6 @@
 <?php
 /**
- * Text Module
+ * Blog Module
  */
 class Module_Blog_Controller extends Cx_Module_Controller
 {
@@ -126,15 +126,13 @@ class Module_Blog_Controller extends Cx_Module_Controller
 	 */
 	protected function formView()
 	{
-		$fields = $this->mapper()->fields();
+		$view = parent::formView();
+		$fields = $view->fields();
 		
 		// Set text 'content' as type 'editor' to get WYSIWYG
 		$fields['content']['type'] = 'editor';
 		
-		$view = new Alloy_View_Generic_Form('form');
-		$view->action("")
-			->fields($fields)
-			->removeFields(array('id', 'module_id', 'date_created', 'date_modified'));
-		return $view;
+		return $view->action("")
+			->fields($fields);
 	}
 }

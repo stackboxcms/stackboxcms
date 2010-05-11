@@ -1,7 +1,7 @@
 <div id="cx_admin_bar" class="cx_ui">
+  <a id="cx_admin_bar_addContent" href="#"><span>Add Module</span></a>
   <div id="cx_admin_bar_inside">
 	<ul>
-	  <li id="cx_admin_bar_addContent"><a href="#">+ Add Content</a></li>
 	  <li><a href="<?php echo $this->kernel->url('index_action', array('action' => 'new')); ?>" rel="modal">New Page</a></li>
 	  <?php if('/' == $this->page->url): // ugly hack until routes are fixed for good ?>
 		<li><a href="<?php echo $this->kernel->url('index_action', array('action' => 'edit')); ?>" rel="modal">Edit Page</a></li>
@@ -10,6 +10,7 @@
 	  <?php endif; ?>
 	  <li><a href="<?php echo $this->kernel->url('logout'); ?>">Logout</a></li>
 	</ul>
+	<div class="clear"></div>
   </div>
 </div>
 <div id="cx_admin_modules" class="cx_ui cx_ui_pane">

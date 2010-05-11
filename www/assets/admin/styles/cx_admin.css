@@ -2,7 +2,7 @@
  * Admin Styles for Cont-xt CMS
  */
 body {
-	padding-top: 40px;
+	padding-top: 25px;
 }
 
 /*
@@ -79,21 +79,46 @@ ADMIN BAR
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 40px;
+	height: 24px;
 	background: #333;
+	border-bottom: 1px solid #000;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#444), to(#222));
+	background-image: -moz-linear-gradient(100% 100% 90deg, #222, #444);
+	z-index: 999;
 }
-	#cx_admin_bar_inside { padding: 2px 4px; }
+	#cx_admin_bar_inside { height: 24px; overflow: hidden; }
 	/* Navigation */
-	#cx_admin_bar ul { list-style: none; margin: 4px 0 0 0; padding: 0; }
-	#cx_admin_bar ul li { float: left; margin: 0; padding: 4px; }
-	#cx_admin_bar ul li a { display: block; padding: 3px 10px 4px 10px; background-color: #111; font-weight: bold; color: #fff; text-decoration: none; border-radius: 5px;  -webkit-border-radius: 5px; -khtml-border-radius: 5px; }
-	#cx_admin_bar ul li a:hover, #imNav li.active a { background-color: #AFAFAF; color: #000; }
-	/* add content button */
-	#cx_admin_bar ul li#cx_admin_bar_addContent a {
-		text-transform: uppercase;
-		background-color: #C7EFB3;
-		color: #000;
+	#cx_admin_bar ul { list-style: none; margin: 0; padding: 0; }
+	#cx_admin_bar ul li { float: left; margin: 0; }
+	#cx_admin_bar ul li a {
+		display: block;
+		padding: 7px 10px 8px 10px;
+		color: #eee;
+		font-size: 11px;
+		border-left: 1px solid #666;
+		border-right: 1px solid #333;
 	}
+	#cx_admin_bar ul li a:hover, #imNav li.active a { background-color: #444; }
+	/* add content button */
+	a#cx_admin_bar_addContent {
+		display: block;
+		float: left;
+		font-weight: bold;
+		text-transform: uppercase;
+		text-decoration: none;
+		background-color: #0CA009;
+		color: #fff;
+		margin: 0 10px;
+		padding: 10px 15px;
+		-moz-border-radius-bottomleft: 5px;
+		-webkit-border-bottom-left-radius: 5px;
+		-moz-border-radius-bottomright: 5px;
+		-webkit-border-bottom-right-radius: 5px;
+		border-radius: 5px;
+		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#61E510), to(#089B07));
+		background-image: -moz-linear-gradient(100% 100% 90deg, #089B07, #61E510);
+	}
+
 
 /*
 ADMIN PANES
@@ -106,6 +131,7 @@ div.cx_ui_pane {
 	font-family: Arial, Tahoma, sans-serif;
 	font-size: 12px;
 	opacity: 0.8;
+	z-index: 980;
 }
 	div.cx_ui_pane h2 {
 		margin: 0;
@@ -125,7 +151,7 @@ div.cx_ui_pane {
 	}
 
 #cx_admin_modules.cx_ui_pane {
-	top: 40px;
+	top: 25px;
 	right: 0;
 	display: none;
 }

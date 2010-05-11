@@ -63,6 +63,12 @@ class Module_Page_Controller extends Cx_Module_Controller
 				$module = $page->modules->where(array('id' => $moduleId))->first();
 			}
 			
+			// Setup dummy module object if there is none loaded
+			if(!$module) {
+				$module = $this->mapper('Module_Page_Module')->get();
+				$module->name = $request->name;
+			}
+			
 			// Load requested module
 			$moduleObject = $kernel->module($moduleName);
 			
@@ -271,8 +277,8 @@ class Module_Page_Controller extends Cx_Module_Controller
 	 */
 	protected function formView()
 	{
-		$view = new Alloy_View_Generic_Form('form');
-		$fields = $this->mapper()->fields();
+		$view = parent::formView();
+		$fields = $view->fields();
 		
 		// Override int 'parent_id' with option select box
 		$fields['parent_id']['type'] = 'select';

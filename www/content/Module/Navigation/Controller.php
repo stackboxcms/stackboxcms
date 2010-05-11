@@ -24,6 +24,6 @@ class Module_Navigation_Controller extends Cx_Module_Controller
 	 */
 	public function editAction($request, $page, $module)
 	{
-		throw new Alloy_Exception_Http("Navigation module is not editable", 500);
+		return "There are currently no editable options for navigation display.";
 	}
 }

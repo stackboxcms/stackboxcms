@@ -80,7 +80,10 @@ try {
 	
 	// User reserved route
 	$router->route('user', '/user/<:action>(.<:format>)')
-		->defaults(array('module' => 'User', 'format' => 'html'));
+		->defaults(array('module' => 'User', 'format' => 'html'))
+		->post(array('action' => 'post'))
+		->put(array('action' => 'put'))
+		->delete(array('action' => 'delete'));
 		
 	// Admin reserved route
 	$router->route('admin', '/admin/<:action>(.<:format>)')
