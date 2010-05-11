@@ -110,11 +110,13 @@ ADMIN BAR
 		color: #fff;
 		margin: 0 10px;
 		padding: 10px 15px;
-		-moz-border-radius-bottomleft: 5px;
-		-webkit-border-bottom-left-radius: 5px;
-		-moz-border-radius-bottomright: 5px;
-		-webkit-border-bottom-right-radius: 5px;
 		border-radius: 5px;
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius-topleft: 0;
+		-moz-border-radius-topright: 0;
+		-webkit-border-top-left-radius: 0;
+		-webkit-border-top-right-radius: 0;
 		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#61E510), to(#089B07));
 		background-image: -moz-linear-gradient(100% 100% 90deg, #089B07, #61E510);
 	}
@@ -204,13 +206,23 @@ REGION / MODULE UI
 	left: 0;
 	height: 20px;
 	overflow: hidden;
-	background-color: #B7B7B7;
+	color: #eee;
+	background: #333;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#444), to(#222));
+	background-image: -moz-linear-gradient(100% 100% 90deg, #222, #444);
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius-bottomleft: 0;
+	-moz-border-radius-bottomright: 0;
+	-webkit-border-bottom-left-radius: 0;
+	-webkit-border-bottom-right-radius: 0;
 	cursor: move;
 }
 	.cx_module .cx_ui_modulebar span {
 		display: block;
-		padding: 3px 6px;
-		font-weight: bold;
+		padding: 4px 8px;
+		font-size: 11px;
 	}
 .cx_module.cx_ui_hover {
 	background-color: #EFEFEF;
