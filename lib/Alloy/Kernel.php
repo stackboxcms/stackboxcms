@@ -107,16 +107,6 @@ class Alloy_Kernel extends AppKernel_Main
 			// Create new mapper, passing in adapter connection
 			$mapper = new $mapperName($this->database());
 			
-			// Hack for MySQL to support UTF-8 properly
-			if($mapper->adapter() instanceof Spot_Adapter_Mysql) {
-				$mapper->adapter()->connection()->exec("SET NAMES 'utf8'");
-			}
-			
-			// Auto-migrate when in 'development' mode
-			if($this->config('mode.development') === true) {
-				$mapper->migrate();
-			}
-			
 			// Store in class cache
 			$this->mappers[$mapperName] = $mapper;
 		}
