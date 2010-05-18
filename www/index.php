@@ -9,7 +9,7 @@ if(version_compare(phpversion(), "5.2.0", "<")) {
 }
 
 // Configuration settings
-$cfg = require(dirname(dirname(__FILE__)) . '/app/config.php');
+$cfg = require(dirname(dirname(__FILE__)) . '/app/config/app.php');
 
 // Cont-xt Kernel
 require $cfg['path']['lib'] . '/Alloy/Kernel.php';
@@ -65,7 +65,7 @@ try {
 	// Router - Add routes we want to match
 	$router = $kernel->router();
 	$kernel->trigger('cx_boot_routes_before', array($router));
-	require $kernel->config('path.app') . '/routes.php';
+	require $kernel->config('path.config') . '/routes.php';
 	$kernel->trigger('cx_boot_routes_after', array($router));
 	
 	// Router - Match HTTP request and return named params
