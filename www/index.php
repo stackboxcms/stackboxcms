@@ -46,7 +46,7 @@ try {
 	}
 	
 	// Host-based config file for overriding default settings in different environments
-	$cfgHostFile = dirname(dirname(__FILE__)) . '/app/config.' . strtolower(php_uname('n')) . '.php';
+	$cfgHostFile = $kernel->config('path.config') . '/' . strtolower(php_uname('n')) . '/app.php';
 	if(file_exists($cfgHostFile)) {
 		$cfgHost = require($cfgHostFile);
 		$kernel->config($cfgHost);
