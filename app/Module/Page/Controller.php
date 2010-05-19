@@ -100,7 +100,11 @@ class Module_Page_Controller extends Cx_Module_Controller
 		}
 		
 		// Modules
-		$modules = $page->modules->orWhere(array('region' => $template->regionsType('global')));
+		$modules = $page->modules;
+        // Also include modules in global template regions if global regions are present
+        if($template->regionsType('global')) {
+            $modules->orWhere(array('region' => $template->regionsType('global')));
+        }
 		foreach($modules as $module) {
 			// Loop over modules, building content for each region
 			$moduleResponse = $kernel->dispatch($module->name, 'indexAction', array($request, $page, $module));
