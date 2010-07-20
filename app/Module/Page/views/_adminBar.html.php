@@ -20,6 +20,7 @@
 	<div id="cx_module_tile_Text" class="cx_module_tile">Text Module</div>
 	<div id="cx_module_tile_Code" class="cx_module_tile">Code Module</div>
 	<div id="cx_module_tile_Navigation" class="cx_module_tile">Navigation Module</div>
+	<div id="cx_module_tile_Blog" class="cx_module_tile">Blog Module</div>
   </div>
   <div class="cx_ui_pane_info">
 	<p>Drag and drop modules into content regions on the page.</p>

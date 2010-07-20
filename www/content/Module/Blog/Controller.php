@@ -32,8 +32,18 @@ class Module_Blog_Controller extends Cx_Module_Controller
 	 */
 	public function editAction($request, $page, $module)
 	{
-		$view = false; //$this->view(__FUNCTION__);
-		return $view;
+		$posts = $this->mapper('Module_Blog_Post')->all()->order('date_created');
+		
+		$view = $this->view(__FUNCTION__)
+			->set(array(
+					'posts' => $posts
+				));
+		
+		// Return only content for HTML
+		if($request->format == 'html') {
+			return $view;
+		}
+		return false;
 	}
 	
 	

@@ -165,9 +165,10 @@ class Module_Page_Controller extends Cx_Module_Controller
 				$template = str_replace("</body>", $templateBodyContent . "\n</body>", $template);
 			}
 			
-			// Prepend asset path to beginning of HEAD elements prefixed with '@'
-			$template = preg_replace("/<link(.*?)href=\"@([^\"|:]+)\"([^>]*>)/i", "<link$1href=\"".$themeUrl."$2\"$3", $template);
-			$template = preg_replace("/<script(.*?)src=\"@([^\"|:]+)\"([^>]*>)/i", "<script$1src=\"".$themeUrl."$2\"$3", $template);
+			// Prepend asset path to beginning of "href" or "src" attributes that is prefixed with '@'
+			$template = preg_replace("/<(.*?)([src|href]+)=\"@([^\"|:]+)\"([^>]*)>/i", "<$1$2=\"".$themeUrl."$3\"$4>", $template);
+			// Replace '!' prepend with web URL root
+			$template = preg_replace("/<(.*?)([src|href]+)=\"!([^\"|:]*)\"([^>]*)>/i", "<$1$2=\"".$this->kernel->config('url.root')."$3\"$4>", $template);
 		} else {
 			// Other output formats not supported at this time
 			throw new Alloy_Exception_FileNotFound("Page not found");
