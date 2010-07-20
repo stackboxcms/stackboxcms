@@ -11,10 +11,11 @@ require dirname(__FILE__) . '/Exception/FileNotFound.php';
 class Alloy_Kernel extends AppKernel_Main
 {
 	protected $session;
-	protected $database = array();
-	protected $mappers = array();
 	protected $binds = array();
 	protected $_user = false;
+	
+	protected $_spotConfig;
+	protected $_spotMapper = array();
 	
 	
 	/**
@@ -92,25 +93,37 @@ class Alloy_Kernel extends AppKernel_Main
 	/**
 	 * Get mapper object to work with
 	 * Ensures only one instance of a mapper gets loaded
+	 *
+	 * @param string $mapperName (Optional) Custom mapper class to load in case of custom requirements or queries
 	 */
-	public function mapper($mapperName)
+	public function mapper($mapperName = 'Spot_Mapper')
 	{
-		// Append 'Mapper' to the end, as per convention
-		$mapperName .=  "_Mapper";
-		
-		if(!isset($this->mappers[$mapperName])) {
-			// Ensure file can be loaded
-			if(!$this->load($mapperName)) {
-				throw new Exception("Unable to load class '" . $mapperName . "' - requested class not found");
-			}
-			
-			// Create new mapper, passing in adapter connection
-			$mapper = new $mapperName($this->database());
-			
-			// Store in class cache
-			$this->mappers[$mapperName] = $mapper;
+		if(!isset($this->_spotMapper[$mapperName])) {
+			// Create new mapper, passing in config
+			$this->_spotMapper[$mapperName] = new $mapperName($this->spotConfig());
 		}
-		return $this->mappers[$mapperName];
+		return $this->_spotMapper[$mapperName];
+	}
+	
+	
+	/**
+	 * Get instance of database connection
+	 */
+	public function spotConfig()
+	{
+		if(!$this->_spotConfig) {
+			$dbCfg = $this->config('database');
+			if($dbCfg) {
+				// New config
+				$this->_spotConfig = new Spot_Config();
+				foreach($dbCfg as $name => $options) {
+					$this->_spotConfig->addConnection($name, $options);
+				}
+			} else {
+				throw new Exception("Unable to load configuration for Spot - Database configuration settings do not exist.");
+			}
+		}
+		return $this->_spotConfig;
 	}
 	
 
@@ -201,27 +214,6 @@ class Alloy_Kernel extends AppKernel_Main
 			$this->session = new Alloy_Session();
 		}
 		return $this->session;
-	}
-	
-	
-	/**
-	 * Get instance of database connection
-	 */
-	public function database($name = 'master')
-	{
-		if(!isset($this->database[$name])) {
-			$cfg = $this->config('database.' . $name);
-			if($cfg) {
-				if($this->load('Spot_Adapter_Mysql')) {
-					$this->database[$name] = new Spot_Adapter_Mysql($cfg['host'], $cfg['dbname'], $cfg['username'], $cfg['password']);
-				} else {
-					throw new Exception("Unable to load database connection - Check to ensure the username and password are correct");
-				}
-			} else {
-				throw new Exception("Unable to load database connection - Configuration settings for connection '" . $name . "' do not exist.");
-			}
-		}
-		return $this->database[$name];
 	}
 	
 	

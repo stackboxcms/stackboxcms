@@ -24,13 +24,6 @@ try {
 	ini_set("session.use_only_cookies", true); // Don't allow session_id in URLs
 	session_start();
 	
-	// Host-based config file for overriding default settings in different environments
-	$cfgHostFile = dirname(dirname(__FILE__)) . '/app/config.' . strtolower(php_uname('n')) . '.php';
-	if(file_exists($cfgHostFile)) {
-		$cfgHost = require($cfgHostFile);
-		$cfg = $kernel->config($cfgHost);
-	}
-	
 	// Debug?
 	if($kernel->config('debug')) {
 		// Enable debug mode

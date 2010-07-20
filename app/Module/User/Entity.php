@@ -1,6 +1,47 @@
 <?php
 class Module_User_Entity extends Cx_Module_Entity
 {
+	// Table
+	protected $_datasource = "users";
+	
+	// Fields
+	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
+	public $username = array('type' => 'string', 'required' => true, 'unique' => true);
+	public $password = array('type' => 'password', 'required' => true);
+	public $salt = array('type' => 'string', 'length' => 20, 'required' => true);
+	public $email = array('type' => 'string', 'required' => true);
+	public $is_admin = array('type' => 'boolean', 'default' => 0);
+	public $date_created = array('type' => 'datetime');
+	
+	// Custom entity class
+	protected $_entityClass = 'Module_User_Entity';
+	
+	// User session/login
+	public $session = array(
+		'type' => 'relation',
+		'relation' => 'HasOne',
+		'entity' => 'Module_User_Session_Entity',
+		'where' => array('user_id' => ':entity.id'),
+		'order' => array('date_created' => 'DESC')
+	);
+	
+	
+	/**
+	 * Save with salt and encrypted password
+	 */
+	public function beforeSave(Spot_Mapper $mapper)
+	{
+		$data = $mapper->data($this);
+		$newData = $mapper->dataModified($this);
+		
+		// If password has been modified or set for the first time
+		if(!$this->id || (isset($newData['password']) && $newData['password'] != $data['password'])) {
+			$this->salt = $this->randomSalt();
+			$this->password = $this->encryptedPassword($newData['password']);
+		}
+	}
+	
+	
 	/**
 	 * Is user logged-in?
 	 *

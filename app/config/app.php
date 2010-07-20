@@ -38,7 +38,7 @@ $cfg['site']['id'] = 1;
 $cfg['site']['title'] = '';
 
 // Debug?
-$cfg['debug'] = false;
+$cfg['debug'] = true;
 
 // In Development Mode?
 $cfg['mode']['development'] = true;
@@ -53,7 +53,7 @@ $cfg['default']['theme'] = 'default';
 $cfg['default']['theme_template'] = 'index';
 
 // Database - Param names to match Zend_Config
-$cfg['database']['master']['adapter'] = 'MySQL';
+$cfg['database']['master']['adapter'] = 'mysql';
 $cfg['database']['master']['host'] = 'localhost';
 $cfg['database']['master']['username'] = 'root';
 $cfg['database']['master']['password'] = '';

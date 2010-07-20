@@ -31,17 +31,17 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 	 */
 	public function postMethod($request)
 	{
-		$userMapper = $this->mapper('Module_User');
+		$mapper = $this->kernel->mapper();
 		
 		// Get user by username first so we can get salt for hashing encrypted password
-		$userTest = $userMapper->first(array('username' => $request->username));
+		$userTest = $mapper->first('Module_User_Entity', array('username' => $request->username));
 		if(!$userTest || !$request->password) {
 			$this->kernel->response(401);
 			return $this->formView()->errors(array('username' => array('Incorrect username/password combination provided')));
 		}
 		
 		// Test user login credentials
-		$user = $userMapper->first(array(
+		$user = $mapper->first(array(
 			'username' => $request->username,
 			'password' => $userTest->encryptedPassword($request->password)
 			));
@@ -51,14 +51,12 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 		}
 		
 		// Create new session
-		$sessionMapper = $this->mapper();
-		
-		$session = $sessionMapper->get();
+		$session = $mapper->get('Module_User_Session_Entity');
 		$session->user_id = $user->id;
 		$session->session_id = session_id();
-		$session->date_created = date($sessionMapper->adapter()->dateTimeFormat());
+		$session->date_created = date($mapper->connection('Module_User_Session_Entity')->dateTime());
 		
-		if($sessionMapper->save($session)) {
+		if($mapper->save($session)) {
 			// Set session cookie and user object on Kernel
 			$_SESSION['user']['session'] = $user->id . ":" . $session->session_id;
 			$this->kernel->user($user);
@@ -67,7 +65,7 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 			return $this->kernel->redirect($this->kernel->url('page', array('page' => '/')));
 		} else {
 			$this->kernel->response(401);
-			return $this->formView()->errors($sessionMapper->errors());
+			return $this->formView()->errors($mapper->errors());
 		}
 	}
 	
@@ -108,22 +106,21 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 	 */
 	public function authenticate($sessionKey = null)
 	{
-		$userSessionMapper = $this->mapper();
-		$userMapper = $this->mapper('Module_User');
+		$mapper = $this->kernel->mapper();
 		$user = false;
 		
 		// Return user based on session key, if valid
 		if($sessionKey && strpos($sessionKey, ':')) {
 			list($userId, $userSession) = explode(':', $sessionKey);
-			$userSession = $userSessionMapper->first(array('user_id' => $userId, 'session_id' => $userSession));
+			$userSession = $mapper->first('Module_User_Session_Entity', array('user_id' => $userId, 'session_id' => $userSession));
 			if($userSession) {
-				return $userMapper->get($userSession->user_id);
+				return $mapper->get('Module_User_Entity', $userSession->user_id);
 			}
 		}
 		
 		// Return empty 'guest' user object
 		if(!$user) {
-			$user = $userMapper->get();
+			$user = $mapper->get('Module_User_Entity');
 		}
 		
 		return $user;

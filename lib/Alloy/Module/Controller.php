@@ -60,20 +60,4 @@ abstract class Alloy_Module_Controller
 		$view->set('kernel', $this->kernel);
 		return $view;
 	}
-	
-	
-	/**
-	 * Get mapper object to work with
-	 * 
-	 * @param string $mapperName Name of the mapper object to load (by convention)
-	 */
-	public function mapper($mapperName = null)
-	{
-		// Append given name, if any
-		if(null === $mapperName) {
-			$mapperName = 'Module_' . $this->name();
-		}
-		
-		return $this->kernel->mapper($mapperName);
-	}
 }

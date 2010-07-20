@@ -1,8 +1,8 @@
 <?php
 /**
- * Base Cont-xt Mapper
+ * Base Cont-xt Entity
  */
-abstract class Cx_Mapper_Abstract extends Spot_Mapper_Abstract
+abstract class Cx_Entity_Abstract
 {
 	// Site id for future multi-site possibilities
 	public $site_id = array('type' => 'int', 'index' => true, 'default' => 0);

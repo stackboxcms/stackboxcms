@@ -26,19 +26,20 @@ class Module_Page_Controller extends Cx_Module_Controller
 		$user = $kernel->user();
 		
 		// Ensure page exists
-		$mapper = $this->mapper();
-		$pageUrl = $mapper->formatPageUrl($pageUrl);
-		$page = $mapper->getPageByUrl($pageUrl);
+		$mapper = $kernel->mapper();
+		$pageMapper = $kernel->mapper('Module_Page_Mapper');
+		$pageUrl = Module_Page_Entity::formatPageUrl($pageUrl);
+		$page = $pageMapper->getPageByUrl($pageUrl);
 		if(!$page) {
 			if($pageUrl == '/') {
 				// Create new page for the homepage automatically if it does not exist
-				$page = $mapper->get();
+				$page = $pageMapper->get('Module_Page_Entity');
 				$page->parent_id = 0;
 				$page->title = "Home";
 				$page->url = $pageUrl;
-				$page->date_created = date($mapper->adapter()->dateTimeFormat());
+				$page->date_created = date($pageMapper->connection('Module_Page_Entity')->dateTime());
 				$page->date_modified = $page->date_created;
-				if(!$mapper->save($page)) {
+				if(!$pageMapper->save($page)) {
 					throw new Alloy_Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
 				}
 			} else {
@@ -56,7 +57,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			if($moduleId == 0) {
 				// Get new module entity, no ID supplied
 				// @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
-				$module = $this->mapper('Module_Page_Module')->get();
+				$module = $mapper->get('Module_Page_Module_Entity');
 				$module->name = $request->name;
 			} else {
 				// Module belongs to current page
@@ -65,7 +66,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 			
 			// Setup dummy module object if there is none loaded
 			if(!$module) {
-				$module = $this->mapper('Module_Page_Module')->get();
+				$module = $mapper->get('Module_Page_Module_Entity');
 				$module->name = $request->name;
 			}
 			

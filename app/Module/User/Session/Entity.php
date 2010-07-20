@@ -1,5 +1,5 @@
 <?php
-class Module_User_Session_Mapper extends Cx_Mapper_Abstract
+class Module_User_Session_Entity extends Cx_Entity_Abstract
 {
 	// Table
 	protected $_datasource = "user_session";
@@ -13,8 +13,8 @@ class Module_User_Session_Mapper extends Cx_Mapper_Abstract
 	// User session/login
 	public $user = array(
 		'type' => 'relation',
-		'relation' => 'HasOne', // Actually a 'BelongsTo', but that is currently not implemented in phpDataMapper
-		'mapper' => 'Module_User_Mapper',
+		'relation' => 'HasOne', // Actually a 'BelongsTo', but that is currently not implemented in Spot
+		'entity' => 'Module_User_Entity',
 		'where' => array('id' => ':entity.user_id')
 	);
 }
