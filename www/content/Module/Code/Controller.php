@@ -2,7 +2,7 @@
 /**
  * Text Module
  */
-class Module_Code_Controller extends Cx_Module_Controller
+class Module_Code_Controller extends Cx_Module_Controller_Abstract
 {
 	protected $_file = __FILE__;
 	
@@ -12,7 +12,7 @@ class Module_Code_Controller extends Cx_Module_Controller
 	 */
 	public function indexAction($request, $page, $module)
 	{
-		$item = $this->mapper()->currentEntity($module);
+		$item = $this->kernel->mapper('Module_Code_Mapper')->currentEntity($module);
 		if(!$item) {
 			return true;
 		}
@@ -46,14 +46,16 @@ class Module_Code_Controller extends Cx_Module_Controller
 			->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)))
 			->method('PUT');
 		
+		$mapper = $this->kernel->mapper('Module_Code_Mapper');
+		
 		if(!$module) {
-			$module = $this->mapper()->get();
+			$module = $mapper->get('Module_Code_Entity');
 			$form->method('POST');
 		}
 		
-		$item = $this->mapper()->currentEntity($module);
+		$item = $mapper->currentEntity($module);
 		
-		return $form->data($item->data());
+		return $form->data($mapper->data($item));
 	}
 	
 	
@@ -63,15 +65,15 @@ class Module_Code_Controller extends Cx_Module_Controller
 	 */
 	public function postMethod($request, $page, $module)
 	{
-		$mapper = $this->mapper();
-		$item = $mapper->get()->data($request->post());
+		$mapper = $this->kernel->mapper('Module_Code_Mapper');
+		$item = $mapper->data($mapper->get('Module_Code_Entity'), $request->post());
 		$item->module_id = $module->id;
 		if($mapper->save($item)) {
 			$itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
 			if($request->format == 'html') {
 				return $this->indexAction($request, $page, $module);
 			} else {
-				return $this->kernel->resource($item)->status(201)->location($itemUrl);
+				return $this->kernel->resource($mapper->data($item))->status(201)->location($itemUrl);
 			}
 		} else {
 			$this->kernel->response(400);
@@ -100,7 +102,7 @@ class Module_Code_Controller extends Cx_Module_Controller
 			if($request->format == 'html') {
 				return $this->indexAction($request, $page, $module);
 			} else {
-				return $this->kernel->resource($item)->status(201)->location($itemUrl);
+				return $this->kernel->resource($mapper->data($item))->status(201)->location($itemUrl);
 			}
 		} else {
 			$this->kernel->response(400);
@@ -114,10 +116,11 @@ class Module_Code_Controller extends Cx_Module_Controller
 	 */
 	public function deleteMethod($request, $page, $module)
 	{
-		$item = $mapper->get($request->module_item);
+		$mapper = $this->kernel->mapper('Module_Code_Mapper');
+		$item = $mapper->get('Module_Code_Entity', $request->module_item);
 		if(!$item) {
 			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
 		}
-		return $this->mapper()->delete($item);
+		return $mapper->delete($item);
 	}
 }

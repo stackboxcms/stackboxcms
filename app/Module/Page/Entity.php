@@ -1,5 +1,5 @@
 <?php
-class Module_Page_Entity extends Cx_Module_Entity
+class Module_Page_Entity extends Cx_Module_Entity_Abstract
 {
 	// Table
 	protected $_datasource = "pages";

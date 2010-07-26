@@ -2,7 +2,7 @@
 /**
  * Page controller - sets up whole page for display
  */
-class Module_Page_Controller extends Cx_Module_Controller
+class Module_Page_Controller extends Cx_Module_Controller_Abstract
 {
 	protected $_file = __FILE__;
 	
@@ -129,7 +129,7 @@ class Module_Page_Controller extends Cx_Module_Controller
 		}
 		
 		// Replace template tags
-		$tags = $page->toArray();
+		$tags = $mapper->data($page);
 		$kernel->trigger('module_page_tags', array(&$tags));
 		foreach($tags as $tagName => $tagValue) {
 			$template->replaceTag($tagName, $tagValue);

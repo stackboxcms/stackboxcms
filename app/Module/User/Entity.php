@@ -1,5 +1,5 @@
 <?php
-class Module_User_Entity extends Cx_Module_Entity
+class Module_User_Entity extends Cx_Module_Entity_Abstract
 {
 	// Table
 	protected $_datasource = "users";

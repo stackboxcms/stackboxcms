@@ -2,7 +2,7 @@
 /**
  * Navigation Module
  */
-class Module_Navigation_Controller extends Cx_Module_Controller
+class Module_Navigation_Controller extends Cx_Module_Controller_Abstract
 {
 	protected $_file = __FILE__;
 	
@@ -12,7 +12,7 @@ class Module_Navigation_Controller extends Cx_Module_Controller
 	 */
 	public function indexAction($request, $page, $module)
 	{
-		$pages = $this->mapper('Module_Page')->pageTree();
+		$pages = $this->kernel->mapper('Module_Page_Mapper')->pageTree();
 		
 		return $this->view(__FUNCTION__)
 			->set(array('pages' => $pages));
