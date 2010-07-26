@@ -2,7 +2,7 @@
 /**
  * Blog Module
  */
-class Module_Blog_Controller extends Cx_Module_Controller
+class Module_Blog_Controller extends Cx_Module_Controller_Abstract
 {
 	protected $_file = __FILE__;
 	
@@ -12,7 +12,7 @@ class Module_Blog_Controller extends Cx_Module_Controller
 	 */
 	public function indexAction($request, $page, $module)
 	{
-		$posts = $this->mapper('Module_Blog_Post')->all()->order('date_created');
+		$posts = $this->kernel->mapper()->all('Module_Blog_Post')->order('date_created');
 		
 		$view = $this->view(__FUNCTION__)
 			->set(array(
@@ -32,7 +32,7 @@ class Module_Blog_Controller extends Cx_Module_Controller
 	 */
 	public function editAction($request, $page, $module)
 	{
-		$posts = $this->mapper('Module_Blog_Post')->all()->order('date_created');
+		$posts = $this->kernel->mapper()->all('Module_Blog_Post')->order('date_created');
 		
 		$view = $this->view(__FUNCTION__)
 			->set(array(
@@ -52,10 +52,11 @@ class Module_Blog_Controller extends Cx_Module_Controller
 	 */
 	public function deleteMethod($request, $page, $module)
 	{
-		$item = $mapper->get($request->module_item);
+		$mapper = $this->kernel->mapper();
+		$item = $mapper->get('Module_Blog_Post', $request->module_item);
 		if(!$item) {
-			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
+			return false;
 		}
-		return $this->mapper()->delete($item);
+		return $mapper->delete($item);
 	}
 }

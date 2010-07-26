@@ -14,7 +14,7 @@ class Module_Code_Controller extends Cx_Module_Controller_Abstract
 	{
 		$item = $this->kernel->mapper('Module_Code_Mapper')->currentEntity($module);
 		if(!$item) {
-			return true;
+			return false;
 		}
 		
 		// Return only content for HTML
@@ -88,11 +88,11 @@ class Module_Code_Controller extends Cx_Module_Controller_Abstract
 	 */
 	public function putMethod($request, $page, $module)
 	{
-		$mapper = $this->mapper();
+		$mapper = $this->kernel->mapper('Module_Code_Mapper');
 		//$item = $mapper->get($request->module_item);
-		$item = $this->mapper()->currentEntity($module);
+		$item = $mapper->currentEntity($module);
 		if(!$item) {
-			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
+			return false;
 		}
 		$item->data($request->post());
 		$item->module_id = $module->id;
@@ -119,7 +119,7 @@ class Module_Code_Controller extends Cx_Module_Controller_Abstract
 		$mapper = $this->kernel->mapper('Module_Code_Mapper');
 		$item = $mapper->get('Module_Code_Entity', $request->module_item);
 		if(!$item) {
-			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
+			return false;
 		}
 		return $mapper->delete($item);
 	}
