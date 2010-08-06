@@ -2,7 +2,7 @@
 /**
  * Page module controller - Add, move, or delete modules
  */
-class Module_Page_Module_Controller extends Cx_Module_Controller
+class Module_Page_Module_Controller extends Cx_Module_Controller_Abstract
 {
 	protected $_file = __FILE__;
 	
@@ -49,16 +49,16 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 		// @todo Attempt to load module before saving it so we know it will work
 		
 		// Save it
-		$mapper = $this->mapper();
-		$entity = $mapper->get()->data($request->post())->data(array(
+		$mapper = $kernel->mapper();
+		$entity = $mapper->data($mapper->get('Module_Page_Module_Entity'), $request->post() + array(
 			'page_id' => $page->id,
-			'date_created' => date($mapper->adapter()->dateTimeFormat())
+			'date_created' => $mapper->connection('Module_Page_Module_Entity')->dateTime()
 			));
 		if($mapper->save($entity)) {
 			$pageUrl = $this->kernel->url('page', array('page' => $page->url));
 			if($request->format == 'html') {
 				// Set module data for return content
-				$module->data($entity->data());
+				$mapper->data($module, $mapper->data($entity));
 				// Dispatch to return module content
 				return $kernel->dispatch($entity->name, 'indexAction', array($request, $page, $entity));
 			} else {
@@ -87,6 +87,7 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 				->submitButtonText('Delete');
 			return "<p>Are you sure you want to delete this module?</p>" . $form;
 		}
+		return false;
 	}
 	
 	
@@ -95,12 +96,12 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	 */
 	public function deleteMethod($request, $page, $module)
 	{
-		$item = $this->mapper()->get($request->module_item);
+		$item = $this->kernel->mapper()->get('Module_Page_Module_Entity', $request->module_item);
 		if($item) {
-			$this->mapper()->delete($item);
+			$this->kernel->mapper()->delete($item);
 			return true;
 		} else {
-			throw new Exception_FileNotFound("Requested module not found");
+			return false;
 		}
 	}
 	
@@ -135,7 +136,7 @@ class Module_Page_Module_Controller extends Cx_Module_Controller
 	{
 		$view = new Alloy_View_Generic_Form('form');
 		$view->action("")
-			->fields($this->mapper()->fields())
+			->fields($this->kernel->mapper()->fields('Module_Page_Module_Entity'))
 			->removeFields(array('id', 'date_created', 'date_modified'));
 		return $view;
 	}

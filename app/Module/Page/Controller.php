@@ -199,13 +199,13 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 		$kernel = $this->kernel;
 		
 		// Ensure page exists
-		$mapper = $this->mapper();
+		$mapper = $this->kernel->mapper('Module_Page_Mapper');
 		$page = $mapper->getPageByUrl($request->page);
 		if(!$page) {
 			throw new Alloy_Exception_FileNotFound("Page not found: '" . $request->page . "'");
 		}
 		
-		return $this->formView()->data($page->data());
+		return $this->formView()->data($mapper->data($page));
 	}
 	
 	
@@ -215,10 +215,10 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 	 */
 	public function postMethod($request)
 	{
-		$mapper = $this->mapper();
-		$entity = $mapper->get()->data($request->post());
+		$mapper = $this->kernel->mapper();
+		$entity = $mapper->data($mapper->get('Module_Page_Entity'), $request->post());
 		$entity->parent_id = (int) $request->parent_id;
-		$entity->date_created = date($mapper->adapter()->dateTimeFormat());
+		$entity->date_created = $mapper->connection('Module_Page_Entity')->dateTime();
 		$entity->date_modified = $entity->date_created;
 		
 		// Auto-genereate URL if not filled in
@@ -289,7 +289,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 		
 		// Override int 'parent_id' with option select box
 		$fields['parent_id']['type'] = 'select';
-		$fields['parent_id']['options'] = array(0 => '[None]') + $this->mapper()->all()->order(array('ordering' => 'ASC'))->toArray('id', 'title');
+		$fields['parent_id']['options'] = array(0 => '[None]') + $this->kernel->mapper()->all('Module_Page_Entity')->order(array('ordering' => 'ASC'))->toArray('id', 'title');
 		$fields['parent_id']['title'] = 'Parent Page';
 		
 		// Prepare view
