@@ -113,10 +113,10 @@ class Module_Page_Module_Controller extends Cx_Module_Controller_Abstract
 	public function saveSortAction($request, $page, $module)
 	{
 		if($request->modules && is_array($request->modules)) {
-			$mapper = $this->mapper();
+			$mapper = $this->kernel->mapper();
 			foreach($request->modules as $regionName => $modules) {
 				foreach($modules as $orderIndex => $moduleId) {
-					$item = $mapper->get($moduleId);
+					$item = $mapper->get('Module_Page_Module_Entity', $moduleId);
 					if($item) {
 						$item->region = $regionName;
 						$item->ordering = $orderIndex;
