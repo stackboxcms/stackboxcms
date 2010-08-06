@@ -1,5 +1,5 @@
 <?php
-class Module_User_Entity extends Cx_Module_Entity_Abstract
+class Module_User_Entity extends Cx_Entity_Abstract
 {
 	// Table
 	protected $_datasource = "users";
@@ -25,6 +25,20 @@ class Module_User_Entity extends Cx_Module_Entity_Abstract
 		'order' => array('date_created' => 'DESC')
 	);
 	
+	// Save password on load to see if it's changed later
+	protected $_loadedPassword;
+	
+	
+	/**
+	 * Callback after entity is loaded by ID
+	 */
+	public function afterLoad(array $data = array())
+	{
+		if(isset($data['password'])) {
+			$this->_loadedPassword = $data['password'];
+		}
+	}
+	
 	
 	/**
 	 * Save with salt and encrypted password
@@ -32,13 +46,14 @@ class Module_User_Entity extends Cx_Module_Entity_Abstract
 	public function beforeSave(Spot_Mapper $mapper)
 	{
 		$data = $mapper->data($this);
-		$newData = $mapper->dataModified($this);
 		
 		// If password has been modified or set for the first time
-		if(!$this->id || (isset($newData['password']) && $newData['password'] != $data['password'])) {
+		if(!$this->id || ($this->password != $this->_loadedPassword)) {
 			$this->salt = $this->randomSalt();
-			$this->password = $this->encryptedPassword($newData['password']);
+			$this->password = $this->encryptedPassword($data['password']);
 		}
+		
+		parent::beforeSave($mapper);
 	}
 	
 	

@@ -102,6 +102,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 		
 		// Modules
 		$modules = $page->modules;
+		
         // Also include modules in global template regions if global regions are present
         if($template->regionsType('global')) {
             $modules->orWhere(array('region' => $template->regionsType('global')));

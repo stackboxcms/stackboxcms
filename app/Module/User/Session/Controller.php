@@ -41,7 +41,7 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 		}
 		
 		// Test user login credentials
-		$user = $mapper->first(array(
+		$user = $mapper->first('Module_User_Entity', array(
 			'username' => $request->username,
 			'password' => $userTest->encryptedPassword($request->password)
 			));
@@ -54,7 +54,7 @@ class Module_User_Session_Controller extends Alloy_Module_Controller
 		$session = $mapper->get('Module_User_Session_Entity');
 		$session->user_id = $user->id;
 		$session->session_id = session_id();
-		$session->date_created = date($mapper->connection('Module_User_Session_Entity')->dateTime());
+		$session->date_created = $mapper->connection('Module_User_Session_Entity')->dateTime();
 		
 		if($mapper->save($session)) {
 			// Set session cookie and user object on Kernel

@@ -33,8 +33,8 @@ abstract class Cx_Entity_Abstract
 	/**
 	 * Set site_id with current site based on config
 	 */
-	public function beforeSave(Spot_Entity $entity)
+	public function beforeSave(Spot_Mapper $mapper)
 	{
-		$entity->site_id = Alloy()->config('site.id', 0);
+		$this->site_id = Alloy()->config('site.id', 0);
 	}
 }

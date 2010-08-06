@@ -2,7 +2,7 @@
 /**
  * User Module
  */
-class Module_User_Controller extends Cx_Module_Controller
+class Module_User_Controller extends Cx_Module_Controller_Abstract
 {
 	protected $_file = __FILE__;
 	
@@ -19,7 +19,7 @@ class Module_User_Controller extends Cx_Module_Controller
 			$access = true;
 		} else {
 			// If there are not currently any users that exist
-			$userCount = $this->mapper()->all()->count();
+			$userCount = $this->kernel->mapper()->all('Module_User_Entity')->count();
 			if($userCount == 0) {
 				$access = true;
 			}
@@ -65,13 +65,12 @@ class Module_User_Controller extends Cx_Module_Controller
 			->method('put');
 		
 		if(!$module) {
-			$module = $this->mapper()->get();
+			$module = $this->kernel->mapper()->get('Module_User_Entity');
 			$form->method('post');
 		}
 		
-		$item = $this->mapper()->currentEntity($module);
-		
-		return $form->data($item->data());
+		// @todo: Fill-in user data for editing
+		return $form->data(array());
 	}
 	
 	
@@ -81,8 +80,8 @@ class Module_User_Controller extends Cx_Module_Controller
 	 */
 	public function postMethod($request)
 	{
-		$mapper = $this->mapper();
-		$item = $mapper->get()->data($request->post());
+		$mapper = $this->kernel->mapper();
+		$item = $mapper->data($mapper->get('Module_User_Entity'), $request->post());
 		$item->site_id = 0;
 		if($mapper->save($item)) {
 			$itemUrl = $this->kernel->url('page', array('page' => '/'));
@@ -93,7 +92,6 @@ class Module_User_Controller extends Cx_Module_Controller
 			}
 		} else {
 			$this->kernel->response(400);
-			var_dump($mapper->errors());
 			return $this->formView()->errors($mapper->errors())->data($request->post());
 		}
 	}
@@ -105,13 +103,13 @@ class Module_User_Controller extends Cx_Module_Controller
 	 */
 	public function putMethod($request)
 	{
-		$mapper = $this->mapper();
+		$mapper = $this->kernel->mapper();
 		//$item = $mapper->get($request->module_item);
-		$item = $this->mapper()->get($request->id);
+		$item = $mapper->get('Module_User_Entity', $request->id);
 		if(!$item) {
-			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
+			return false;
 		}
-		$item->data($request->post());
+		$mapper->data($item, $request->post());
 		$item->site_id = 0;
 		
 		if($mapper->save($item)) {
@@ -133,11 +131,11 @@ class Module_User_Controller extends Cx_Module_Controller
 	 */
 	public function deleteMethod($request, $page, $module)
 	{
-		$item = $mapper->get($request->module_item);
+		$item = $this->kernel->mapper->get('Module_User_Entity', $request->module_item);
 		if(!$item) {
-			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
+			return false;
 		}
-		return $this->mapper()->delete($item);
+		return $this->kernel->mapper()->delete($item);
 	}
 	
 	

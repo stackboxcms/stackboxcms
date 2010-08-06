@@ -56,7 +56,7 @@ abstract class Cx_Module_Controller_Abstract extends Alloy_Module_Controller
 	 */
 	protected function formView()
 	{
-		$fields = $this->mapper()->fields();
+		$fields = $this->kernel->mapper()->fields("Module_" . $this->name() . "_Entity");
 		$view = new Alloy_View_Generic_Form('form');
 		$view->action("")
 			->fields($fields)
