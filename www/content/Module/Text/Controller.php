@@ -118,7 +118,7 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
 		$mapper = $this->kernel->mapper('Module_Text_Mapper');
 		$item = $mapper->get('Module_Text_Entity', $request->module_item);
 		if(!$item) {
-			throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
+			return false;
 		}
 		return $mapper->delete($item);
 	}
