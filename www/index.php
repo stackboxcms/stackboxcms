@@ -100,17 +100,23 @@ try {
 	$kernel->user($user);
 	// ==================================
 	
-	//var_dump($kernel->user());
+	// Required params
+	if(isset($params['module']) && isset($params['action'])) {
+		$module = $params['module'];
+		$action = $params['action'];
+		
+		// Run/execute
+		$content = $kernel->dispatchRequest($request, $module, $action, array($request));
+		$kernel->trigger('cx_boot_dispatch_after', array(&$content));
+	} else {
+		$content = false;
+	}
 	
-	// Run/execute
-	$content = "";
+	// Raise 404 error on boolean false result
+ 	if(false === $content) {
+		throw new Alloy_Exception_FileNotFound("Requested file or page not found. Please check the URL and try again.");
+	}
 	
-	$kernel->trigger('cx_boot_dispatch_before', array(&$content));
-	
-	$content .= $kernel->dispatchRequest($request, $module, $action, array($request));
-	
-	$kernel->trigger('cx_boot_dispatch_after', array(&$content));
- 
 // Authentication Error
 } catch(Cx_Exception_Auth $e) {
 	$responseStatus = 403;

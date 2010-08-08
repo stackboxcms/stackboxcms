@@ -319,7 +319,9 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 	protected function regionModuleFormat($request, $page, $module, $user, $moduleResponse, $includeControls = true)
 	{
 		$content = "";
-		if(false !== $moduleResponse) {
+		if(false === $moduleResponse) {
+			$content = false;
+		} else {
 			if('html' == $request->format) {
 				// Module placeholder
 				if(true === $moduleResponse || empty($moduleResponse)) {
