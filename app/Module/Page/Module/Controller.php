@@ -8,6 +8,7 @@ class Module_Page_Module_Controller extends Cx_Module_Controller_Abstract
 	
 	
 	/**
+	 * Module listing
 	 * @method GET
 	 */
 	public function indexAction($request, $page, $module)
