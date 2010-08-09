@@ -63,4 +63,25 @@ abstract class Cx_Module_Controller_Abstract extends Alloy_Module_Controller
 			->removeFields(array('id', 'site_id', 'module_id', 'date_created', 'date_modified'));
 		return $view;
 	}
+	
+	
+	/**
+	 * Install Module
+	 *
+	 * @param string $action Action to execute on module when install is complete (passed when autoinstall is triggered)
+	 */
+	public function install($action = null)
+	{
+		$response = true;
+		if(null !== $action) {
+			$response = $this->kernel->dispatchRequest($this->kernel->request(), $this->name(), $action, array($this->kernel->request()));
+		}
+		return $response;
+	}
+	
+	
+	/**
+	 * Uninstall Module
+	 */
+	public function uninstall() { return true; }
 }

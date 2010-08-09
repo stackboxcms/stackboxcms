@@ -142,6 +142,16 @@ try {
 } catch(Alloy_Exception $e) {
 	$responseStatus = 500;
 	$content = $e;
+
+// Database table/datasource missing - attempt to autoinstall
+} catch(Spot_Exception_Datasource_Missing $e) {
+	$responseStatus = 200;
+	try {
+		$content = $kernel->dispatch($module, 'install', array($action));
+	} catch(Exception $e) {
+		$responseStatus = 500;
+		$content = $e;
+	}
  
 // Generic Error
 } catch(Exception $e) {
@@ -162,7 +172,7 @@ if($kernel && $content && $responseStatus >= 400 && !$request->isAjax()) {
 
 // Exception detail depending on mode
 if($content instanceof Exception) {
-	$content = "[ERROR] " . $e->getMessage();
+	$content = "<h1>ERROR</h1><p>" . get_class($e) . " (Code: " . $e->getCode() . ")<br />" . $e->getMessage() . "</p>";
 	// Show debugging info?
 	if($kernel->config('debug')) {
 		$content .= "<p>File: " . $e->getFile() . " (" . $e->getLine() . ")</p>";

@@ -37,7 +37,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 				$page->parent_id = 0;
 				$page->title = "Home";
 				$page->url = $pageUrl;
-				$page->date_created = date($pageMapper->connection('Module_Page_Entity')->dateTime());
+				$page->date_created = $pageMapper->connection('Module_Page_Entity')->dateTime();
 				$page->date_modified = $page->date_created;
 				if(!$pageMapper->save($page)) {
 					throw new Alloy_Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
@@ -345,5 +345,26 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 			}
 		}
 		return $content;
+	}
+	
+	
+	/**
+	 * Install Module
+	 *
+	 * @param string $action Action to execute on module when install is complete (passed when autoinstall is triggered)
+	 */
+	public function install($action = null)
+	{
+		$this->kernel->mapper('Module_Page_Mapper')->migrate('Module_Page_Entity');
+		return parent::install($action);
+	}
+	
+	
+	/**
+	 * Uninstall Module
+	 */
+	public function uninstall()
+	{
+		return $this->kernel->mapper('Module_Page_Mapper')->dropDatasource('Module_Page_Entity');
 	}
 }

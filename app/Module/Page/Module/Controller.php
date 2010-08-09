@@ -141,4 +141,25 @@ class Module_Page_Module_Controller extends Cx_Module_Controller_Abstract
 			->removeFields(array('id', 'date_created', 'date_modified'));
 		return $view;
 	}
+	
+	
+	/**
+	 * Install Module
+	 *
+	 * @param string $action Action to execute on module when install is complete (passed when autoinstall is triggered)
+	 */
+	public function install($action = null)
+	{
+		$this->kernel->mapper()->migrate('Module_Page_Module_Entity');
+		return parent::install($action);
+	}
+	
+	
+	/**
+	 * Uninstall Module
+	 */
+	public function uninstall()
+	{
+		return $this->kernel->mapper()->dropDatasource('Module_Page_Module_Entity');
+	}
 }
