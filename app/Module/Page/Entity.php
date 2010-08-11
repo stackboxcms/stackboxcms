@@ -42,6 +42,7 @@ class Module_Page_Entity extends Cx_Entity_Abstract
 	public function beforeSave(Spot_Mapper $mapper)
 	{
 		$this->url = self::formatPageUrl($this->url);
+		return parent::beforeSave($mapper);
 	}
 	
 	
