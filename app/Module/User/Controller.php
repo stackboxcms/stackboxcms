@@ -140,6 +140,29 @@ class Module_User_Controller extends Cx_Module_Controller_Abstract
 	
 	
 	/**
+	 * Install Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
+	 */
+	public function install($action = null, array $params = array())
+	{
+		$this->kernel->mapper()->migrate('Module_User_Entity');
+		return parent::install($action, $params);
+	}
+	
+	
+	/**
+	 * Uninstall Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
+	 */
+	public function uninstall()
+	{
+		return $this->kernel->mapper()->dropDatasource('Module_User_Entity');
+	}
+	
+	
+	/**
 	 * Return view object for the add/edit form
 	 */
 	protected function formView()

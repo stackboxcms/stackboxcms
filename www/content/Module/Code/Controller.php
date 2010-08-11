@@ -94,7 +94,7 @@ class Module_Code_Controller extends Cx_Module_Controller_Abstract
 		if(!$item) {
 			return false;
 		}
-		$item->data($request->post());
+		$mapper->data($item, $request->post());
 		$item->module_id = $module->id;
 		
 		if($mapper->save($item)) {
@@ -108,6 +108,29 @@ class Module_Code_Controller extends Cx_Module_Controller_Abstract
 			$this->kernel->response(400);
 			return $this->formView()->errors($mapper->errors());
 		}
+	}
+	
+	
+	/**
+	 * Install Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
+	 */
+	public function install($action = null, array $params = array())
+	{
+		$this->kernel->mapper('Module_Code_Mapper')->migrate('Module_Code_Entity');
+		return parent::install($action, $params);
+	}
+	
+	
+	/**
+	 * Uninstall Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
+	 */
+	public function uninstall()
+	{
+		return $this->kernel->mapper('Module_Code_Mapper')->dropDatasource('Module_Code_Entity');
 	}
 	
 	

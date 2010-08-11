@@ -351,8 +351,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 	/**
 	 * Install Module
 	 *
-	 * @param string $action Action to execute on module when install is complete (passed when autoinstall is triggered)
-	 * @param array $params Params to execute action with
+	 * @see Cx_Module_Controller_Abstract
 	 */
 	public function install($action = null, array $params = array())
 	{
@@ -363,6 +362,8 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 	
 	/**
 	 * Uninstall Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
 	 */
 	public function uninstall()
 	{

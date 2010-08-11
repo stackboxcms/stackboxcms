@@ -59,4 +59,30 @@ class Module_Blog_Controller extends Cx_Module_Controller_Abstract
 		}
 		return $mapper->delete($item);
 	}
+	
+	
+	/**
+	 * Install Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
+	 */
+	public function install($action = null, array $params = array())
+	{
+		$this->kernel->mapper()->migrate('Module_Blog_Entity');
+		$this->kernel->mapper()->migrate('Module_Blog_Post');
+		return parent::install($action, $params);
+	}
+	
+	
+	/**
+	 * Uninstall Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
+	 */
+	public function uninstall()
+	{
+		$this->kernel->mapper()->dropDatasource('Module_Blog_Entity');
+		$this->kernel->mapper()->dropDatasource('Module_Blog_Post');
+		return true;
+	}
 }

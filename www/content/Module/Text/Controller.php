@@ -125,6 +125,29 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
 	
 	
 	/**
+	 * Install Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
+	 */
+	public function install($action = null, array $params = array())
+	{
+		$this->kernel->mapper('Module_Text_Mapper')->migrate('Module_Text_Entity');
+		return parent::install($action, $params);
+	}
+	
+	
+	/**
+	 * Uninstall Module
+	 *
+	 * @see Cx_Module_Controller_Abstract
+	 */
+	public function uninstall()
+	{
+		return $this->kernel->mapper('Module_Text_Mapper')->dropDatasource('Module_Text_Entity');
+	}
+	
+	
+	/**
 	 * Return view object for the add/edit form
 	 */
 	protected function formView()
