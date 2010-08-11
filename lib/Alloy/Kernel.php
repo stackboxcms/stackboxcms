@@ -151,14 +151,29 @@ class Alloy_Kernel extends AppKernel_Main
 			throw new Alloy_Exception_FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
 		}
 		
-		// Handle result
-		$paramCount = count($params);
-		if($paramCount == 0) {
-			$result = $sModuleObject->$action();
-		} elseif($paramCount == 1) {
-			$result = $sModuleObject->$action(current($params));
-		} else {
-			$result = call_user_func_array(array($sModuleObject, $action), $params);
+		try {
+			// Handle result
+			$paramCount = count($params);
+			if($paramCount == 0) {
+				$result = $sModuleObject->$action();
+			} elseif($paramCount == 1) {
+				$result = $sModuleObject->$action(current($params));
+			} elseif($paramCount == 2) {
+				$result = $sModuleObject->$action($params[0], $params[1]);
+			} elseif($paramCount == 3) {
+				$result = $sModuleObject->$action($params[0], $params[1], $params[2]);
+			} else {
+				$result = call_user_func_array(array($sModuleObject, $action), $params);
+			}
+		
+		// Database table/datasource missing - attempt to autoinstall
+		// @todo Move this elsewhere - it probably does not belong here 
+		} catch(Spot_Exception_Datasource_Missing $e) {
+			try {
+				$result = $this->dispatch($module, 'install', array($action, $params));
+			} catch(Exception $e) {
+				$result = $e;
+			}
 		}
 		
 		return $result;

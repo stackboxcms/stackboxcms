@@ -69,12 +69,13 @@ abstract class Cx_Module_Controller_Abstract extends Alloy_Module_Controller
 	 * Install Module
 	 *
 	 * @param string $action Action to execute on module when install is complete (passed when autoinstall is triggered)
+	 * @param array $params Params to execute action with
 	 */
-	public function install($action = null)
+	public function install($action = null, array $params = array())
 	{
 		$response = true;
 		if(null !== $action) {
-			$response = $this->kernel->dispatchRequest($this->kernel->request(), $this->name(), $action, array($this->kernel->request()));
+			$response = $this->kernel->dispatchRequest($this->kernel->request(), $this->name(), $action, array($this->kernel->request()) + $params);
 		}
 		return $response;
 	}
