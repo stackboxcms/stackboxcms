@@ -2,7 +2,7 @@
 /**
  * User Session module
  */
-class Module_User_Session_Controller extends Alloy_Module_Controller
+class Module_User_Session_Controller extends Cx_Module_Controller_Abstract
 {
 	protected $_file = __FILE__;
 	

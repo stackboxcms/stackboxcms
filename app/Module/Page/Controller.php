@@ -103,10 +103,10 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 		// Modules
 		$modules = $page->modules;
 		
-        // Also include modules in global template regions if global regions are present
-        if($template->regionsType('global')) {
-            $modules->orWhere(array('region' => $template->regionsType('global')));
-        }
+		// Also include modules in global template regions if global regions are present
+		if($template->regionsType('global')) {
+			$modules->orWhere(array('region' => $template->regionsType('global')));
+		}
 		foreach($modules as $module) {
 			// Loop over modules, building content for each region
 			$moduleResponse = $kernel->dispatch($module->name, 'indexAction', array($request, $page, $module));
@@ -356,6 +356,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 	public function install($action = null, array $params = array())
 	{
 		$this->kernel->mapper('Module_Page_Mapper')->migrate('Module_Page_Entity');
+		$this->kernel->mapper('Module_Page_Mapper')->migrate('Module_Page_Module_Entity');
 		return parent::install($action, $params);
 	}
 	

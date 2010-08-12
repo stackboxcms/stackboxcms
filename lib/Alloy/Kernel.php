@@ -60,7 +60,7 @@ class Alloy_Kernel extends AppKernel_Main
 	 * @return object
 	 * @throws Alloy_Exception_FileNotFound
 	 */
-	public function module($module)
+	public function module($module, $init = true)
 	{
 		// Clean module name to prevent possible security vulnerabilities
 		$sModule = preg_replace('/[^a-zA-Z0-9_]/', '', $module);
@@ -82,8 +82,10 @@ class Alloy_Kernel extends AppKernel_Main
 		$sModuleObject = new $sModuleClass($this);
 		
 		// Run init() setup only if supported
-		if(method_exists($sModuleObject, 'init')) {
-			$sModuleObject->init();
+		if(true === $init) {
+			if(method_exists($sModuleObject, 'init')) {
+				$sModuleObject->init();
+			}
 		}
 		
 		return $sModuleObject;
@@ -138,20 +140,20 @@ class Alloy_Kernel extends AppKernel_Main
 	 */
 	public function dispatch($module, $action = 'index', array $params = array())
 	{
-		if($module instanceof Alloy_Module_Controller) {
-			// Use current module instance
-			$sModuleObject = $module;
-		} else {
-			// Get module instance
-			$sModuleObject = $this->module($module);
-		}
-		
-		// Module action callable (includes __call magic function if method missing)?
-		if(!is_callable(array($sModuleObject, $action))) {
-			throw new Alloy_Exception_FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
-		}
-		
 		try {
+			if($module instanceof Alloy_Module_Controller) {
+				// Use current module instance
+				$sModuleObject = $module;
+			} else {
+				// Get module instance
+				$sModuleObject = $this->module($module);
+			}
+			
+			// Module action callable (includes __call magic function if method missing)?
+			if(!is_callable(array($sModuleObject, $action))) {
+				throw new Alloy_Exception_FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
+			}
+		
 			// Handle result
 			$paramCount = count($params);
 			if($paramCount == 0) {
@@ -169,11 +171,8 @@ class Alloy_Kernel extends AppKernel_Main
 		// Database table/datasource missing - attempt to autoinstall
 		// @todo Move this elsewhere - it probably does not belong here 
 		} catch(Spot_Exception_Datasource_Missing $e) {
-			try {
-				$result = $this->dispatch($module, 'install', array($action, $params));
-			} catch(Exception $e) {
-				$result = $e;
-			}
+			$module = $this->module($module, false); // Don't run init function for install
+			$result = $this->dispatch($module, 'install', array($action, $params));
 		}
 		
 		return $result;
@@ -201,9 +200,9 @@ class Alloy_Kernel extends AppKernel_Main
 		
 		// Append 'Action' or 'Method'
 		if(strtolower($requestMethod) == strtolower($action)) {
-			$action = $action . 'Method'; // Append with 'Method' to limit scope to REST access only
+			$action = $action . (false === strpos($action, 'Method') ? 'Method' : ''); // Append with 'Method' to limit scope to REST access only
 		} else {
-			$action = $action . 'Action'; // Append with 'Action' to limit scope of available functions from HTTP request
+			$action = $action . (false === strpos($action, 'Action') ? 'Action' : ''); // Append with 'Action' to limit scope of available functions from HTTP request
 		}
 		
 		

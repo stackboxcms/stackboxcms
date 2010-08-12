@@ -142,16 +142,6 @@ try {
 } catch(Alloy_Exception $e) {
 	$responseStatus = 500;
 	$content = $e;
-
-// Database table/datasource missing - attempt to autoinstall
-} catch(Spot_Exception_Datasource_Missing $e) {
-	$responseStatus = 200;
-	try {
-		$content = $kernel->dispatch($module, 'install', array($action));
-	} catch(Exception $e) {
-		$responseStatus = 500;
-		$content = $e;
-	}
  
 // Generic Error
 } catch(Exception $e) {
@@ -172,6 +162,7 @@ if($kernel && $content && $responseStatus >= 400 && !$request->isAjax()) {
 
 // Exception detail depending on mode
 if($content instanceof Exception) {
+	$e = $content;
 	$content = "<h1>ERROR</h1><p>" . get_class($e) . " (Code: " . $e->getCode() . ")<br />" . $e->getMessage() . "</p>";
 	// Show debugging info?
 	if($kernel->config('debug')) {
@@ -199,7 +190,16 @@ if($kernel) {
 		echo "<hr />";
 		echo "<pre>";
 		print_r($kernel->trace());
-		echo "</pre>";	
+		echo "</pre>";
+		
+		// Executed queries
+		/*
+		echo "<hr />";
+		echo "<h1>Executed Queries (" . Spot_Log::queryCount() . ")</h1>";
+		echo "<pre>";
+		print_r(Spot_Log::queries());
+		echo "</pre>";
+		*/
 	}
 	
 } else {
