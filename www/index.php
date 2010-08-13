@@ -193,13 +193,11 @@ if($kernel) {
 		echo "</pre>";
 		
 		// Executed queries
-		/*
 		echo "<hr />";
 		echo "<h1>Executed Queries (" . Spot_Log::queryCount() . ")</h1>";
 		echo "<pre>";
 		print_r(Spot_Log::queries());
 		echo "</pre>";
-		*/
 	}
 	
 } else {

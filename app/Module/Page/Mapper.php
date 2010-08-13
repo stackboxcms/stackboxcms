@@ -1,5 +1,5 @@
 <?php
-class Module_Page_Mapper extends Spot_Mapper
+class Module_Page_Mapper extends Cx_Module_Mapper_Abstract
 {
 	/**
 	 * Get current page by given URL
