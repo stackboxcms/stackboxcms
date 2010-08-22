@@ -105,7 +105,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 		
 		// Also include modules in global template regions if global regions are present
 		if($template->regionsType('global')) {
-			$modules->orWhere(array('region' => $template->regionsType('global')));
+			$modules->orWhere(array('site_id' => $kernel->config('site.id'), 'region' => $template->regionsType('global')));
 		}
 		foreach($modules as $module) {
 			// Loop over modules, building content for each region
@@ -333,13 +333,14 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 				// Show controls only for authorized users and requests that are not AJAX
 				if($includeControls && $user->isAdmin()) {
 					$content .= '
-				  <div class="cx_ui cx_ui_modulebar"><span>' . $module->name . ' Module</span></div>
 				  <div class="cx_ui cx_ui_controls">
 					<ul>
+					  <li class="title"><span>' . $module->name . '</span></li>
 					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
 					  <li><a href="' . $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => 'Page_Module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
 					</ul>
-				  </div>';
+				  </div>
+				  ';
 				}
 				$content .= '</div>';
 			}

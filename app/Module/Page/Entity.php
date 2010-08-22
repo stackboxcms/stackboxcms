@@ -23,7 +23,7 @@ class Module_Page_Entity extends Cx_Entity_Abstract
 		'type' => 'relation',
 		'relation' => 'HasMany',
 		'entity' => ':self',
-		'where' => array('parent_id' => ':entity.id'),
+		'where' => array('site_id' => ':entity.site_id', 'parent_id' => ':entity.id'),
 		'order' => array('ordering' => 'ASC')
 		);
 	
@@ -32,7 +32,7 @@ class Module_Page_Entity extends Cx_Entity_Abstract
 		'type' => 'relation',
 		'relation' => 'HasMany',
 		'entity' => 'Module_Page_Module_Entity',
-		'where' => array('page_id' => ':entity.id'),
+		'where' => array('site_id' => ':entity.site_id', 'page_id' => ':entity.id'),
 		'order' => array('ordering' => 'ASC')
 		);
 	

@@ -1,6 +1,9 @@
 <?php
 abstract class Cx_Module_Mapper_Abstract extends Spot_Mapper
 {
+	protected $_auto_site_id_query = true;
+	
+	
 	/**
 	 * Begin a new database query - get query builder
 	 * Acts as a kind of factory to get the query builder object
@@ -12,7 +15,14 @@ abstract class Cx_Module_Mapper_Abstract extends Spot_Mapper
 	 */
 	public function select($entityName, $fields = "*")
 	{
-        $siteId = Alloy()->config('site.id');
-		return parent::select($entityName, $fields)->where(array('site_id' => (int) $siteId));
+		$query = parent::select($entityName, $fields);
+		
+		// Auto-add site_id to queries?
+		if(true === $this->_auto_site_id_query) {
+			$siteId = Alloy()->config('site.id');
+			$query->where(array('site_id' => (int) $siteId));
+		}
+		
+		return parent::select($entityName, $fields);
 	}
 }

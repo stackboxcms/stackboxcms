@@ -6,6 +6,7 @@ class Module_Page_Module_Entity extends Cx_Entity_Abstract
 	
 	// Fields
 	public $id = array('type' => 'int', 'primary' => true, 'serial' => true);
+	public $site_id = array('type' => 'int', 'key' => true, 'default' => 0);
 	public $page_id = array('type' => 'int', 'key' => true, 'required' => true);
 	public $module_id = array('type' => 'int', 'default' => 0);
 	public $region = array('type' => 'string', 'required' => true);
