@@ -289,7 +289,12 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 		
 		// Override int 'parent_id' with option select box
 		$fields['parent_id']['type'] = 'select';
-		$fields['parent_id']['options'] = array(0 => '[None]') + $this->kernel->mapper()->all('Module_Page_Entity')->order(array('ordering' => 'ASC'))->toArray('id', 'title');
+		// Get all pages for site
+		$fields['parent_id']['options'] = array(0 => '[None]') + $this->kernel->mapper('Module_Page_Mapper')->all('Module_Page_Entity', array(
+    		    'site_id' => $this->kernel->config('site.id')
+		    ))->order(array(
+		        'ordering' => 'ASC'
+		    ))->toArray('id', 'title'); // Return records in 'id' => 'title' key/value array
 		$fields['parent_id']['title'] = 'Parent Page';
 		
 		// Prepare view
