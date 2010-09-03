@@ -113,7 +113,7 @@ $(function() {
 	cx_regions.sortable({
 		items: 'div.cx_module, div.cx_module_tile',
 		connectWith: cx_regions,
-		handle: 'div.cx_ui_modulebar',
+		handle: 'div.cx_ui_controls .cx_ui_title',
 		placeholder: 'cx_module_placeholder',
 		forcePlaceholderSize: true,
 		start: function(e, ui) {

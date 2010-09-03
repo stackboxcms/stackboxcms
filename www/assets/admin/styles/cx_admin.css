@@ -199,13 +199,14 @@ REGION / MODULE UI
 	width: 100px;
 	overflow: visible;
 }
-.cx_module .cx_ui_modulebar {
+.cx_module .cx_ui_controls {
 	display: none;
 	position: absolute;
-	top: -20px;
+	top: -21px;
 	left: 0;
-	height: 20px;
-	overflow: hidden;
+	width: 200px;
+	height: 21px;
+	overflow: visible;
 	color: #eee;
 	background: #333;
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#444), to(#222));
@@ -219,10 +220,12 @@ REGION / MODULE UI
 	-webkit-border-bottom-right-radius: 0;
 	cursor: move;
 }
-	.cx_module .cx_ui_modulebar span {
-		display: block;
-		padding: 4px 8px;
+    .cx_module .cx_ui_controls {
 		font-size: 11px;
+    }
+	.cx_module .cx_ui_controls .cx_ui_title {
+		display: block;
+		padding: 5px 8px;
 	}
 .cx_module.cx_ui_hover {
 	background-color: #EFEFEF;
@@ -234,7 +237,9 @@ REGION / MODULE UI
 	display: block!important;
 }
 .cx_module .cx_ui_controls ul {
-	float: right;
+    position: absolute;
+    top: 0;
+    right: 5px;
 	list-style: none;
 	margin: 0px 0 0 0;
 	padding: 0;
@@ -243,13 +248,11 @@ REGION / MODULE UI
 	.cx_module .cx_ui_controls ul li {
 		float: left;
 		margin: 0;
-		padding: 1px;
+		padding: 0 1px;
 	}
 	.cx_module .cx_ui_controls ul li a {
 		display: block;
-		padding: 2px;
-		background-color: #111;
-		font-weight: bold;
+		padding: 5px;
 		color: #fff;
 		text-decoration: none;
 	}

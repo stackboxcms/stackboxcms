@@ -96,7 +96,7 @@ class Module_User_Session_Controller extends Cx_Module_Controller_Abstract
 		}
 		
 		// Delete all sessions matched for current user
-		$this->kernel->mapper()->delete(array('user_id' => $user->id));
+		$this->kernel->mapper()->delete('Module_User_Entity', array('user_id' => $user->id));
 		return $this->kernel->redirect($this->kernel->url('page', array('page' => '/')));
 	}
 	

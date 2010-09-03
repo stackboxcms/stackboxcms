@@ -149,12 +149,12 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 				$templateHead->script('jquery-ui.min.js');
 				
 				// Setup javascript variables for use
-				$templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $this->kernel->config('url.root') . '", url_assets: "' . $this->kernel->config('url.assets') . '", url_assets_admin: "' . $this->kernel->config('url.assets_admin') . '"}};</script>' . "\n");
-				$templateHead->script($this->kernel->config('url.assets_admin') . 'scripts/cx_admin.js');
-				$templateHead->script($this->kernel->config('url.assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js');
+				$templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('url.assets_admin') . '"}};</script>' . "\n");
+				$templateHead->script($kernel->config('url.assets_admin') . 'scripts/cx_admin.js');
+				$templateHead->script($kernel->config('url.assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js');
 				$templateHead->stylesheet('jquery-ui/base/jquery.ui.all.css');
-				$templateHead->stylesheet($this->kernel->config('url.assets_admin') . 'styles/cx_admin.css');
-				$templateHead->stylesheet($this->kernel->config('url.assets_admin') . 'jHtmlArea/styles/jHtmlArea.css');
+				$templateHead->stylesheet($kernel->config('url.assets_admin') . 'styles/cx_admin.css');
+				$templateHead->stylesheet($kernel->config('url.assets_admin') . 'jHtmlArea/styles/jHtmlArea.css');
 				
 				// Grab template contents
 				$template = $template->content();
@@ -339,8 +339,8 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 				if($includeControls && $user->isAdmin()) {
 					$content .= '
 				  <div class="cx_ui cx_ui_controls">
+				    <div class="cx_ui_title"><span>' . $module->name . '</span></div>
 					<ul>
-					  <li class="title"><span>' . $module->name . '</span></li>
 					  <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
 					  <li><a href="' . $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => 'Page_Module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
 					</ul>
