@@ -14,12 +14,15 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
 	{
 		$item = $this->kernel->mapper('Module_Text_Mapper')->currentTextEntity($module);
 		if(!$item) {
-			return true;
+			return false;
 		}
-		
 		// Return only content for HTML
 		if($request->format == 'html') {
-			return $item->content;
+			// Return view with formatting
+            return $this->view(__FUNCTION__)
+			    ->set(array(
+			        'item' => $item
+			    ));
 		}
 		return $this->kernel->resource($item);
 	}
@@ -157,6 +160,15 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
 		
 		// Set text 'content' as type 'editor' to get WYSIWYG
 		$fields['content']['type'] = 'editor';
+		
+		// Set type and options for 'type' select
+		$fields['type']['type'] = 'select';
+		$fields['type']['options'] = array(
+		    '' => 'None',
+    		'note' => 'Note',
+    		'warning' => 'Warning',
+    		'code' => 'Code'
+		    );
 		
 		$view->action("")
 			->fields($fields);

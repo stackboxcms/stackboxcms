@@ -19,8 +19,11 @@ class Module_Code_Controller extends Cx_Module_Controller_Abstract
 		
 		// Return only content for HTML
 		if($request->format == 'html') {
-			// Uses built-in PHP highligher for now, PHP code only until a full syntax highlighting solution is decided upon
-			return highlight_string($item->content, true);
+            // Return view with formatting
+            return $this->view(__FUNCTION__)
+			    ->set(array(
+			        'content' => $item->content
+			    ));
 		}
 		return $this->kernel->resource($item);
 	}

@@ -333,7 +333,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 					$moduleResponse = "<p>&lt;" . $module->name . " Placeholder&gt;</p>";
 				}
 				$content = '
-				<div id="cx_module_' . $module->id . '" class="cx_module cx_module_' . $module->name . '">
+				<div id="cx_module_' . $module->id . '" class="cx_module module_' . strtolower($module->name) . '">
 				  ' . $moduleResponse;
 				// Show controls only for authorized users and requests that are not AJAX
 				if($includeControls && $user->isAdmin()) {
