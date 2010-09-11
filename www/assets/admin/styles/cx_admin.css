@@ -121,6 +121,52 @@ ADMIN BAR
 		background-image: -moz-linear-gradient(100% 100% 90deg, #089B07, #61E510);
 	}
 
+/*
+MODAL / DIALOG
+============================= */
+#cx_modal {
+	position: absolute;
+	top: 24px;
+	left: 0;
+	background: #333;
+	border-bottom: 5px solid #aaa;
+	width: 100%;
+	height: 70%;
+	display: none;
+}
+	#cx_modal_content {
+		padding: 20px;
+		color: #fff;
+		overflow: scroll;
+		height: 90%;
+	}
+	#cx_modal .cx_ui_controls {
+		display: none!important;
+	}
+	#cx_modal .cx_module.cx_ui_hover {
+		background-color: transparent!important;
+	}
+	#cx_modal .cx_module.cx_ui_modulebar {
+		display: none!important;
+	}
+/*
+.ui-dialog {
+	width: 600px!important;
+}
+.ui-dialog-titlebar, .ui-dialog-title {
+	font-size: 12px;
+	font-weight: bold;
+}
+	#cx_modal .cx_ui_controls {
+		display: none!important;
+	}
+	#cx_modal .cx_module.cx_ui_hover {
+		background-color: transparent!important;
+	}
+	#cx_modal .cx_module.cx_ui_modulebar {
+		display: none!important;
+	}
+*/
 
 /*
 ADMIN PANES
@@ -259,25 +305,4 @@ REGION / MODULE UI
 	.cx_module .cx_ui_controls ul li a:hover, #imNav li.active a {
 		background-color: #AFAFAF;
 		color: #000;
-	}
-
-/*
-MODAL / DIALOG
-============================= */
-.ui-dialog {
-	width: 600px!important;
-}
-.ui-dialog-titlebar, .ui-dialog-title {
-	font-size: 12px;
-	font-weight: bold;
-}
-	/* never show admin controls in dialog */
-	#cx_modal .cx_ui_controls {
-		display: none!important;
-	}
-	#cx_modal .cx_module.cx_ui_hover {
-		background-color: transparent!important;
-	}
-	#cx_modal .cx_module.cx_ui_modulebar {
-		display: none!important;
 	}

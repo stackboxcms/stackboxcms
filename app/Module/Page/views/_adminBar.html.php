@@ -26,4 +26,4 @@
 	<p>Drag and drop modules into content regions on the page.</p>
   </div>
 </div>
-<div id="cx_modal" class="cx_ui"><div id="cx_modal_content"></div></div>
+<div id="cx_modal" class="cx_ui"><div id="cx_modal_content">Loading...</div></div>

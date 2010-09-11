@@ -151,10 +151,10 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
 				// Setup javascript variables for use
 				$templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('url.assets_admin') . '"}};</script>' . "\n");
 				$templateHead->script($kernel->config('url.assets_admin') . 'scripts/cx_admin.js');
-				$templateHead->script($kernel->config('url.assets_admin') . 'jHtmlArea/scripts/jHtmlArea-0.7.0.min.js');
+				$templateHead->script($kernel->config('url.assets_admin') . 'scripts/ckeditor/ckeditor.js');
+				$templateHead->script($kernel->config('url.assets_admin') . 'scripts/ckeditor/adapters/jquery.js');
 				$templateHead->stylesheet('jquery-ui/base/jquery.ui.all.css');
 				$templateHead->stylesheet($kernel->config('url.assets_admin') . 'styles/cx_admin.css');
-				$templateHead->stylesheet($kernel->config('url.assets_admin') . 'jHtmlArea/styles/jHtmlArea.css');
 				
 				// Grab template contents
 				$template = $template->content();

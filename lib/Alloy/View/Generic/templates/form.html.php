@@ -73,7 +73,7 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 	</li>
 	<li class="app_form_actions">
 	  <button type="submit" class="app_action_primary"><?php echo $this->submitButtonText(); ?></button>
-	  <!--<a href="#" class="app_action_cancel">Cancel</a>-->
+	  <a href="#" class="app_action_cancel">Cancel</a>
     </li>
   </ol>
 </form>

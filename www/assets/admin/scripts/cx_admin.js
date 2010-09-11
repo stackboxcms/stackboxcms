@@ -1,69 +1,28 @@
-// When DOM is ready
-$(function() {
-	/**
-	 * Initialize commonly referenced elements to avoid multiple DOM lookups
-	 */
-	var cx_admin_bar = $('#cx_admin_bar');
-	var cx_modal = $('#cx_modal');
-	var cx_modal_content = $('#cx_modal_content');
-	var cx_regions = $('div.cx_region');
-	var cx_modules = $('div.cx_module');
+var cx = cx || {};
+
+/**
+ * MODAL / Content Area
+ */
+cx.modal = (function (cx, $) {
+	// PRIVATE
+	var p = {};
 	
-	/**
-	 * Initialize dialog window
-	 */
-	cx_modal.dialog({
-		autoOpen: false,
-		modal: true,
-		draggable: false,
-		resizeable: false,
-		minWidth: 500,
-		minHeight: 300
-	});
-	
-	
-	/**
-	 * Open link in the admin bar in a modal window
-	 */
-	$('#cx_admin_bar a[rel=modal], div.cx_ui_controls a').live('click', function() {
-		var tLink = $(this);
-		$.ajax({
-			type: "GET",
-			url: tLink.attr('href'),
-			success: function(data, textStatus, req) {
-				cx_modalContent(data);
-			},
-			error: function(req) { // req = XMLHttpRequest object
-				alert("[ERROR] Unable to load URL: " + req.responseText);
-			}
-		});
-		return false;
-	});
-	
-	
-	/**
-	 * Clieck 'ADD CONTENT' button
-	 */
-	$('#cx_admin_bar_addContent').toggle(function() {
-		$('#cx_admin_modules').slideDown();
-		return false;
-	}, function() {
-		$('#cx_admin_modules').slideUp();
-		return false;
-	});
-	
-	
-	/**
-	 * Handle forms within modal windows (AJAX)
-	 */
-	function cx_modalFormBind() {
-		$('#cx_modal form').submit(function(e) {
+	// Bind submit button
+	p.bindSubmit = function() {
+		p.el.find('form').submit(function(e) {
 			var tForm = $(this);
+			
+			// Force-update all CKEditor instances for jQuery's 'serialize' method
+			if(window.CKEDITOR && window.CKEDITOR.instances) {
+				for (instance in CKEDITOR.instances) {
+					CKEDITOR.instances[instance].updateElement();
+				}
+			}
 			
 			// Assemble form data into object for use below
 			formData = tForm.serializeArray();
 			tData = {};
-			jQuery.each(formData, function(i, field){
+			$.each(formData, function(i, field){
 				tData[field.name] = field.value;
 			});
 			
@@ -80,21 +39,114 @@ $(function() {
 					} else {
 						nModule = $('#' + nData.attr('id')).replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000);
 					}
-					cx_modalClose();
+					m.hide();
 				},
 				error: function(req) { // req = XMLHttpRequest object
 					if(req.status == 400){
 						// Validation error ("Bad Request")
-						cx_modalContent(req.responseText);
+						m.error("There were some validation errors on save");
+						m.content(req.responseText);
 					} else {
-						alert("[ERROR] Unable to save data: \n" + req.responseText);
+						m.error("[ERROR] Unable to save data: \n" + req.responseText);
 					}
 				}
 			});
-			e.preventDefault();
 			return false;
 		});
 	}
+	
+	// PUBLIC
+	var m = {};
+	m.init = function() {
+		// Setup selectors
+		p.el = $('#cx_modal');
+		p.elContent = $('#cx_modal_content');
+		
+		// Initialize...
+		m.hide();
+		p.bindSubmit();
+		
+		// Close modal window on 'cancel'
+		$('a.app_action_cancel', p.el).live('click', function() {
+			m.hide();
+			return false;
+		});
+	};
+	m.show = function() {
+		p.el.slideDown();
+	};
+	m.hide = function() {
+		p.el.slideUp();
+	};
+	m.loading = function() {
+		m.content('Loading...');
+	};
+	m.content = function(content) {
+		p.elContent.html(content);
+		
+		// Load CKEditor in editor fields
+		$("form li.app_form_field_editor textarea", p.elContent).ckeditor();
+		
+		p.bindSubmit();
+		m.show();
+	};
+	m.error = function(msg) {
+		alert(msg);
+	};
+	
+	// Expose public methods
+	return m;
+}(cx, jQuery));
+
+
+/**
+ * When DOM is ready / event binding
+ */
+$(function() {
+	/**
+	 * Initialize commonly referenced elements to avoid multiple DOM lookups
+	 */
+	var cx_admin_bar = $('#cx_admin_bar');
+	var cx_regions = $('div.cx_region');
+	var cx_modules = $('div.cx_module');
+	
+	
+	/**
+	 * Initialize dialog window
+	 */
+	cx.modal.init();
+	
+	
+	/**
+	 * Open link in the admin bar in a modal window
+	 */
+	$('#cx_admin_bar a[rel=modal], div.cx_ui_controls a').live('click', function() {
+		var tLink = $(this);
+		cx.modal.loading();
+		$.ajax({
+			type: "GET",
+			url: tLink.attr('href'),
+			success: function(data, textStatus, req) {
+				cx.modal.content(data);
+			},
+			error: function(req) { // req = XMLHttpRequest object
+				cx.modal.error("[ERROR] Unable to load URL: " + req.responseText);
+			}
+		});
+		return false;
+	});
+	
+	
+	/**
+	 * Clieck 'ADD CONTENT' button
+	 */
+	$('#cx_admin_bar_addContent').toggle(function() {
+		$('#cx_admin_modules').slideDown();
+		return false;
+	}, function() {
+		$('#cx_admin_modules').slideUp();
+		return false;
+	});
 	
 	
 	/**
@@ -172,7 +224,7 @@ $(function() {
 	
 	
 	/**
-	 * 
+	 * Ensure datepicker is always available
 	 */
 	$('form .app_form_field_datetime input').live('click', function(e) {
 		$(this).datepicker({showOn:'focus'}).focus();
@@ -180,39 +232,8 @@ $(function() {
 	
 	
 	/**
-	 * Close modal window on 'cancel'
+	 * Serialize module order in regions into URL for Cont-xt to handle saving
 	 */
-	$('a.app_action_cancel', cx_modal).live('click', function() {
-		cx_modalClose();
-		return false;
-	});
-	
-	
-	/**
-	 * Custom admin functions
-	 */
-	// Fill modal window with specified content
-	function cx_modalContent(data) {
-		cx_modal.dialog('open');
-		cx_modal_content.html(data);
-		
-		// Load jHTMLArea in editor fields
-		$("form li.app_form_field_editor textarea").htmlarea();
-		
-		// Re-bind form submit in modal (live 'submit' not working in IE8)
-		cx_modalFormBind();
-	}
-	// Close modal windows
-	function cx_modalClose() {
-		cx_modal.dialog('close');
-		cx_modal_content.html(cx_modalLoadingMessage());
-	}
-	// Modal window loading message displayed
-	function cx_modalLoadingMessage() {
-		cx_modal_content.html('Loading...');
-	}
-
-	// Custom function to serialize module order in regions
 	function cx_serializeRegionModules() {
 		var str = "";
 		$('div.cx_region').each(function() {

@@ -33,9 +33,10 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
 	 */
 	public function newAction($request, $page, $module)
 	{
-		return $this->formView()
+		$form = $this->formView()
 			->method('post')
 			->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)));
+		return $this->view('editAction')->set(compact('form'));
 	}
 	
 	
@@ -57,7 +58,11 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
 		
 		$item = $mapper->currentTextEntity($module);
 		
-		return $form->data($mapper->data($item));
+		// Set item data on form
+		$form->data($mapper->data($item));
+		
+		// Return view template
+		return $this->view(__FUNCTION__)->set(compact('form'));
 	}
 	
 	
@@ -70,6 +75,8 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
 		$mapper = $this->kernel->mapper('Module_Text_Mapper');
 		$item = $mapper->data($mapper->get('Module_Text_Entity'), $request->post());
 		$item->module_id = $module->id;
+		$item->date_created = $mapper->connection('Module_Text_Entity')->dateTime();
+		$item->date_modified = $mapper->connection('Module_Text_Entity')->dateTime();
 		if($mapper->save($item)) {
 			$itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
 			if($request->format == 'html') {
@@ -98,6 +105,7 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
 		}
 		$mapper->data($item, $request->post());
 		$item->module_id = $module->id;
+		$item->date_modified = $mapper->connection('Module_Text_Entity')->dateTime();
 		
 		if($mapper->save($item)) {
 			$itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
