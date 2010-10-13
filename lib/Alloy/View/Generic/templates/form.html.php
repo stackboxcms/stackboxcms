@@ -13,8 +13,8 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 	$fieldType = isset($fieldOpts['type']) ? $fieldOpts['type'] : 'string';
     ?>
 	<li class="app_form_field app_form_field_<?php echo strtolower($fieldOpts['type']); ?>">
-	  <label><?php echo $fieldLabel; ?></label></dt>
-	  <span>
+	  <label class="app_form_field_label"><?php echo $fieldLabel; ?></label></dt>
+	  <span class="app_form_field_element">
 	  <?php
 	  // Adjust field depending on field type
 	  switch($fieldType) {
