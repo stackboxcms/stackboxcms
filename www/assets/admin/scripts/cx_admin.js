@@ -58,6 +58,7 @@ cx.modal = (function (cx, $) {
         // Setup dialog
         p.el.dialog({
             autoOpen: false,
+            modal: true,
             'title' : '',
             width: '90%',
             height: 550
