@@ -58,8 +58,8 @@ abstract class ControllerAbstract extends \Alloy\Module\ControllerAbstract
      */
     protected function formView()
     {
-        $fields = $this->kernel->mapper()->fields("Module_" . $this->name() . "_Entity");
-        $view = new Alloy_View_Generic_Form('form');
+        $fields = $this->kernel->mapper()->fields("Module\\" . $this->name() . "\\Entity");
+        $view = new \Alloy\View\Generic\Form('form');
         $view->action("")
             ->fields($fields)
             ->removeFields(array('id', 'site_id', 'module_id', 'date_created', 'date_modified'));

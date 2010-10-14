@@ -61,7 +61,7 @@ class Controller extends \Cx\Module\ControllerAbstract
             $this->kernel->user($user);
             
             // Redirect to index
-            return $this->kernel->redirect($this->kernel->url('page', array('page' => '/')));
+            return $this->kernel->redirect($this->kernel->url(array('page' => '/'), 'page'));
         } else {
             $this->kernel->response(401);
             return $this->formView()->errors($mapper->errors());
@@ -96,7 +96,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         
         // Delete all sessions matched for current user
         $this->kernel->mapper()->delete('Module\User\Entity', array('user_id' => $user->id));
-        return $this->kernel->redirect($this->kernel->url('page', array('page' => '/')));
+        return $this->kernel->redirect($this->kernel->url(array('page' => '/'), 'page'));
     }
     
     

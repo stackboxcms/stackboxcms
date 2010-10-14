@@ -539,7 +539,7 @@ class Kernel
  * @param array $queryParams Named querystring URL parts (optional)
      * @return string
      */
-    public function url($params = array(), $queryParams = array())
+    public function url($params = array(), $routeName = null, $queryParams = array())
     {
         $urlBase = $this->config('url.root', '');
         
@@ -552,10 +552,7 @@ class Kernel
         if(is_string($params)) {
             $routeName = $params;
             $params = array();
-        } elseif(is_array($params)) {
-            // Route name
-            $routeName = isset($params['_route']) ? $params['_route'] : null;
-        } else {
+        } elseif(!is_array($params)) {
             throw new Exception("First parameter of URL must be array or string route name");
         }
         
@@ -566,7 +563,7 @@ class Kernel
         }
         
         // Get URL from router object by reverse match
-        $fullUrl = $urlBase . strtolower(ltrim($this->router()->url($routeName, $params), '/')) . $queryString;
+        $fullUrl = $urlBase . str_replace('%2f', '/', strtolower($this->router()->url($params, $routeName))) . $queryString;
         return $fullUrl;
     }
     

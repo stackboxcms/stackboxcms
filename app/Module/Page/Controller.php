@@ -78,7 +78,7 @@ class Controller extends \Cx\Module\ControllerAbstract
             }
             
             // Dispatch to single module
-            $moduleResponse = $kernel->dispatchRequest($request, $moduleObject, $moduleAction, array($request, $page, $module));
+            $moduleResponse = $kernel->dispatchRequest($moduleObject, $moduleAction, array($page, $module));
             
             // Return content immediately, currently not wrapped in template
             return $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
@@ -162,7 +162,7 @@ class Controller extends \Cx\Module\ControllerAbstract
                 $template = str_replace("</head>", $templateHead->content() . "\n</head>", $template);
                 
                 // Admin bar and edit controls
-                $templateBodyContent = $this->view('_adminBar')->set('page', $page);
+                $templateBodyContent = $this->template('_adminBar')->path(__DIR__ . '/views/')->set('page', $page);
                 $template = str_replace("</body>", $templateBodyContent . "\n</body>", $template);
             }
             
@@ -186,7 +186,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     {
         return $this->formView()
             ->method('post')
-            ->action($this->kernel->url('page', array('page' => '/')));
+            ->action($this->kernel->url(array('page' => '/'), 'page'));
     }
     
     
@@ -201,10 +201,10 @@ class Controller extends \Cx\Module\ControllerAbstract
         $mapper = $this->kernel->mapper('Module\Page\Mapper');
         $page = $mapper->getPageByUrl($request->page);
         if(!$page) {
-            throw new Alloy_Exception_FileNotFound("Page not found: '" . $request->page . "'");
+            throw new \Alloy\Exception_FileNotFound("Page not found: '" . $request->page . "'");
         }
         
-        return $this->formView()->data($mapper->data($page));
+        return $this->formView()->data($page->data());
     }
     
     
@@ -225,7 +225,7 @@ class Controller extends \Cx\Module\ControllerAbstract
             $entity->url = $this->kernel->formatUrl($request->title);
         }
         if($mapper->save($entity)) {
-            $pageUrl = $this->kernel->url('page', array('page' => $entity->url));
+            $pageUrl = $this->kernel->url(array('page' => $entity->url), 'page');
             if($request->format == 'html') {
                 return $this->kernel->redirect($pageUrl);
             } else {
@@ -340,8 +340,8 @@ class Controller extends \Cx\Module\ControllerAbstract
                   <div class="cx_ui cx_ui_controls">
                     <div class="cx_ui_title"><span>' . $module->name . '</span></div>
                     <ul>
-                      <li><a href="' . $this->kernel->url('module', array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit')) . '">Edit</a></li>
-                      <li><a href="' . $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => 'Page_Module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete')) . '">Delete</a></li>
+                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit'), 'module') . '">Edit</a></li>
+                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'Page_Module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>
                     </ul>
                   </div>
                   ';

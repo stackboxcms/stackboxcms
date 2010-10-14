@@ -16,7 +16,7 @@ function renderNavigation($pages) {
 <ul>
 <?php foreach($pages as $page): ?>
     <li>
-    <a href="<?php echo $kernel->url(array('page' => $page->url, '_route' => 'page')); ?>" title="<?php echo $page->title; ?>"><?php echo $page->title; ?></a>
+    <a href="<?php echo $kernel->url(array('page' => ltrim($page->url, '/')), 'page'); ?>" title="<?php echo $page->title; ?>"><?php echo $page->title; ?></a>
     <?php
         $children = $page->children;
         if($children && count($children) > 0):

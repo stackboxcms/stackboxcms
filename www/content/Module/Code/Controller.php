@@ -33,7 +33,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     {
         $form = $this->formView()
             ->method('post')
-            ->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)));
+            ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'));
         return $this->template('editAction')->set(compact('form'));
     }
     
@@ -44,7 +44,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function editAction($request, $page, $module)
     {
         $form = $this->formView()
-            ->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)))
+            ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'))
             ->method('PUT');
         
         $mapper = $this->kernel->mapper('Module\Code\Mapper');
@@ -74,7 +74,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         $item = $mapper->data($mapper->get('Module\Code\Entity'), $request->post());
         $item->module_id = $module->id;
         if($mapper->save($item)) {
-            $itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
+            $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
             if($request->format == 'html') {
                 return $this->indexAction($request, $page, $module);
             } else {
@@ -102,7 +102,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         $item->module_id = $module->id;
         
         if($mapper->save($item)) {
-            $itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
+            $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
             if($request->format == 'html') {
                 return $this->indexAction($request, $page, $module);
             } else {

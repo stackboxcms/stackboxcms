@@ -6,9 +6,6 @@ namespace Module\Page\Module;
  */
 class Controller extends \Cx\Module\ControllerAbstract
 {
-    protected $_file = __FILE__;
-    
-    
     /**
      * Module listing
      * @method GET
@@ -82,10 +79,10 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function deleteAction($request, $page, $module)
     {
         if($request->format == 'html') {
-            $view = new Alloy_View_Generic_Form('form');
+            $view = new \Alloy\View\Generic\Form('form');
             $form = $view
                 ->method('delete')
-                ->action($this->kernel->url('module_item', array('page' => '/', 'module_name' => $this->name(), 'module_id' => 0, 'module_item' => $request->module_item)))
+                ->action($this->kernel->url(array('page' => '/', 'module_name' => $this->name(), 'module_id' => 0, 'module_item' => $request->module_item), 'module_item'))
                 ->data(array('item_dom_id' => 'cx_module_' . $request->module_item))
                 ->submitButtonText('Delete');
             return "<p>Are you sure you want to delete this module?</p>" . $form;

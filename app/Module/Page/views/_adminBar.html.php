@@ -2,11 +2,11 @@
   <a id="cx_admin_bar_addContent" href="#"><span>Add Module</span></a>
   <div id="cx_admin_bar_inside">
 	<ul>
-	  <li><a href="<?php echo $this->kernel->url('index_action', array('action' => 'new')); ?>" rel="modal">New Page</a></li>
+	  <li><a href="<?php echo $this->kernel->url(array('action' => 'new'), 'index_action'); ?>" rel="modal">New Page</a></li>
 	  <?php if('/' == $this->page->url): // ugly hack until routes are fixed for good ?>
-		<li><a href="<?php echo $this->kernel->url('index_action', array('action' => 'edit')); ?>" rel="modal">Edit Page</a></li>
+		<li><a href="<?php echo $this->kernel->url(array('action' => 'edit'), 'index_action'); ?>" rel="modal">Edit Page</a></li>
 	  <?php else: ?>
-		<li><a href="<?php echo $this->kernel->url('page_action', array('page' => $this->page->url, 'action' => 'edit')); ?>" rel="modal">Edit Page</a></li>
+		<li><a href="<?php echo $this->kernel->url(array('page' => $this->page->url, 'action' => 'edit'), 'page_action'); ?>" rel="modal">Edit Page</a></li>
 	  <?php endif; ?>
 	  <li><a href="<?php echo $this->kernel->url('logout'); ?>">Logout</a></li>
 	</ul>

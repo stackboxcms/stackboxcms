@@ -51,7 +51,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     {
         return $this->formView()
             ->method('post')
-            ->action($this->kernel->url('user', array('action' => 'post')));
+            ->action($this->kernel->url(array('action' => 'post'), 'user'));
     }
     
     
@@ -61,7 +61,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function editAction($request)
     {
         $form = $this->formView()
-            ->action($this->kernel->url('user', array('action' => 'post')))
+            ->action($this->kernel->url(array('action' => 'post'), 'user'))
             ->method('put');
         
         if(!$module) {
@@ -84,7 +84,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         $item = $mapper->data($mapper->get('Module\User\Entity'), $request->post());
         $item->site_id = 0;
         if($mapper->save($item)) {
-            $itemUrl = $this->kernel->url('page', array('page' => '/'));
+            $itemUrl = $this->kernel->url(array('page' => '/'), 'page');
             if($request->format == 'html') {
                 return $this->kernel->redirect($itemUrl);
             } else {
@@ -112,7 +112,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         $item->site_id = 0;
         
         if($mapper->save($item)) {
-            $itemUrl = $this->kernel->url('user', array('action' => 'index'));
+            $itemUrl = $this->kernel->url(array('action' => 'index'), 'user');
             if($request->format == 'html') {
                 return $this->indexAction($request);
             } else {
