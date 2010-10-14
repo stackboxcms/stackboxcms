@@ -4,7 +4,7 @@ namespace Module\User\Session;
 class Entity extends \Cx\EntityAbstract
 {
     // Table
-    protected $_datasource = "user_session";
+    protected static $_datasource = "user_session";
     
     // Fields
     protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);

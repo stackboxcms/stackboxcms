@@ -116,7 +116,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         }
         
         // Replace region content
-        $kernel->trigger('Module\Page\regions', array(&$regionModules));
+        $kernel->trigger('module_page_template_regions', array(&$regionModules));
         foreach($regionModules as $region => $modules) {
             if(is_array($modules)) {
                 // Array = Region has modules
@@ -130,7 +130,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         
         // Replace template tags
         $tags = $mapper->data($page);
-        $kernel->trigger('Module\Page\tags', array(&$tags));
+        $kernel->trigger('module_page_template_data', array(&$tags));
         foreach($tags as $tagName => $tagValue) {
             $template->replaceTag($tagName, $tagValue);
         }
@@ -142,7 +142,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         // Admin stuff for HTML format
         if($template->format() == 'html') {
             // Add user and admin stuff to the page
-            if($user->isAdmin()) {
+            if($user && $user->isAdmin()) {
                 // Admin toolbar, javascript, styles, etc.
                 $templateHead->script('http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
                 $templateHead->script('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js');
@@ -335,7 +335,7 @@ class Controller extends \Cx\Module\ControllerAbstract
                 <div id="cx_module_' . $module->id . '" class="cx_module module_' . strtolower($module->name) . '">
                   ' . $moduleResponse;
                 // Show controls only for authorized users and requests that are not AJAX
-                if($includeControls && $user->isAdmin()) {
+                if($includeControls && false !== $user && $user->isAdmin()) {
                     $content .= '
                   <div class="cx_ui cx_ui_controls">
                     <div class="cx_ui_title"><span>' . $module->name . '</span></div>

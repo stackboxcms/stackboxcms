@@ -87,4 +87,15 @@ abstract class ControllerAbstract extends \Alloy\Module\ControllerAbstract
      * Uninstall Module
      */
     public function uninstall() { return true; }
+    
+    
+    /**
+     * Return current class path
+     */
+    public function path()
+    {
+        $class = get_called_class();
+        $path = str_replace('\\', '/', str_replace('\\Controller', '', $class));
+        return $this->kernel->config('path.cx_modules') . '/' . $path;
+    }
 }

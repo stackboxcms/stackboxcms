@@ -13,8 +13,8 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 	$fieldType = isset($fieldOpts['type']) ? $fieldOpts['type'] : 'string';
     ?>
 	<li class="app_form_field app_form_field_<?php echo strtolower($fieldOpts['type']); ?>">
-	  <label class="app_form_field_label"><?php echo $fieldLabel; ?></label></dt>
-	  <span class="app_form_field_element">
+	  <label><?php echo $fieldLabel; ?></label></dt>
+	  <span>
 	  <?php
 	  // Adjust field depending on field type
 	  switch($fieldType) {
@@ -73,7 +73,7 @@ $formMethodRest = ($formMethod == 'POST' && $this->method != 'POST') ? $this->me
 	</li>
 	<li class="app_form_actions">
 	  <button type="submit" class="app_action_primary"><?php echo $this->submitButtonText(); ?></button>
-	  <a href="#" class="app_action_cancel">Cancel</a>
+	  <!--<a href="#" class="app_action_cancel">Cancel</a>-->
     </li>
   </ol>
 </form>

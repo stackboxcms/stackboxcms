@@ -4,7 +4,7 @@ namespace Module\Page\Module;
 class Entity extends \Cx\EntityAbstract
 {
     // Setup table and fields
-    protected $_datasource = "page_modules";
+    protected static $_datasource = "page_modules";
     
     // Fields
     protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);

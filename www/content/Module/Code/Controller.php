@@ -19,7 +19,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         // Return only content for HTML
         if($request->format == 'html') {
             // Return view with formatting
-            return $this->view(__FUNCTION__)
+            return $this->template(__FUNCTION__)
                 ->set(compact('item'));
         }
         return $this->kernel->resource($item);
@@ -34,7 +34,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         $form = $this->formView()
             ->method('post')
             ->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)));
-        return $this->view('editAction')->set(compact('form'));
+        return $this->template('editAction')->set(compact('form'));
     }
     
     
@@ -60,7 +60,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         $form->data($mapper->data($item));
         
         // Return view template
-        return $this->view(__FUNCTION__)->set(compact('form'));
+        return $this->template(__FUNCTION__)->set(compact('form'));
     }
     
     

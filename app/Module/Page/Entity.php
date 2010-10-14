@@ -1,8 +1,10 @@
 <?php
-class Module_Page_Entity extends \Cx\EntityAbstract
+namespace Module\Page;
+
+class Entity extends \Cx\EntityAbstract
 {
     // Table
-    protected $_datasource = "pages";
+    protected static $_datasource = "pages";
     
     // Fields
     protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);

@@ -3,7 +3,7 @@ namespace Module\Blog;
 
 class Post extends \Cx\Module\EntityAbstract
 {
-    protected $_datasource = "module_blog_posts";
+    protected static $_datasource = "module_blog_posts";
     
     // Fields
     protected $title = array('type' => 'string', 'required' => true);

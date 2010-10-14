@@ -4,7 +4,7 @@ namespace Module\Code;
 class Entity extends \Cx\Module\EntityAbstract
 {
     // Table
-    protected $_datasource = "module_code";
+    protected static $_datasource = "module_code";
     
     // Fields
     protected $content = array('type' => 'text', 'required' => true);

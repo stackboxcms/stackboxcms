@@ -4,7 +4,7 @@ namespace Cx;
 /**
  * Base Cont-xt Entity
  */
-abstract class EntityAbstract
+abstract class EntityAbstract extends \Spot\Entity
 {
     // Site id for future multi-site possibilities
     protected $site_id = array('type' => 'int', 'index' => true, 'default' => 0);

@@ -13,7 +13,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     {
         $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree();
         
-        return $this->view(__FUNCTION__)
+        return $this->template(__FUNCTION__)
             ->set(array('pages' => $pages));
     }
     

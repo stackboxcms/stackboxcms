@@ -2,7 +2,7 @@
 namespace Alloy\Module;
 
 /**
- * Base mapper entity for individual items
+ * Base Module Mapper
  * 
  * Dependencies:
  *	- Spot
@@ -11,7 +11,7 @@ namespace Alloy\Module;
  * @link http://alloyframework.com/
  * @license http://www.opensource.org/licenses/bsd-license.php
  */
-class Entity extends \Spot_Entity
+abstract class Mapper extends \Spot_Mapper
 {
-	
+	// Used for future extensibility for global module changes
 }

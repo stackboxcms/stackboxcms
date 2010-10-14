@@ -17,7 +17,10 @@ class Mapper extends \Cx\Module\MapperAbstract
      */
     public function getPageByUrl($url)
     {
-        return $this->first('Module\Page\Entity', array('site_id' => \Alloy()->config('site.id'), 'url' => Module_Page_Entity::formatPageUrl($url)));
+        return $this->first('Module\Page\Entity', array(
+            'site_id' => \Kernel()->config('site.id'),
+            'url' => Entity::formatPageUrl($url))
+        );
     }
     
     
@@ -29,7 +32,10 @@ class Mapper extends \Cx\Module\MapperAbstract
     public function pageTree($startPage = null)
     {
         if(null === $startPage) {
-            $rootPages = $this->all('Module\Page\Entity', array('site_id' => \Alloy()->config('site.id'), 'parent_id' => 0))->order(array('ordering' => 'ASC'));
+            $rootPages = $this->all('Module\Page\Entity', array(
+                'site_id' => \Kernel()->config('site.id'),
+                'parent_id' => 0))->order(array('ordering' => 'ASC')
+            );
         } else {
             if($startPage instanceof \Module\Page\Entity) {
                 $rootPages = $startPage->children;

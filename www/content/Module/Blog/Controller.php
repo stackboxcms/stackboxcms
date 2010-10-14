@@ -13,7 +13,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     {
         $posts = $this->kernel->mapper()->all('Module\Blog\Post')->order('date_created');
         
-        $view = $this->view(__FUNCTION__)
+        $view = $this->template(__FUNCTION__)
             ->set(array(
                     'posts' => $posts
                 ));
@@ -33,7 +33,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     {
         $posts = $this->kernel->mapper()->all('Module\Blog\Post')->order('date_created');
         
-        $view = $this->view(__FUNCTION__)
+        $view = $this->template(__FUNCTION__)
             ->set(array(
                     'posts' => $posts
                 ));

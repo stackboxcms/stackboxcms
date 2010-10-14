@@ -4,7 +4,7 @@ namespace Module\User;
 class Entity extends \Cx\EntityAbstract
 {
     // Table
-    protected $_datasource = "users";
+    protected static $_datasource = "users";
     
     // Fields
     protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);

@@ -1,20 +1,23 @@
 <?php
+namespace Alloy\View;
+
 /**
  * Asset Helper
  * Functions useful for building HTML forms with less code
  * 
- * @package Alloy Framework
- * @link http://alloyframework.com
+ * @package Alloy
+ * @license http://www.opensource.org/licenses/bsd-license.php
+ * @link http://alloyframework.com/
  */
-class Alloy_View_Helper_Asset extends Alloy_View_Helper
+class Helper_Asset extends HelperAbstract
 {
 	/**
 	 *	Stylesheet <link> tag input
 	 */
 	public function stylesheet($file, $media = 'screen', $extra = '')
 	{
-		if(strpos($file, '://') === false) {
-			$file = Alloy()->config('url.assets') . 'styles/' . $file;
+		if(false === strpos($file, '://')) {
+			$file = $this->kernel->config('url.assets') . 'styles/' . $file;
 		}
 		$tag = '<link type="text/css" href="' . $file . '" media="' . $media . '" rel="stylesheet"' . $this->listExtra($extra) . ' />';
 		return $tag;
@@ -26,8 +29,8 @@ class Alloy_View_Helper_Asset extends Alloy_View_Helper
 	 */
 	public function script($file, $extra = '')
 	{
-		if(strpos($file, '://') === false) {
-			$file = Alloy()->config('url.assets') . 'scripts/' . $file;
+		if(false === strpos($file, '://')) {
+			$file = $this->kernel->config('url.assets') . 'scripts/' . $file;
 		}
 		$tag = '<script type="text/javascript" src="' . $file . '"' . $this->listExtra($extra) . '></script>';
 		return $tag;
@@ -39,8 +42,8 @@ class Alloy_View_Helper_Asset extends Alloy_View_Helper
 	 */
 	public function image($file, $alt = '', $extra = '')
 	{
-		if(strpos($file, '://') === false) {
-			$file = Alloy()->config('url.assets') . 'images/' . $file;
+		if(false === strpos($file, '://')) {
+			$file = $this->kernel->config('url.assets') . 'images/' . $file;
 		}
 		$tag = '<img src="' . $file . '" alt="' . $alt . '"' . $this->listExtra($extra) . ' />';
 		return $tag;

@@ -7,23 +7,23 @@
 $kernel = $this->kernel; // Get object inside function context (ugly hack alert)
 if(!function_exists('renderNavigation')) { // Can't even believe I am doing this...
 function renderNavigation($pages) {
-	global $kernel;
-	if(!$pages || count($pages) == 0) {
-		echo 'NO PAGES';
-		return;
-	}
+    global $kernel;
+    if(!$pages || count($pages) == 0) {
+        echo 'NO PAGES';
+        return;
+    }
 ?>
 <ul>
 <?php foreach($pages as $page): ?>
-	<li>
-	<a href="<?php echo $kernel->url('page', array('page' => $page->url)); ?>" title="<?php echo $page->title; ?>"><?php echo $page->title; ?></a>
-	<?php
-		$children = $page->children;
-		if($children && count($children) > 0):
-			echo renderNavigation($children);
-		endif;
-	?>
-	</li>
+    <li>
+    <a href="<?php echo $kernel->url(array('page' => $page->url, '_route' => 'page')); ?>" title="<?php echo $page->title; ?>"><?php echo $page->title; ?></a>
+    <?php
+        $children = $page->children;
+        if($children && count($children) > 0):
+            echo renderNavigation($children);
+        endif;
+    ?>
+    </li>
 <?php endforeach; ?>
 </ul>
 <?php
