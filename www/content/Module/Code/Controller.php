@@ -4,14 +4,14 @@ namespace Module\Code;
 /**
  * Text Module
  */
-class Controller extends Cx_Module_Controller_Abstract
+class Controller extends \Cx\Module\ControllerAbstract
 {
     /**
      * @method GET
      */
     public function indexAction($request, $page, $module)
     {
-        $item = $this->kernel->mapper('Module_Code_Mapper')->currentEntity($module);
+        $item = $this->kernel->mapper('Module\Code\Mapper')->currentEntity($module);
         if(!$item) {
             return false;
         }
@@ -47,10 +47,10 @@ class Controller extends Cx_Module_Controller_Abstract
             ->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)))
             ->method('PUT');
         
-        $mapper = $this->kernel->mapper('Module_Code_Mapper');
+        $mapper = $this->kernel->mapper('Module\Code\Mapper');
         
         if(!$module) {
-            $module = $mapper->get('Module_Code_Entity');
+            $module = $mapper->get('Module\Code\Entity');
             $form->method('POST');
         }
         
@@ -70,8 +70,8 @@ class Controller extends Cx_Module_Controller_Abstract
      */
     public function postMethod($request, $page, $module)
     {
-        $mapper = $this->kernel->mapper('Module_Code_Mapper');
-        $item = $mapper->data($mapper->get('Module_Code_Entity'), $request->post());
+        $mapper = $this->kernel->mapper('Module\Code\Mapper');
+        $item = $mapper->data($mapper->get('Module\Code\Entity'), $request->post());
         $item->module_id = $module->id;
         if($mapper->save($item)) {
             $itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
@@ -93,7 +93,7 @@ class Controller extends Cx_Module_Controller_Abstract
      */
     public function putMethod($request, $page, $module)
     {
-        $mapper = $this->kernel->mapper('Module_Code_Mapper');
+        $mapper = $this->kernel->mapper('Module\Code\Mapper');
         $item = $mapper->currentEntity($module);
         if(!$item) {
             return false;
@@ -122,7 +122,7 @@ class Controller extends Cx_Module_Controller_Abstract
      */
     public function install($action = null, array $params = array())
     {
-        $this->kernel->mapper('Module_Code_Mapper')->migrate('Module_Code_Entity');
+        $this->kernel->mapper('Module\Code\Mapper')->migrate('Module\Code\Entity');
         return parent::install($action, $params);
     }
     
@@ -134,7 +134,7 @@ class Controller extends Cx_Module_Controller_Abstract
      */
     public function uninstall()
     {
-        return $this->kernel->mapper('Module_Code_Mapper')->dropDatasource('Module_Code_Entity');
+        return $this->kernel->mapper('Module\Code\Mapper')->dropDatasource('Module\Code\Entity');
     }
     
     
@@ -143,8 +143,8 @@ class Controller extends Cx_Module_Controller_Abstract
      */
     public function deleteMethod($request, $page, $module)
     {
-        $mapper = $this->kernel->mapper('Module_Code_Mapper');
-        $item = $mapper->get('Module_Code_Entity', $request->module_item);
+        $mapper = $this->kernel->mapper('Module\Code\Mapper');
+        $item = $mapper->get('Module\Code\Entity', $request->module_item);
         if(!$item) {
             return false;
         }

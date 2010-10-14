@@ -1,18 +1,17 @@
 <?php
+namespace Module\Text;
+
 /**
  * Text Module
  */
-class Module_Text_Controller extends Cx_Module_Controller_Abstract
+class Controller extends \Cx\Module\ControllerAbstract
 {
-    protected $_file = __FILE__;
-    
-    
     /**
      * @method GET
      */
     public function indexAction($request, $page, $module)
     {
-        $item = $this->kernel->mapper('Module_Text_Mapper')->currentTextEntity($module);
+        $item = $this->kernel->mapper('Module\Text\Mapper')->currentTextEntity($module);
         if(!$item) {
             return false;
         }
@@ -49,10 +48,10 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
             ->action($this->kernel->url('module', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id)))
             ->method('PUT');
         
-        $mapper = $this->kernel->mapper('Module_Text_Mapper');
+        $mapper = $this->kernel->mapper('Module\Text\Mapper');
         
         if(!$module) {
-            $module = $mapper->get('Module_Text_Entity');
+            $module = $mapper->get('Module\Text\Entity');
             $form->method('POST');
         }
         
@@ -72,11 +71,11 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
      */
     public function postMethod($request, $page, $module)
     {
-        $mapper = $this->kernel->mapper('Module_Text_Mapper');
-        $item = $mapper->data($mapper->get('Module_Text_Entity'), $request->post());
+        $mapper = $this->kernel->mapper('Module\Text\Mapper');
+        $item = $mapper->data($mapper->get('Module\Text\Entity'), $request->post());
         $item->module_id = $module->id;
-        $item->date_created = $mapper->connection('Module_Text_Entity')->dateTime();
-        $item->date_modified = $mapper->connection('Module_Text_Entity')->dateTime();
+        $item->date_created = $mapper->connection('Module\Text\Entity')->dateTime();
+        $item->date_modified = $mapper->connection('Module\Text\Entity')->dateTime();
         if($mapper->save($item)) {
             $itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
             if($request->format == 'html') {
@@ -97,7 +96,7 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
      */
     public function putMethod($request, $page, $module)
     {
-        $mapper = $this->kernel->mapper('Module_Text_Mapper');
+        $mapper = $this->kernel->mapper('Module\Text\Mapper');
         //$item = $mapper->get($request->module_item);
         $item = $mapper->currentTextEntity($module);
         if(!$item) {
@@ -105,7 +104,7 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
         }
         $mapper->data($item, $request->post());
         $item->module_id = $module->id;
-        $item->date_modified = $mapper->connection('Module_Text_Entity')->dateTime();
+        $item->date_modified = $mapper->connection('Module\Text\Entity')->dateTime();
         
         if($mapper->save($item)) {
             $itemUrl = $this->kernel->url('module_item', array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id));
@@ -126,8 +125,8 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
      */
     public function deleteMethod($request, $page, $module)
     {
-        $mapper = $this->kernel->mapper('Module_Text_Mapper');
-        $item = $mapper->get('Module_Text_Entity', $request->module_item);
+        $mapper = $this->kernel->mapper('Module\Text\Mapper');
+        $item = $mapper->get('Module\Text\Entity', $request->module_item);
         if(!$item) {
             return false;
         }
@@ -142,7 +141,7 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
      */
     public function install($action = null, array $params = array())
     {
-        $this->kernel->mapper('Module_Text_Mapper')->migrate('Module_Text_Entity');
+        $this->kernel->mapper('Module\Text\Mapper')->migrate('Module\Text\Entity');
         return parent::install($action, $params);
     }
     
@@ -154,7 +153,7 @@ class Module_Text_Controller extends Cx_Module_Controller_Abstract
      */
     public function uninstall()
     {
-        return $this->kernel->mapper('Module_Text_Mapper')->dropDatasource('Module_Text_Entity');
+        return $this->kernel->mapper('Module\Text\Mapper')->dropDatasource('Module\Text\Entity');
     }
     
     

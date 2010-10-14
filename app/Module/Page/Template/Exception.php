@@ -1,2 +1,4 @@
 <?php
-class Module_Page_Template_Exception extends Exception {}
+namespace Module\Page;
+
+class Template_Exception extends \Alloy\Exception {}

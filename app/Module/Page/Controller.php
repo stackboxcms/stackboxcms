@@ -1,12 +1,11 @@
 <?php
+namespace Module\Page;
+
 /**
  * Page controller - sets up whole page for display
  */
-class Module_Page_Controller extends Cx_Module_Controller_Abstract
+class Controller extends \Cx\Module\ControllerAbstract
 {
-    protected $_file = __FILE__;
-    
-    
     /**
      * @method GET
      */
@@ -27,23 +26,23 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
         
         // Ensure page exists
         $mapper = $kernel->mapper();
-        $pageMapper = $kernel->mapper('Module_Page_Mapper');
-        $pageUrl = Module_Page_Entity::formatPageUrl($pageUrl);
+        $pageMapper = $kernel->mapper('Module\Page\Mapper');
+        $pageUrl = Entity::formatPageUrl($pageUrl);
         $page = $pageMapper->getPageByUrl($pageUrl);
         if(!$page) {
             if($pageUrl == '/') {
                 // Create new page for the homepage automatically if it does not exist
-                $page = $pageMapper->get('Module_Page_Entity');
+                $page = $pageMapper->get('Module\Page\Entity');
                 $page->parent_id = 0;
                 $page->title = "Home";
                 $page->url = $pageUrl;
-                $page->date_created = $pageMapper->connection('Module_Page_Entity')->dateTime();
+                $page->date_created = $pageMapper->connection('Module\Page\Entity')->dateTime();
                 $page->date_modified = $page->date_created;
                 if(!$pageMapper->save($page)) {
-                    throw new Alloy_Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
+                    throw new \Alloy\Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
                 }
             } else {
-                throw new Alloy_Exception_FileNotFound("Page not found: '" . $pageUrl . "'");
+                throw new \Alloy\Exception_FileNotFound("Page not found: '" . $pageUrl . "'");
             }
         }
         
@@ -57,7 +56,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
             if($moduleId == 0) {
                 // Get new module entity, no ID supplied
                 // @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
-                $module = $mapper->get('Module_Page_Module_Entity');
+                $module = $mapper->get('Module\Page\Module\Entity');
                 $module->name = $request->name;
             } else {
                 // Module belongs to current page
@@ -66,7 +65,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
             
             // Setup dummy module object if there is none loaded
             if(!$module) {
-                $module = $mapper->get('Module_Page_Module_Entity');
+                $module = $mapper->get('Module\Page\Module\Entity');
                 $module->name = $request->name;
             }
             
@@ -89,7 +88,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
         $activeTheme = ($page->theme) ? $page->theme : $kernel->config('default.theme');
         $activeTemplate = ($page->template) ? $page->template : $kernel->config('default.theme_template');
         $themeUrl = $kernel->config('url.themes') . $activeTheme . '/';
-        $template = new Module_Page_Template($activeTemplate);
+        $template = new Template($activeTemplate);
         $template->format($request->format);
         $template->path($kernel->config('path.themes') . $activeTheme . '/');
         $template->parse();
@@ -117,7 +116,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
         }
         
         // Replace region content
-        $kernel->trigger('module_page_regions', array(&$regionModules));
+        $kernel->trigger('Module\Page\regions', array(&$regionModules));
         foreach($regionModules as $region => $modules) {
             if(is_array($modules)) {
                 // Array = Region has modules
@@ -131,7 +130,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
         
         // Replace template tags
         $tags = $mapper->data($page);
-        $kernel->trigger('module_page_tags', array(&$tags));
+        $kernel->trigger('Module\Page\tags', array(&$tags));
         foreach($tags as $tagName => $tagValue) {
             $template->replaceTag($tagName, $tagValue);
         }
@@ -173,7 +172,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
             $template = preg_replace("/<(.*?)([src|href]+)=\"!([^\"|:]*)\"([^>]*)>/i", "<$1$2=\"".$this->kernel->config('url.root')."$3\"$4>", $template);
         } else {
             // Other output formats not supported at this time
-            throw new Alloy_Exception_FileNotFound("Page not found");
+            return false; // 404
         }
         
         return $template;
@@ -199,7 +198,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
         $kernel = $this->kernel;
         
         // Ensure page exists
-        $mapper = $this->kernel->mapper('Module_Page_Mapper');
+        $mapper = $this->kernel->mapper('Module\Page\Mapper');
         $page = $mapper->getPageByUrl($request->page);
         if(!$page) {
             throw new Alloy_Exception_FileNotFound("Page not found: '" . $request->page . "'");
@@ -216,9 +215,9 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
     public function postMethod($request)
     {
         $mapper = $this->kernel->mapper();
-        $entity = $mapper->data($mapper->get('Module_Page_Entity'), $request->post());
+        $entity = $mapper->data($mapper->get('Module\Page\Entity'), $request->post());
         $entity->parent_id = (int) $request->parent_id;
-        $entity->date_created = $mapper->connection('Module_Page_Entity')->dateTime();
+        $entity->date_created = $mapper->connection('Module\Page\Entity')->dateTime();
         $entity->date_modified = $entity->date_created;
         
         // Auto-genereate URL if not filled in
@@ -249,7 +248,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
         // Ensure page exists
         $page = $this->mapper()->getPageByUrl($request->url);
         if(!$page) {
-            throw new Alloy_Exception_FileNotFound("Page not found: '" . $this->mapper()->formatPageUrl($url) . "'");
+            return false;
         }
         
         $this->mapper()->delete($page);
@@ -267,12 +266,12 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
         $mapper = $this->mapper();
         $page = $mapper->getPageByUrl($request->url);
         if(!$page) {
-            throw new Alloy_Exception_FileNotFound("Page not found: '" . $request->url . "'");
+            return false;
         }
         
         $pages = $mapper->pageTree();
         
-        
+        // View template
         return $this->view(__FUNCTION__)
             ->format($request->format)
             ->set(array('pages' => $pages));
@@ -290,7 +289,7 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
         // Override int 'parent_id' with option select box
         $fields['parent_id']['type'] = 'select';
         // Get all pages for site
-        $fields['parent_id']['options'] = array(0 => '[None]') + $this->kernel->mapper('Module_Page_Mapper')->all('Module_Page_Entity', array(
+        $fields['parent_id']['options'] = array(0 => '[None]') + $this->kernel->mapper('Module\Page\Mapper')->all('Module\Page\Entity', array(
                 'site_id' => $this->kernel->config('site.id')
             ))->order(array(
                 'ordering' => 'ASC'
@@ -361,8 +360,8 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
      */
     public function install($action = null, array $params = array())
     {
-        $this->kernel->mapper('Module_Page_Mapper')->migrate('Module_Page_Entity');
-        $this->kernel->mapper('Module_Page_Mapper')->migrate('Module_Page_Module_Entity');
+        $this->kernel->mapper('Module\Page\Mapper')->migrate('Module\Page\Entity');
+        $this->kernel->mapper('Module\Page\Mapper')->migrate('Module\Page\Module\Entity');
         return parent::install($action, $params);
     }
     
@@ -374,6 +373,6 @@ class Module_Page_Controller extends Cx_Module_Controller_Abstract
      */
     public function uninstall()
     {
-        return $this->kernel->mapper('Module_Page_Mapper')->dropDatasource('Module_Page_Entity');
+        return $this->kernel->mapper('Module\Page\Mapper')->dropDatasource('Module\Page\Entity');
     }
 }

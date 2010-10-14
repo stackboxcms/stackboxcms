@@ -1,12 +1,14 @@
 <?php
-class Module_Text_Entity extends Cx_Module_Entity_Abstract
+namespace Module\Text;
+
+class Entity extends \Cx\Module\EntityAbstract
 {
     // Table
     protected $_datasource = "module_text";
     
     // Fields
-    public $content = array('type' => 'text', 'required' => true);
-    public $type = array('type' => 'string');
-    public $date_created = array('type' => 'datetime');
-    public $date_modified = array('type' => 'datetime');
+    protected $content = array('type' => 'text', 'required' => true);
+    protected $type = array('type' => 'string');
+    protected $date_created = array('type' => 'datetime');
+    protected $date_modified = array('type' => 'datetime');
 }
