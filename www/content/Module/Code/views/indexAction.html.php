@@ -1,3 +1,3 @@
 <code><pre>
-<?php echo htmlentities($this->content, ENT_QUOTES, 'UTF-8'); ?>
+<?php echo Nijikodo\Parser::toHtml($this->item->content, $this->item->type); ?>
 </pre></code>
