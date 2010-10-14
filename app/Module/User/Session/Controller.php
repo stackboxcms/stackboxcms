@@ -40,7 +40,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         }
         
         // Test user login credentials
-        $user = $mapper->first('Module_User_Entity', array(
+        $user = $mapper->first('Module\User\Entity', array(
             'username' => $request->username,
             'password' => $userTest->encryptedPassword($request->password)
             ));
@@ -154,7 +154,7 @@ class Controller extends \Cx\Module\ControllerAbstract
      */
     protected function formView()
     {
-        $view = new Alloy_View_Generic_Form('form');
+        $view = new \Alloy\View\Generic\Form('form');
         $view->action($this->kernel->url('login'))
             ->method('post')
             ->fields(array(

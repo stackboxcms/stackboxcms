@@ -155,9 +155,9 @@ if($kernel) {
         
         // Executed queries
         echo "<hr />";
-        echo "<h1>Executed Queries (" . \Spot\Log::queryCount() . ")</h1>";
+        echo "<h1>Executed Queries (" . Spot\Log::queryCount() . ")</h1>";
         echo "<pre>";
-        print_r(\Spot\Log::queries());
+        print_r(Spot\Log::queries());
         echo "</pre>";
     }
 

@@ -13,7 +13,8 @@ class Controller extends \Cx\Module\ControllerAbstract
     {
         // Ensure user has rights to create new user account
         $access = false;
-        if($this->kernel->user()->isAdmin()) {
+        $user = $this->kernel->user();
+        if($user && $user->isAdmin()) {
             // If user has admin access
             $access = true;
         } else {
