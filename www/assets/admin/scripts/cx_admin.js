@@ -60,8 +60,8 @@ cx.modal = (function (cx, $) {
             autoOpen: false,
             modal: true,
             'title' : '',
-            width: '90%',
-            height: 550
+            width: $(window).width() * 0.9,
+            height: $(window).height() * 0.85
             });
         
         // Initialize...
@@ -87,8 +87,7 @@ cx.modal = (function (cx, $) {
         p.elContent.html(content);
         
         // Load CKEditor in editor fields
-        $("form li.app_form_field_editor textarea", p.elContent).ckeditor(function() {},
-        {
+        $("form li.app_form_field_editor textarea", p.elContent).ckeditor(function() {}, {
             toolbar: [
                 ['PasteText','PasteFromWord'],
                 ['Bold','Italic','Underline','Strike'],
