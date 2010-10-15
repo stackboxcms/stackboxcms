@@ -42,7 +42,7 @@ class Controller extends \Cx\Module\ControllerAbstract
      * Create a new resource with the given parameters
      * @method POST
      */
-    public function postMethod($request, $page, Module\Page\Module\Entity $module)
+    public function postMethod($request, $page, \Module\Page\Module\Entity $module)
     {
         $kernel = $this->kernel;
         

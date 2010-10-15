@@ -1,16 +1,11 @@
 
 <div class="module_blog">
 <?php
-$table = new Alloy_View_Generic_Datagrid('datagrid');
-/*
+$view = $this; // Closure scoping
+$table = new \Alloy\View\Generic\Datagrid('datagrid');
 $table->data($this->posts)
-  ->column('Post', 'title', function($item) use($this) { return ""; })
+  ->column('Post', 'title', function($item) use($view) { return ""; })
   ->column('date_published');
-*/
-$view = $this;
-$test = function($var) use($view) {
-	return $var;
-};
-echo $test('blah');
+echo $table;
 ?>
 </div>

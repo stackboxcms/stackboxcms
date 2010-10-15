@@ -13,18 +13,6 @@ if(version_compare(phpversion(), "5.3.1", "<")) {
     throw new \RuntimeException("PHP version must be 5.3.1 or greater to run Alloy Framework.<br />\nCurrent PHP version: " . phpversion());
 }
 
-
-/**
- * Get and return instance of \Alloy\Kernel
- * Checks if 'Kernel' function already exists so it can be overridden/customized
- */
-if(!function_exists('Kernel')) {
-    function Kernel(array $config = array()) {
-        return \Alloy\Kernel::getInstance($config);
-    }
-}
-
-
 /**
  * Configuration settings
  */
@@ -47,13 +35,27 @@ if(!isset($cfgAlloy['path']['lib'])) {
     throw new \InvalidArgumentException("Configuration must have at least \$cfg['path']['lib'] set in order to load required classes.");
 }
 
+// Require Kernel lib
+require $cfgAlloy['path']['lib'] . '/Alloy/Kernel.php';
+
+// Load Kernel override
+require $cfgAlloy['path']['lib'] . '/Cx/Kernel.php';
+
+/**
+ * Get and return instance of \Cx\Kernel
+ * Checks if 'Kernel' function already exists so it can be overridden/customized
+ */
+if(!function_exists('Kernel')) {
+    function Kernel(array $config = array()) {
+        return \Cx\Kernel::getInstance($config);
+    }
+}
 
 /**
  * Load Kernel
  */
 try {
     // Get Kernel with config and host config
-    require $cfgAlloy['path']['lib'] . '/Alloy/Kernel.php';
     $kernel = \Kernel($cfgAlloy);
     $kernel->config($cfgHost);
     unset($cfgAlloy, $cfgHost);
