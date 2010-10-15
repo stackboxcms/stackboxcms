@@ -1,6 +1,0 @@
-[submodule "lib/AppKernel"]
-	path = lib/AppKernel
-	url = http://github.com/actridge/AppKernel.git
-[submodule "lib/Spot"]
-	path = lib/Spot
-	url = http://github.com/actridge/Spot.git
