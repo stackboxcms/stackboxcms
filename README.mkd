@@ -7,6 +7,8 @@ About
 -----
 Cont-xt is an ambitious new open source content management system aimed to end the "backend" editing idea for good. All content editing is done directly in place and on-page through JavaScript and AJAX methods.
 
+Cont-xt is built on [Alloy Framework](http://alloyframework.org). And uses Alloy's Hierarchal MVC module system for all CMS content modules.  
+
 License
 -------
 This project is open source BSD licensed.  
@@ -17,11 +19,11 @@ Installation
 ------------
 Download Packages:
 
-    v0.3.0 beta  
+    Current release: v0.3.0 beta  
     Zip Archive: http://github.com/actridge/Cont-xt/zipball/v0.3.0  
     Tarball: http://github.com/actridge/Cont-xt/tarball/v0.3.0  
 
-Installation from git source:
+Installation from git source (bleeding edge -- unstable master):
 
     git clone http://github.com/actridge/Cont-xt.git
 
