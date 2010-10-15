@@ -72,7 +72,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function postMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper('Module\Text\Mapper');
-        $item = $mapper->data($mapper->get('Module\Text\Entity'), $request->post());
+        $item = $mapper->get('Module\Text\Entity')->data($request->post());
         $item->module_id = $module->id;
         $item->date_created = $mapper->connection('Module\Text\Entity')->dateTime();
         $item->date_modified = $mapper->connection('Module\Text\Entity')->dateTime();
@@ -97,12 +97,11 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function putMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper('Module\Text\Mapper');
-        //$item = $mapper->get($request->module_item);
         $item = $mapper->currentTextEntity($module);
         if(!$item) {
-            throw new Alloy_Exception_FileNotFound($this->name() . " module item not found");
+            throw new \Alloy\Exception_FileNotFound($this->name() . " module item not found");
         }
-        $mapper->data($item, $request->post());
+        $item->data($request->post());
         $item->module_id = $module->id;
         $item->date_modified = $mapper->connection('Module\Text\Entity')->dateTime();
         

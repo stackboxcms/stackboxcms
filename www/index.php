@@ -163,11 +163,14 @@ if($kernel) {
     $response->send();
     
     // Debugging on?
-    if($kernel->config('debug')) {
+    if($kernel->config('debug') && !$request->isAjax()) {
+        /*
+        // Trace of hooks/events - not currently used
         echo "<hr />";
         echo "<pre>";
         print_r($kernel->trace());
         echo "</pre>";
+        */
         
         // Executed queries
         echo "<hr />";
