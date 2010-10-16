@@ -10,7 +10,6 @@ class Entity extends \Cx\EntityAbstract
     protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);
     protected $site_id = array('type' => 'int', 'index' => 'site_page', 'default' => 0);
     protected $page_id = array('type' => 'int', 'index' => 'site_page', 'required' => true);
-    protected $module_id = array('type' => 'int', 'default' => 0);
     protected $region = array('type' => 'string', 'required' => true);
     protected $name = array('type' => 'string', 'required' => true);
     protected $ordering = array('type' => 'int', 'default' => 0);

@@ -23,7 +23,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     {
         return $this->formView()
             ->method('post')
-            ->action($this->kernel->url('page', array('page' => '/')));
+            ->action($this->kernel->url(array('page' => '/'), 'page'));
     }
     
     
@@ -50,12 +50,14 @@ class Controller extends \Cx\Module\ControllerAbstract
         
         // Save it
         $mapper = $kernel->mapper();
-        $entity = $mapper->data($mapper->get('Module\Page\Module\Entity'), $request->post() + array(
-            'page_id' => $page->id,
-            'date_created' => $mapper->connection('Module\Page\Module\Entity')->dateTime()
+        $entity = $mapper->get('Module\Page\Module\Entity')
+            ->data($request->post() + array(
+                'site_id' => $page->site_id,
+                'page_id' => $page->id,
+                'date_created' => $mapper->connection('Module\Page\Module\Entity')->dateTime()
             ));
         if($mapper->save($entity)) {
-            $pageUrl = $this->kernel->url('page', array('page' => $page->url));
+            $pageUrl = $this->kernel->url(array('page' => $page->url), 'page');
             if($request->format == 'html') {
                 // Set module data for return content
                 $mapper->data($module, $mapper->data($entity));
@@ -66,7 +68,7 @@ class Controller extends \Cx\Module\ControllerAbstract
             }
         } else {
             $this->kernel->response(400);
-            return $this->formView()
+            return "<h1>ERROR!</h1>" . (string) $this->formView()
                 ->data($request->post())
                 ->errors($mapper->errors());
         }
