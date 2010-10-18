@@ -58,6 +58,25 @@ class Template
     
     
     /**
+     * Cache prototype
+     * Not functional as a cache yet
+     */
+    public function cache($closure, $name)
+    {
+        if(is_array($closure) || !is_callable($closure)) {
+            throw new \InvalidArgumentException("Cache helper expected a closure");
+        }
+        
+        $helper = $this->helper('Cache');
+        $cached = $helper->get($name);
+        if(!$cached) {
+            $cached = $helper->set($name, $closure);
+        }
+        echo $cached();
+    }
+    
+    
+    /**
      * Gets a view variable
      *
      * Surpress notice errors for variables not found to
