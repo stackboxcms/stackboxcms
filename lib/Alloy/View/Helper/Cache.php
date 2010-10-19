@@ -1,5 +1,5 @@
 <?php
-namespace Alloy\View;
+namespace Alloy\View\Helper;
 
 /**
  * Cache Helper
@@ -11,7 +11,7 @@ namespace Alloy\View;
  * @license http://www.opensource.org/licenses/bsd-license.php
  * @link http://alloyframework.com/
  */
-class Helper_Cache extends HelperAbstract
+class Cache extends HelperAbstract
 {
     protected $_cache = array();
     

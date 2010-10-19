@@ -72,7 +72,7 @@ class Template
         if(!$cached) {
             $cached = $helper->set($name, $closure);
         }
-        echo $cached();
+        echo $cached($this);
     }
     
     
@@ -158,7 +158,7 @@ class Template
      */
     public function helper($name)
     {
-        $helperClass = 'Alloy\View\Helper_' . $name;
+        $helperClass = 'Alloy\View\Helper\\' . $name;
         
         if(!isset(self::$_helpers[$helperClass])) {
             self::$_helpers[$helperClass] = new $helperClass(\Kernel(), $this);

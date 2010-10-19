@@ -437,6 +437,7 @@ class Kernel
         }
 
         // Handle result
+        $params = array_values($params); // Ensure params are numerically indexed
         $paramCount = count($params);
         if($paramCount == 0) {
             $result = $sModuleObject->$action();

@@ -172,7 +172,7 @@ class Router
         
         // Static routes - let's save some time here
         if($route->isStatic()) {
-                return $routeUrl;
+            return $routeUrl;
         }
         
         
