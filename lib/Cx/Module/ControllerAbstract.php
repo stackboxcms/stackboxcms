@@ -56,6 +56,15 @@ abstract class ControllerAbstract extends \Alloy\Module\ControllerAbstract
     /**
      * Return view object for the add/edit form
      */
+    public function urlName()
+    {
+        return str_replace('\\', '_', $this->name());
+    }
+    
+    
+    /**
+     * Return view object for the add/edit form
+     */
     protected function formView()
     {
         $fields = $this->kernel->mapper()->fields("Module\\" . $this->name() . "\\Entity");
