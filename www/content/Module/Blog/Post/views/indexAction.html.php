@@ -11,10 +11,12 @@
 <?php else: ?>
   <p>No blog posts to show</p>
   
-  <?php $this->cache(function() { ?>
-    <p>Cached paragraph</p>
-    <p>Also here</p>
-  <?php }, 'my_cached_content'); ?>
+  <?php $this->cache(function($view) { ?>
+    <?php
+    // Expensive external HTTP request
+    echo "Cached content";
+    ?>
+  <?php }, 'github_zf2_commits', 3600); ?>
   
 <?php endif; ?>
 </div>

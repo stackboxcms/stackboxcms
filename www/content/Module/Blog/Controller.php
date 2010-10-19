@@ -11,18 +11,21 @@ class Controller extends \Cx\Module\ControllerAbstract
      */
     public function indexAction($request, $page, $module)
     {
-        $posts = $this->kernel->mapper()->all('Module\Blog\Post')->order('date_created');
+        return $this->kernel->dispatch('Blog_Post', __FUNCTION__, compact('request', 'page', 'module'));
+    }
+    
+    
+    /**
+     * @method GET
+     */
+    public function editAction($request, $page, $module)
+    {
+        // Get all blog posts (remember - query is not actually executed yet and can be futher modified by the gridview)
+        $mapper = $this->kernel->mapper();
+        $posts = $mapper->all('Module\Blog\Post\Entity');
         
-        $view = $this->template(__FUNCTION__)
-            ->set(array(
-                    'posts' => $posts
-                ));
-        
-        // Return only content for HTML
-        if($request->format == 'html') {
-            return $view;
-        }
-        return $this->kernel->resource($posts);
+        // Return view template
+        return $this->template(__FUNCTION__)->set(compact('posts', 'page', 'module'));
     }
     
     
@@ -34,7 +37,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function install($action = null, array $params = array())
     {
         $this->kernel->mapper()->migrate('Module\Blog\Entity');
-        $this->kernel->mapper()->migrate('Module\Blog\Post');
+        $this->kernel->mapper()->migrate('Module\Blog\Post\Entity');
         return parent::install($action, $params);
     }
     
@@ -47,7 +50,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function uninstall()
     {
         $this->kernel->mapper()->dropDatasource('Module\Blog\Entity');
-        $this->kernel->mapper()->dropDatasource('Module\Blog\Post');
+        $this->kernel->mapper()->dropDatasource('Module\Blog\Post\Entity');
         return true;
     }
 }

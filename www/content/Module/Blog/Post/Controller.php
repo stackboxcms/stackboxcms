@@ -12,7 +12,20 @@ class Controller extends \Cx\Module\ControllerAbstract
      */
     public function indexAction($request, $page, $module)
     {
-        return false;
+        $posts = $this->kernel->mapper()->all('Module\Blog\Post\Entity', array(
+                'status' => Entity::STATUS_PUBLISHED
+            ))
+            ->order('date_created');
+        
+        // Return only content for HTML
+        if($request->format == 'html') {
+            $view = $this->template(__FUNCTION__)
+                ->set(array(
+                    'posts' => $posts
+                ));
+            return $view;
+        }
+        return $this->kernel->resource($posts);
     }
     
     
@@ -22,9 +35,9 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function newAction($request, $page, $module)
     {
         $form = $this->formView()
-            ->method('post')
-            ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'), 'module');
-        return $this->template('editAction')->set(compact('form'));
+            ->method('POST')
+            ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->urlName(), 'module_id' => $module->id), 'module'));
+        return $form;
     }
     
     
@@ -34,11 +47,11 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function editAction($request, $page, $module)
     {
         $form = $this->formView()
-            ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'), 'module')
+            ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->urlName(), 'module_id' => $module->id), 'module'))
             ->method('PUT');
         
         $mapper = $this->kernel->mapper();
-        $item = $mapper->get('Module\Blog\Post', $request->module_item);
+        $item = $mapper->get('Module\Blog\Post\Entity', $request->module_item);
         
         if(!$item) {
             return false;
@@ -48,7 +61,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         $form->data($item->data());
         
         // Return view template
-        return $this->template(__FUNCTION__)->set(compact('form'));
+        return $form;
     }
     
     
@@ -59,16 +72,17 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function postMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper();
-        $item = $mapper->get('Module\Blog\Post')->data($request->post());
+        $item = $mapper->get('Module\Blog\Post\Entity')->data($request->post());
         $item->module_id = $module->id;
-        $item->date_created = $mapper->connection('Module\Blog\Post')->dateTime();
-        $item->date_modified = $mapper->connection('Module\Blog\Post')->dateTime();
+        $item->date_created = $mapper->connection('Module\Blog\Post\Entity')->dateTime();
+        $item->date_modified = $mapper->connection('Module\Blog\Post\Entity')->dateTime();
+        
         if($mapper->save($item)) {
-            $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
+            $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->urlName(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
             if($request->format == 'html') {
                 return $this->indexAction($request, $page, $module);
             } else {
-                return $this->kernel->resource($mapper->data($item))->status(201)->location($itemUrl);
+                return $this->kernel->resource($item->data())->status(201)->location($itemUrl);
             }
         } else {
             $this->kernel->response(400);
@@ -84,20 +98,20 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function putMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper();
-        $item = $mapper->get('Module\Blog\Post', $request->module_item);
+        $item = $mapper->get('Module\Blog\Post\Entity', $request->module_item);
         if(!$item) {
-            throw new \Alloy\Exception_FileNotFound($this->name() . " module item not found");
+            return false;
         }
         $item->data($request->post());
         $item->module_id = $module->id;
-        $item->date_modified = $mapper->connection('Module\Blog\Post')->dateTime();
+        $item->date_modified = $mapper->connection('Module\Blog\Post\Entity')->dateTime();
         
         if($mapper->save($item)) {
-            $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
+            $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->urlName(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
             if($request->format == 'html') {
                 return $this->indexAction($request, $page, $module);
             } else {
-                return $this->kernel->resource($mapper->data($item))->status(201)->location($itemUrl);
+                return $this->kernel->resource($item->data($item))->status(201)->location($itemUrl);
             }
         } else {
             $this->kernel->response(400);
@@ -112,7 +126,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     public function deleteMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper();
-        $item = $mapper->get('Module\Blog\Post', $request->module_item);
+        $item = $mapper->get('Module\Blog\Post\Entity', $request->module_item);
         if(!$item) {
             return false;
         }
@@ -127,7 +141,7 @@ class Controller extends \Cx\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
-        $this->kernel->mapper()->migrate('Module\Blog\Post');
+        $this->kernel->mapper()->migrate('Module\Blog\Post\Entity');
         return parent::install($action, $params);
     }
     
@@ -139,7 +153,7 @@ class Controller extends \Cx\Module\ControllerAbstract
      */
     public function uninstall()
     {
-        return $this->kernel->mapper()->dropDatasource('Module\Blog\Post');
+        return $this->kernel->mapper()->dropDatasource('Module\Blog\Post\Entity');
     }
     
     
@@ -154,8 +168,8 @@ class Controller extends \Cx\Module\ControllerAbstract
         // Set type and options for 'type' select
         $fields['status']['type'] = 'select';
         $fields['status']['options'] = array(
-            '0' => 'Draft',
-            '1' => 'Published',
+            Entity::STATUS_DRAFT => 'Draft',
+            Entity::STATUS_PUBLISHED => 'Published',
             );
         
         $view->action("")
