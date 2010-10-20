@@ -1,0 +1,57 @@
+/**
+ * Code-Highlighting styles from Nijikodo
+ * @link http://www.craigiam.com/nijikodo
+ */
+.niji_code {
+    font-family: 'monaco', courier, monospace;
+    font-size: 11.5px;
+    overflow: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #03050A;
+    color: #fff;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    white-space: pre-wrap;
+}
+
+.niji_code em {
+    font-style: italic;
+}
+
+.niji_html {
+    color: #7F90AA;
+}
+
+.niji_keyword, .niji_define {
+    color: #FBDE2D;
+}
+
+.niji_int, .niji_constant {
+    color: #D8FA3C;
+}
+
+.niji_comment {
+    color: #E40700;
+}
+
+.niji_class, .niji_function {
+    color: #8DA6CE;
+}
+
+.niji_string {
+    color: #61CE3C;
+}
+
+.niji_default {
+    color: #fff;
+}
+
+.niji_tag {
+    color: #7F90AA;
+}
+
+.niji_method {
+    color: #FF6400;
+}

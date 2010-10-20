@@ -158,13 +158,16 @@ class Controller extends \Cx\Module\ControllerAbstract
                 // Grab template contents
                 $template = $template->content();
                 
-                // Render head
-                $template = str_replace("</head>", $templateHead->content() . "\n</head>", $template);
-                
                 // Admin bar and edit controls
                 $templateBodyContent = $this->template('_adminBar')->path(__DIR__ . '/views/')->set('page', $page);
                 $template = str_replace("</body>", $templateBodyContent . "\n</body>", $template);
             }
+            
+            // Global styles and scripts
+            $templateHead->stylesheet($kernel->config('url.assets') . 'styles/cx_modules.css');
+            
+            // Render head
+            $template = str_replace("</head>", $templateHead->content() . "\n</head>", $template);
             
             // Prepend asset path to beginning of "href" or "src" attributes that is prefixed with '@'
             $template = preg_replace("/<(.*?)([src|href]+)=\"@([^\"|:]+)\"([^>]*)>/i", "<$1$2=\"".$themeUrl."$3\"$4>", $template);
