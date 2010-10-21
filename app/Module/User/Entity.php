@@ -24,20 +24,6 @@ class Entity extends \Cx\EntityAbstract
         'order' => array('date_created' => 'DESC')
     );
     
-    // Save password on load to see if it's changed later
-    protected $_loadedPassword;
-    
-    
-    /**
-     * Callback after entity is loaded by ID
-     */
-    public function afterLoad(array $data = array())
-    {
-        if(isset($data['password'])) {
-            $this->_loadedPassword = $data['password'];
-        }
-    }
-    
     
     /**
      * Save with salt and encrypted password
@@ -47,9 +33,9 @@ class Entity extends \Cx\EntityAbstract
         $data = $mapper->data($this);
         
         // If password has been modified or set for the first time
-        if(!$this->id || ($this->password != $this->_loadedPassword)) {
-            $this->salt = $this->randomSalt();
-            $this->password = $this->encryptedPassword($data['password']);
+        if(isset($this->_dataModified['password']) && ($this->_data['password'] != $this->_dataModified['password'])) {
+            $this->__set('salt', $this->randomSalt());
+            $this->__set('password', $this->encryptedPassword($this->_dataModified['password']));
         }
         
         parent::beforeSave($mapper);
@@ -63,7 +49,7 @@ class Entity extends \Cx\EntityAbstract
      */
     public function isLoggedIn()
     {
-        return $this->id ? true : false;
+        return $this->__get('id') ? true : false;
     }
     
     
@@ -74,7 +60,7 @@ class Entity extends \Cx\EntityAbstract
      */
     public function isAdmin()
     {
-        return (boolean) $this->is_admin;
+        return (boolean) $this->__get('is_admin');
     }
     
     
@@ -106,6 +92,6 @@ class Entity extends \Cx\EntityAbstract
     public function encryptedPassword($pass)
     {
         // Hash = <salt>:<password>
-        return sha1($this->salt . ':' . $pass);
+        return sha1($this->__get('salt') . ':' . $pass);
     }
 }

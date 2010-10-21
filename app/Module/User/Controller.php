@@ -141,11 +141,12 @@ class Controller extends \Cx\Module\ControllerAbstract
     /**
      * Install Module
      *
-     * @see Cx_Module_Controller_Abstract
+     * @see \Cx\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
         $this->kernel->mapper()->migrate('Module\User\Entity');
+        $this->kernel->mapper()->migrate('Module\User\Session\Entity');
         return parent::install($action, $params);
     }
     
@@ -153,11 +154,13 @@ class Controller extends \Cx\Module\ControllerAbstract
     /**
      * Uninstall Module
      *
-     * @see Cx_Module_Controller_Abstract
+     * @see \Cx\Module\ControllerAbstract
      */
     public function uninstall()
     {
-        return $this->kernel->mapper()->dropDatasource('Module\User\Entity');
+        $this->kernel->mapper()->dropDatasource('Module\User\Entity');
+        $this->kernel->mapper()->dropDatasource('Module\User\Session\Entity');
+        return parent::uninstall();
     }
     
     
