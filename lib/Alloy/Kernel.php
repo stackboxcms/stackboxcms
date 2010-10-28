@@ -564,7 +564,7 @@ class Kernel
         }
         
         // Get URL from router object by reverse match
-        $fullUrl = $urlBase . str_replace('%2f', '/', strtolower($this->router()->url($params, $routeName))) . $queryString;
+        $fullUrl = $urlBase . str_replace('//', '/', str_replace('%2f', '/', strtolower($this->router()->url($params, $routeName)))) . $queryString;
         return $fullUrl;
     }
     
