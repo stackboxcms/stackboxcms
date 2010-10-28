@@ -44,7 +44,8 @@ class Entity extends \Cx\EntityAbstract
      */
     public function beforeSave(\Spot\Mapper $mapper)
     {
-        $this->url = self::formatPageUrl($this->url);
+        $this->__set('site_id', \Kernel()->config('site.id'));
+        $this->__set('url', self::formatPageUrl($this->__get('url')));
         return parent::beforeSave($mapper);
     }
     

@@ -33,6 +33,7 @@ class Controller extends \Cx\Module\ControllerAbstract
             if($pageUrl == '/') {
                 // Create new page for the homepage automatically if it does not exist
                 $page = $pageMapper->get('Module\Page\Entity');
+                $page->site_id = $kernel->config('site.id');
                 $page->parent_id = 0;
                 $page->title = "Home";
                 $page->url = $pageUrl;
@@ -217,8 +218,9 @@ class Controller extends \Cx\Module\ControllerAbstract
      */
     public function postMethod($request)
     {
-        $mapper = $this->kernel->mapper();
-        $entity = $mapper->data($mapper->get('Module\Page\Entity'), $request->post());
+        $mapper = $this->kernel->mapper('Module\Page\Mapper');
+        $entity = $mapper->get('Module\Page\Entity')->data($request->post());
+        $entity->site_id = $this->kernel->config('site.id');
         $entity->parent_id = (int) $request->parent_id;
         $entity->date_created = $mapper->connection('Module\Page\Entity')->dateTime();
         $entity->date_modified = $entity->date_created;
@@ -244,17 +246,35 @@ class Controller extends \Cx\Module\ControllerAbstract
     
     
     /**
+     * @method GET
+     */
+    public function deleteAction($request)
+    {
+        if($request->format == 'html') {
+            $view = new \Alloy\View\Generic\Form('form');
+            $form = $view
+                ->method('delete')
+                ->action($this->kernel->url(array('page' => $request->page), 'page'))
+                ->submitButtonText('Delete');
+            return "<p>Are you sure you want to delete this page and ALL data and modules on it?</p>" . $form;
+        }
+        return false;
+    }
+    
+    
+    /**
      * @method DELETE
      */
     public function deleteMethod($request)
     {
         // Ensure page exists
-        $page = $this->mapper()->getPageByUrl($request->url);
+        $mapper = $this->kernel->mapper('Module\Page\Mapper');
+        $page = $mapper->getPageByUrl($request->page);
         if(!$page) {
             return false;
         }
         
-        $this->mapper()->delete($page);
+        $mapper->delete($page);
     }
     
     
@@ -266,7 +286,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         $kernel = $this->kernel;
         
         // Ensure page exists
-        $mapper = $this->mapper();
+        $mapper = $kernel->mapper('Module\Page\Mapper');
         $page = $mapper->getPageByUrl($request->url);
         if(!$page) {
             return false;
@@ -344,7 +364,7 @@ class Controller extends \Cx\Module\ControllerAbstract
                     <div class="cx_ui_title"><span>' . $module->name . '</span></div>
                     <ul>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit'), 'module') . '">Edit</a></li>
-                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'Page_Module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>
+                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>
                     </ul>
                   </div>
                   ';
