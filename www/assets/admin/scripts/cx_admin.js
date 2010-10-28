@@ -58,10 +58,19 @@ cx.modal = (function (cx, $) {
         // Setup dialog
         p.el.dialog({
             autoOpen: false,
+            closeOnEscape: true,
             modal: true,
             'title' : '',
             width: $(window).width() * 0.9,
-            height: $(window).height() * 0.85
+            height: $(window).height() * 0.85,
+            open: function(event,ui) {},
+            close: function(e,ui) {
+                // Destroy CKEditor instance so it can be re-created for next AJAX call
+                try {
+                    $("form li.app_form_field_editor textarea", p.elContent).ckeditorGet().destroy();
+                } catch(e) {}
+            }
+
             });
         
         // Initialize...
