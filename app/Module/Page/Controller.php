@@ -150,9 +150,9 @@ class Controller extends \Cx\Module\ControllerAbstract
                 
                 // Setup javascript variables for use
                 $templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('url.assets_admin') . '"}};</script>' . "\n");
-                $templateHead->script($kernel->config('url.assets_admin') . 'scripts/cx_admin.js');
                 $templateHead->script($kernel->config('url.assets_admin') . 'scripts/ckeditor/ckeditor.js');
                 $templateHead->script($kernel->config('url.assets_admin') . 'scripts/ckeditor/adapters/jquery.js');
+                $templateHead->script($kernel->config('url.assets_admin') . 'scripts/cx_admin.js');
                 $templateHead->stylesheet('jquery-ui/aristo/aristo.css');
                 $templateHead->stylesheet($kernel->config('url.assets_admin') . 'styles/cx_admin.css');
                 
