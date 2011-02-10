@@ -1,7 +1,8 @@
 <?php
 namespace Module\Page;
+use Stackbox;
 
-class Mapper extends \Cx\Module\MapperAbstract
+class Mapper extends Stackbox\Module\MapperAbstract
 {
     /**
      * Disables automatic adding of 'site_id' field to all queries in base mapper
@@ -40,7 +41,7 @@ class Mapper extends \Cx\Module\MapperAbstract
             if($startPage instanceof \Module\Page\Entity) {
                 $rootPages = $startPage->children;
             } else {
-                throw new \Cx\Exception("Provided start page must be an instance of Module\Page\Entity");
+                throw new Stackbox\Exception("Provided start page must be an instance of Module\Page\Entity");
             }
         }
         

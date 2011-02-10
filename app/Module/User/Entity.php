@@ -1,34 +1,51 @@
 <?php
 namespace Module\User;
+use Stackbox;
+use Spot;
 
-class Entity extends \Cx\EntityAbstract
+class Entity extends Stackbox\EntityAbstract
 {
     // Table
     protected static $_datasource = "users";
     
-    // Fields
-    protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);
-    protected $username = array('type' => 'string', 'required' => true, 'unique' => true);
-    protected $password = array('type' => 'password', 'required' => true);
-    protected $salt = array('type' => 'string', 'length' => 20, 'required' => true);
-    protected $email = array('type' => 'string', 'required' => true);
-    protected $is_admin = array('type' => 'boolean', 'default' => 0);
-    protected $date_created = array('type' => 'datetime');
+    /**
+     * Fields
+     */
+    public static function fields()
+    {
+        return array(
+            'id' => array('type' => 'int', 'primary' => true, 'serial' => true),
+            'username' => array('type' => 'string', 'required' => true, 'unique' => true),
+            'password' => array('type' => 'password', 'required' => true),
+            'salt' => array('type' => 'string', 'length' => 20, 'required' => true),
+            'email' => array('type' => 'string', 'required' => true),
+            'is_admin' => array('type' => 'boolean', 'default' => 0),
+            'date_created' => array('type' => 'datetime')
+        ) + parent::fields();
+    }
     
-    // User session/login
-    protected $session = array(
-        'type' => 'relation',
-        'relation' => 'HasOne',
-        'entity' => 'Module\User\Session\Entity',
-        'where' => array('user_id' => ':entity.id'),
-        'order' => array('date_created' => 'DESC')
-    );
+
+    /**
+     * Relations
+     */
+    public static function relations()
+    {
+        return array(
+            // User session/login
+            'session' => array(
+                'type' => 'HasOne',
+                'entity' => 'Module\User\Session\Entity',
+                'where' => array('user_id' => ':entity.id'),
+                'order' => array('date_created' => 'DESC')
+            )
+        ) + parent::relations();
+    }
     
     
     /**
      * Save with salt and encrypted password
      */
-    public function beforeSave(\Spot\Mapper $mapper)
+    public function beforeSave(Spot\Mapper $mapper)
     {
         $data = $mapper->data($this);
         

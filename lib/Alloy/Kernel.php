@@ -28,11 +28,7 @@ class Kernel
     protected $instances = array();
     protected $callbacks = array();
     
-    protected $binds = array();
     protected $_user = false;
-    
-    protected $_spotConfig;
-    protected $_spotMapper = array();
     
     
     /**
@@ -126,39 +122,50 @@ class Kernel
      * Factory method for loading and instantiating new objects
      *
      * @param string $className Name of the class to attempt to load
+     * @param array $params Array of parameters to pass to instantiate new object with
      * @return object Instance of the class requested
      * @throws InvalidArgumentException
      */
-    public function factory($className, array $args = array())
+    public function factory($className, array $params = array())
     {
-        if(isset($this->instances[$className])) {
-            return $this->instances[$className];
+        $instanceHash = md5($className . var_export($params, true));
+        
+        // Return already instantiated object instance if set
+        if(isset($this->instances[$instanceHash])) {
+            return $this->instances[$instanceHash];
         }
         
         // Return new class instance
-        if(count($args) == 0) {
+        $paramCount = count($params);
+        if(0 === $paramCount) {
             $instance = new $className();
+        } elseif(1 === $paramCount) {
+            $instance = new $className(current($params));
+        } elseif(2 === $paramCount) {
+            $instance = new $className($params[0], $params[1]);
+        } elseif(3 === $paramCount) {
+            $instance = new $className($params[0], $params[1], $params[2]);
         } else {
-            $class = new ReflectionClass($className);
+            $class = new \ReflectionClass($className);
             $instance = $class->newInstanceArgs($args);
         }
         
-        return $this->setInstance($className, $instance);
+        return $this->setInstance($instanceHash, $instance);
     }
     
     
     /**
-     * Sets instance of specified class
+     * Class-level object instance cache
      * Note: This function does not check if $class is currently in use or already instantiated.
      *  This will override any previous instances of $class within the $instances array.
      *
-     * @param $class string Name of the class you wish to locate
-     * @param $instance object Instance of class you wish to set in locator
+     * @param $hash string Hash or name of the object instance to cache
+     * @param $instance object Instance of object you wish to cache
      * @return object
      */
-    public function setInstance($class, $instance)
+    public function setInstance($hash, $instance)
     {
-        $this->instances[$class] = $instance;
+        $this->instances[$hash] = $instance;
         return $instance;
     }
     
@@ -232,6 +239,19 @@ class Kernel
     
     
     /**
+     * Get class loader object
+     */
+    public function loader()
+    {
+        $class = __NAMESPACE__ . '\ClassLoader';
+        if(!class_exists($class, false)) {
+            require(__DIR__ . '/ClassLoader.php');
+        }
+        return $this->factory($class);
+    }
+    
+    
+    /**
      * Return a resource object to work with
      */
     public function resource($data)
@@ -246,6 +266,17 @@ class Kernel
     public function session()
     {
         return $this->factory(__NAMESPACE__ . '\Session');
+    }
+    
+    
+    /**
+     * Get events object with given namespace
+     *
+     * @param string Event namespace (default is 'alloy')
+     */
+    public function events($ns = 'alloy')
+    {
+        return $this->factory(__NAMESPACE__ . '\Events', array($ns));
     }
     
     
@@ -343,9 +374,8 @@ class Kernel
     /**
      * Load and return instantiated module class
      *
-     * @param string $className Name of the class
+     * @param string $module Name of the module class
      * @return object
-     * @throws \Alloy\Exception_FileNotFound
      */
     public function module($module, $init = true)
     {
@@ -355,6 +385,11 @@ class Kernel
         // Upper-case beginning of each word
         $sModule = str_replace(' ', '\\', ucwords(str_replace('_', ' ', $sModule)));
         $sModuleClass = 'Module\\' . $sModule . '\Controller';
+        
+        // Ensure class exists / can be loaded
+        if(!class_exists($sModuleClass)) {
+            return false;
+        }
         
         // Instantiate module class
         $sModuleObject = new $sModuleClass($this);
@@ -368,50 +403,34 @@ class Kernel
         
         return $sModuleObject;
     }
-    
-    
-    /**
-     * Get mapper object to work with
-     * Ensures only one instance of a mapper gets loaded
-     *
-     * @param string $mapperName (Optional) Custom mapper class to load in case of custom requirements or queries
-     */
-    public function mapper($mapperName = '\Spot\Mapper')
-    {
-        if(!isset($this->_spotMapper[$mapperName])) {
-            // Create new mapper, passing in config
-            $cfg = $this->spotConfig();
-            $this->_spotMapper[$mapperName] = new $mapperName($this->spotConfig());
-        }
-        return $this->_spotMapper[$mapperName];
-    }
-    
-    
-    /**
-     * Get instance of database connection
-     */
-    public function spotConfig()
-    {
-        if(!$this->_spotConfig) {
-            $dbCfg = $this->config('database');
-            if($dbCfg) {
-                // New config
-                if(!class_exists('\Spot\Config')) {
-                    // Require Spot\Config, it will register its own autoloader
-                    require $this->config('path.lib') . 'Spot/Config.php';
-                }
-                $this->_spotConfig = new \Spot\Config();
-                foreach($dbCfg as $name => $options) {
-                        $this->_spotConfig->addConnection($name, $options);
-                }
-            } else {
-                throw new Exception("Unable to load configuration for Spot - Database configuration settings do not exist.");
-            }
-        }
-        return $this->_spotConfig;
-    }
-    
 
+
+    /**
+     * Load and return instantiated plugin class
+     *
+     * @param string $plugin Name of the plugin to get the instance for
+     * @return object
+     */
+    public function plugin($plugin, $init = true)
+    {
+        // Clean module name to prevent possible security vulnerabilities
+        $sPlugin = preg_replace('/[^a-zA-Z0-9_]/', '', $plugin);
+        
+        // Upper-case beginning of each word
+        $sPlugin = str_replace(' ', '\\', ucwords(str_replace('_', ' ', $sPlugin)));
+        $sPluginClass = 'Plugin\\' . $sPlugin . '\Plugin';
+        
+        // Ensure class exists / can be loaded
+        if(!class_exists($sPluginClass)) {
+            return false;
+        }
+        
+        // Instantiate module class
+        $sPluginObject = new $sPluginClass($this);
+        return $sPluginObject;
+    }
+    
+    
     /**
      * Dispatch module action
      *
@@ -429,23 +448,28 @@ class Kernel
         } else {
             // Get module instance
             $sModuleObject = $this->module($module);
+            
+            // Does module exist?
+            if(false === $sModuleObject) {
+                throw new Exception_FileNotFound("Module '" . $module ."' not found");
+            }
         }
         
         // Module action callable (includes __call magic function if method missing)?
         if(!is_callable(array($sModuleObject, $action))) {
-            throw new \Alloy\Exception_FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
+            throw new Exception_FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
         }
 
         // Handle result
         $params = array_values($params); // Ensure params are numerically indexed
         $paramCount = count($params);
-        if($paramCount == 0) {
+        if(0 === $paramCount) {
             $result = $sModuleObject->$action();
-        } elseif($paramCount == 1) {
+        } elseif(1 === $paramCount) {
             $result = $sModuleObject->$action(current($params));
-        } elseif($paramCount == 2) {
+        } elseif(2 === $paramCount) {
             $result = $sModuleObject->$action($params[0], $params[1]);
-        } elseif($paramCount == 3) {
+        } elseif(3 === $paramCount) {
             $result = $sModuleObject->$action($params[0], $params[1], $params[2]);
         } else {
             $result = call_user_func_array(array($sModuleObject, $action), $params);
@@ -490,63 +514,22 @@ class Kernel
     
     
     /**
-     * Event: Trigger a named event and execute callbacks that have been hooked onto it
-     * 
-     * @param string $name Name of the event
-     * @param array $params Parameters to pass to bound event callbacks
-     */
-    public function trigger($name, array $params = array())
-    {
-        if(isset($this->binds[$name])) {
-            foreach($this->binds[$name] as $hookName => $callback) {
-                call_user_func_array($callback, $params);
-            }
-        }
-        
-        $this->trace('[Event] Triggered: ' . $name);
-    }
-    
-    
-    /**
-     * Event: Add callback to be triggered on event name
-     * 
-     * @param string $name Name of the event
-     * @param string $hookName Name of the bound callback that is being added (custom for each callback)
-     * @param callback $callback Callback to execute when named event is triggered
-     */
-    public function bind($eventName, $hookName, $callback)
-    {
-        $this->binds[$eventName][$hookName] = $callback;
-        $this->trace('[Event] Hook callback added: ' . $hookName . ' on event ' . $eventName);
-    }
-
-
-    /**
-     * Event: Remove callback by name
-     */
-    public function unbind($eventName, $hookName)
-    {
-        if(isset($this->binds[$eventName][$hookName])) {
-            unset($this->binds[$eventName][$hookName]);
-        }
-        $this->trace('[Event] Hook callback removed: ' . $hookName);
-    }
-
-
-    /**
      * Generate URL from given params
      *
      * @param array $params Named URL parts
- * @param array $queryParams Named querystring URL parts (optional)
+     * @param array $queryParams Named querystring URL parts (optional)
      * @return string
      */
-    public function url($params = array(), $routeName = null, $queryParams = array())
+    public function url($params = array(), $routeName = null, $queryParams = array(), $qsAppend = false)
     {
         $urlBase = $this->config('url.root', '');
         
-        // Use query string if URL rewriting is not enabled
-        if(!$this->config('url.rewrite')) {
-            $urlBase .= "?u=";
+        // HTTPS Secure URL?
+        $isSecure = false;
+        if(isset($params['secure']) && true === $params['secure']) {
+            $isSecure = true;
+            $urlBase = str_replace('http:', 'https:', $urlBase);
+            unset($params['secure']);
         }
         
         // Detemine what URL is from param types
@@ -557,15 +540,32 @@ class Kernel
             throw new Exception("First parameter of URL must be array or string route name");
         }
         
-        // Query params
+        
+        // Is there query string data?
         $queryString = "";
+        $request = $this->request();
+        if(true === $qsAppend && $request->query()) {
+            $queryParams = array_merge($request->query(), $queryParams);
+        }
         if(count($queryParams) > 0) {
-            $queryString = "?" . http_build_query($queryParams);
+            // Build query string from array $qsData
+            $queryString = http_build_query($queryParams, '', '&amp;');
+        } else {
+            $queryString = false;
         }
         
         // Get URL from router object by reverse match
-        $fullUrl = $urlBase . str_replace('//', '/', str_replace('%2f', '/', strtolower($this->router()->url($params, $routeName)))) . $queryString;
-        return $fullUrl;
+        $url = str_replace('%2f', '/', strtolower($this->router()->url($params, $routeName)));
+        
+        // Use query string if URL rewriting is not enabled
+        if($this->config('url.rewrite')) {
+            $url = $urlBase . $url . (($queryString !== false) ? '?' . $queryString : '');
+        } else {
+            $url = $urlBase . '?u=' . $url . (($queryString !== false) ? '&amp;' . $queryString : '');
+        }
+        
+        // Return fully assembled URL
+        return $url;
     }
     
     
@@ -676,6 +676,48 @@ class Kernel
         }
         return $output;
     }
+
+
+    /**
+     * Merges any number of arrays of any dimensions, the later overwriting
+     * previous keys, unless the key is numeric, in whitch case, duplicated
+     * values will not be added.
+     *
+     * The arrays to be merged are passed as arguments to the function.
+     *
+     * @return array Resulting array, once all have been merged
+     */
+    public function array_merge_recursive_replace() {
+     // Holds all the arrays passed
+        $params =  func_get_args();
+   
+        // First array is used as the base, everything else overwrites on it
+        $return = array_shift($params);
+   
+        // Merge all arrays on the first array
+        foreach ($params as $array) {
+            foreach($array as $key => $value) {
+                // Numeric keyed values are added (unless already there)
+                if(is_numeric($key) && (!in_array($value, $return))) {
+                    if(is_array($value)) {
+                        $return[] = $this->array_merge_recursive_replace($return[$key], $value);
+                    } else {
+                        $return[] = $value;
+                    }
+                      
+                // String keyed values are replaced
+                } else {
+                    if (isset($return[$key]) && is_array($value) && is_array($return[$key])) {
+                        $return[$key] = $this->array_merge_recursive_replace($return[$key], $value);
+                    } else {
+                        $return[$key] = $value;
+                    }
+                }
+            }
+        }
+   
+        return $return;
+    }
     
     
     /**
@@ -739,50 +781,7 @@ class Kernel
             $callback = $this->callbacks[$method];
             return call_user_func_array($callback, $args);
         } else {
-            throw new BadMethodCallException("Method '" . __CLASS__ . "::" . $method . "' not found or the command is not a valid callback type.");	
+            throw new \BadMethodCallException("Method '" . __CLASS__ . "::" . $method . "' not found or the command is not a valid callback type.");	
         }
-    }
-    
-    
-    /**
-     * Merges any number of arrays of any dimensions, the later overwriting
-     * previous keys, unless the key is numeric, in whitch case, duplicated
-     * values will not be added.
-     *
-     * The arrays to be merged are passed as arguments to the function.
-     *
-     * @access public
-     * @return array Resulting array, once all have been merged
-     */
-    public function array_merge_recursive_replace() {
-     // Holds all the arrays passed
-        $params =  func_get_args();
-   
-        // First array is used as the base, everything else overwrites on it
-        $return = array_shift($params);
-   
-        // Merge all arrays on the first array
-        foreach ($params as $array) {
-            foreach($array as $key => $value) {
-                // Numeric keyed values are added (unless already there)
-                if(is_numeric($key) && (!in_array($value, $return))) {
-                    if(is_array($value)) {
-                        $return[] = $this->array_merge_recursive_replace($return[$key], $value);
-                    } else {
-                        $return[] = $value;
-                    }
-                      
-                // String keyed values are replaced
-                } else {
-                    if (isset($return[$key]) && is_array($value) && is_array($return[$key])) {
-                        $return[$key] = $this->array_merge_recursive_replace($return[$key], $value);
-                    } else {
-                        $return[$key] = $value;
-                    }
-                }
-            }
-        }
-   
-        return $return;
     }
 }

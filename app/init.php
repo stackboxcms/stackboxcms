@@ -14,6 +14,16 @@ if(version_compare(phpversion(), "5.3.1", "<")) {
 }
 
 /**
+ * Get and return instance of \Alloy\Kernel
+ * Checks if 'Kernel' function already exists so it can be overridden/customized
+ */
+if(!function_exists('Kernel')) {
+    function Kernel(array $config = array()) {
+        return \Alloy\Kernel::getInstance($config);
+    }
+}
+
+/**
  * Configuration settings
  */
 $cfgAlloy = require(__DIR__ . '/config/app.php');
@@ -35,27 +45,12 @@ if(!isset($cfgAlloy['path']['lib'])) {
     throw new \InvalidArgumentException("Configuration must have at least \$cfg['path']['lib'] set in order to load required classes.");
 }
 
-// Require Kernel lib
-require $cfgAlloy['path']['lib'] . '/Alloy/Kernel.php';
-
-// Load Kernel override
-require $cfgAlloy['path']['lib'] . '/Cx/Kernel.php';
-
-/**
- * Get and return instance of \Cx\Kernel
- * Checks if 'Kernel' function already exists so it can be overridden/customized
- */
-if(!function_exists('Kernel')) {
-    function Kernel(array $config = array()) {
-        return \Cx\Kernel::getInstance($config);
-    }
-}
-
 /**
  * Load Kernel
  */
 try {
     // Get Kernel with config and host config
+    require_once $cfgAlloy['path']['lib'] . '/Alloy/Kernel.php';
     $kernel = \Kernel($cfgAlloy);
     $kernel->config($cfgHost);
     unset($cfgAlloy, $cfgHost);
@@ -63,33 +58,32 @@ try {
     /**
      * Class autoloaders - uses PHP 5.3 SplClassLoader
      */
-    require $kernel->config('path.lib') . '/Alloy/ClassLoader.php';
-    $loader = new \Alloy\ClassLoader();
+    $loader = $kernel->loader();
 
     // Register classes with namespaces
     $loader->registerNamespaces(array(
         'Alloy' => $kernel->config('path.lib'),
         'App' => $kernel->config('path.lib'),
-        'Cx' => $kernel->config('path.lib'),
-        'Nijikodo' => $kernel->config('path.lib'),
-        'Module' => array($kernel->config('path.app'), $kernel->config('path.cx_modules')),
+        'Module' => $kernel->config('path.app'),
+        'Plugin' => array($kernel->config('path.app'), $kernel->config('path.vendor')),
     ));
 
     // Register a library using the PEAR naming convention
-    /*
     $loader->registerPrefixes(array(
         'Zend_' => $kernel->config('path.lib'),
     ));
-    */
     
     // Activate the autoloader
     $loader->register();
     
-    
-    // Debug?
-    if($kernel->config('debug')) {
-        // Enable debug mode
-        $kernel->debug(true);
+    /**
+     * Development Mode & Debug Handling
+     */
+    if($kernel->config('mode.development')) {
+        if($kernel->config('debug')) {
+            // Enable debug mode
+            $kernel->debug(true);
+        }
     } else {
         // Show NO errors
         error_reporting(0);

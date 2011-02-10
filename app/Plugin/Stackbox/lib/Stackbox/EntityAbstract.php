@@ -1,5 +1,5 @@
 <?php
-namespace Cx;
+namespace Stackbox;
 
 /**
  * Base Cont-xt Entity

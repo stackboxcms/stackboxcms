@@ -1,10 +1,11 @@
 <?php
 namespace Module\Page\Module;
+use Stackbox;
 
 /**
  * Page module controller - Add, move, or delete modules
  */
-class Controller extends \Cx\Module\ControllerAbstract
+class Controller extends Stackbox\Module\ControllerAbstract
 {
     /**
      * Module listing

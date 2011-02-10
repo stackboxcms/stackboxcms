@@ -1,22 +1,37 @@
 <?php
 namespace Module\User\Session;
+use Stackbox;
 
-class Entity extends \Cx\EntityAbstract
+class Entity extends Stackbox\EntityAbstract
 {
     // Table
     protected static $_datasource = "user_session";
     
-    // Fields
-    protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);
-    protected $user_id = array('type' => 'int', 'key' => true, 'required' => true);
-    protected $session_id = array('type' => 'string', 'required' => true, 'key' => true);
-    protected $date_created = array('type' => 'datetime');
-    
-    // User session/login
-    protected $user = array(
-        'type' => 'relation',
-        'relation' => 'HasOne', // Actually a 'BelongsTo', but that is currently not implemented in Spot
-        'entity' => 'Module\User\Entity',
-        'where' => array('id' => ':entity.user_id')
-    );
+    /**
+     * Fields
+     */
+    public static function fields()
+    {
+        return array(
+            'id' => array('type' => 'int', 'primary' => true, 'serial' => true),
+            'user_id' => array('type' => 'int', 'key' => true, 'required' => true),
+            'session_id' => array('type' => 'string', 'required' => true, 'key' => true),
+            'date_created' => array('type' => 'datetime')
+        ) + parent::fields();
+    }
+
+    /**
+     * Relations
+     */
+    public static function relations()
+    {
+        return array(
+            // User session/login
+            'user' => array(
+                'type' => 'HasOne', // Actually a 'BelongsTo', but that is currently not implemented in Spot
+                'entity' => 'Module\User\Entity',
+                'where' => array('id' => ':entity.user_id')
+            )
+        ) + parent::relations();
+    }
 }

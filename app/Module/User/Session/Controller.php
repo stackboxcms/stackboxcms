@@ -1,10 +1,11 @@
 <?php
 namespace Module\User\Session;
+use Stackbox;
 
 /**
  * User Session module
  */
-class Controller extends \Cx\Module\ControllerAbstract
+class Controller extends Stackbox\Module\ControllerAbstract
 {
     /**
      * @method GET

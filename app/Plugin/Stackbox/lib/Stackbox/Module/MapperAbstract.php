@@ -1,7 +1,8 @@
 <?php
-namespace Cx\Module;
+namespace Stackbox\Module;
+use Spot;
 
-abstract class MapperAbstract extends \Spot\Mapper
+abstract class MapperAbstract extends Spot\Mapper
 {
     protected $_auto_site_id_query = true;
     

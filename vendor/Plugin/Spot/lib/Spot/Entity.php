@@ -22,6 +22,8 @@ abstract class Entity
      */
     public function __construct(array $data = array())
     {
+        $this->initFields();
+        
         // Set given data
         if($data) {
             $this->data($data, false);
@@ -76,15 +78,7 @@ abstract class Entity
      */
     public static function fields()
     {
-        $fields = array();
-        $props = get_class_vars(get_called_class());
-        foreach($props as $field => $value) {
-            // Property seems like a field?
-            if(is_array($value) && isset($value['type']) && $value['type'] != 'relation') {
-                $fields[$field] = $value;
-            }
-        }
-        return $fields;
+        return array();
     }
     
     
@@ -93,15 +87,7 @@ abstract class Entity
      */
     public static function relations()
     {
-        $relations = array();
-        $props = get_class_vars(get_called_class());
-        foreach($props as $field => $value) {
-            // Property seems like a relation?
-            if(is_array($value) && isset($value['type']) && $value['type'] == 'relation') {
-                $relations[$field] = $value;
-            }
-        }
-        return $relations;
+        return array();
     }
     
     
@@ -112,7 +98,6 @@ abstract class Entity
     {
         // GET
         if(null === $data || !$data) {
-            $this->initFields();
             return array_merge($this->_data, $this->_dataModified);
         }
         

@@ -56,7 +56,7 @@ class Router
         }
         
         // Clean up URL for matching
-        $url = trim(urldecode($url), '/');
+        $url = trim($url, '/');
         $params = array();
         
         // Loop over set routes to find a match
@@ -134,7 +134,7 @@ class Router
                 }
             }
         }
-        return $params;
+        return array_map('urldecode', $params);
     }
     
     
@@ -160,8 +160,18 @@ class Router
      * @return string Full matched URL as string with given values put in place of named parameters
      * @throws UnexpectedValueException For non-existent route name or params that don't match given route name (Unable to create URL string)
      */
-    public function url(array $params = array(), $routeName)
+    public function url($params = array(), $routeName)
     {
+        // If params is string, assume route name for static route
+        if(is_string($params)) {
+            $routeName = $params;
+            $params = array();
+        }
+        
+        if(!$routeName) {
+            throw new \UnexpectedValueException("Error creating URL: Route name must be specified.");
+        }
+        
         if(!isset($this->_routes[$routeName])) {
             throw new \UnexpectedValueException("Error creating URL: Route name '" . $routeName . "' not found in defined routes.");
         }
@@ -194,7 +204,7 @@ class Router
                 $routeParams[$key] = $optionalParams[$key]['routeSegment'];
             // Required/standard param
             } elseif(isset($routeParams[$key])) {
-                $matchedParams[$key] = \urlencode($value);
+                $matchedParams[$key] = $value;
             }
         }
         
@@ -210,7 +220,7 @@ class Router
             if(!isset($matchedParams[$paramName])) {
                 throw new \UnexpectedValueException("Error creating URL for route '" . $routeName . "': Required route parameter '" . $paramName . "' has not been supplied.");
             }
-            $routeUrl = str_replace($paramPlaceholder, $matchedParams[$paramName], $routeUrl);
+            $routeUrl = str_replace($paramPlaceholder, urlencode($matchedParams[$paramName]), $routeUrl);
         }
         
         // Remove all optional parameters with no supplied match or default value

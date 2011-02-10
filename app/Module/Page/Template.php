@@ -1,15 +1,16 @@
 <?php
 namespace Module\Page;
+use Alloy;
 
 /**
  * Page Template Parser
  * 
  * Parses page templates for tokens to replace with content
  *
- * @package Cont-xt
- * @link http://cont-xt.com/
+ * @package Stackbox CMS
+ * @link http://stackboxcms.com/
  */
-class Template extends \Alloy\View\Template
+class Template extends Alloy\View\Template
 {
     // Extension type (inherited from \Alloy\View\Template)
     protected $_default_format = 'html';

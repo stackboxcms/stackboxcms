@@ -1,11 +1,19 @@
 <?php
 namespace Module\Blog;
+use Stackbox;
 
-class Entity extends \Cx\Module\EntityAbstract
+class Entity extends Stackbox\Module\EntityAbstract
 {
     protected static $_datasource = "module_blog";
     
-    // Fields
-    protected $title = array('type' => 'string', 'required' => true);
-    protected $description = array('type' => 'text');
+    /**
+     * Fields
+     */
+    public static function fields()
+    {
+        return array(
+            'title' => array('type' => 'string', 'required' => true),
+            'description' => array('type' => 'text')
+        ) + parent::fields();
+    }
 }

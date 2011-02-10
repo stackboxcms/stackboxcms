@@ -1,11 +1,12 @@
 <?php
-namespace Cx\Module;
+namespace Stackbox\Module;
+use Alloy;
 
 /**
  * Base application module controller
  * Used as a base module class other modules must extend from
  */
-abstract class ControllerAbstract extends \Alloy\Module\ControllerAbstract
+abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
 {
     /**
      * Access control list for controller methods
@@ -105,6 +106,6 @@ abstract class ControllerAbstract extends \Alloy\Module\ControllerAbstract
     {
         $class = get_called_class();
         $path = str_replace('\\', '/', str_replace('\\Controller', '', $class));
-        return $this->kernel->config('path.cx_modules') . '/' . $path;
+        return $this->kernel->config('stackbox.path.modules') . '/' . $path;
     }
 }

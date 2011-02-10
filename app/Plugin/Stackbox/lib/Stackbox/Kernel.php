@@ -1,5 +1,5 @@
 <?php
-namespace Cx;
+namespace Stackbox;
 
 class Kernel extends \Alloy\Kernel
 {

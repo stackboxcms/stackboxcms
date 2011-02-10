@@ -1,11 +1,12 @@
 <?php
 namespace Module\Blog\Post;
+use Stackbox;
 
 /**
  * Blog Module
  * Blog Posts Controller
  */
-class Controller extends \Cx\Module\ControllerAbstract
+class Controller extends Stackbox\Module\ControllerAbstract
 {
     /**
      * @method GET

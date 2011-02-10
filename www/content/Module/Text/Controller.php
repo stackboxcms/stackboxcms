@@ -1,10 +1,11 @@
 <?php
 namespace Module\Text;
+use Stackbox;
 
 /**
  * Text Module
  */
-class Controller extends \Cx\Module\ControllerAbstract
+class Controller extends Stackbox\Module\ControllerAbstract
 {
     /**
      * @method GET

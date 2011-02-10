@@ -1,6 +1,7 @@
 <?php
 require dirname(__DIR__) . '/app/init.php';
 
+
 /**
  * Run
  */
@@ -58,63 +59,45 @@ try {
     $request->setParams($params);
     $request->route = $router->matchedRoute()->name();
     
-    // User - Custom user code for authentication
-    // @todo Move this code to plugin or event hook instead of bootstrap file
-    // ==================================
-    $sessionKey = null;
-    if(isset($_SESSION['user']['session'])) {
-        $sessionKey = $_SESSION['user']['session'];
+    // Load plugins
+    if($plugins = $kernel->config('plugins', false)) {
+        if(!is_array($plugins)) {
+            throw new \InvalidArgumentException("Plugin configuration from app config must be an array. Given (" . gettype($plugins) . ").");
+        }
+
+        foreach($plugins as $pluginName) {
+            $plugin = $kernel->plugin($pluginName);
+            if(false === $plugin) {
+                throw new \Exception("Unable to load plugin '" . $pluginName . "'. Remove from app config or ensure plugin files exist in 'app' or 'vendor' load paths.");
+            }
+        }
     }
-    $user = $kernel->dispatch('User_Session', 'authenticate', array($sessionKey));
-    if(!$user->isLoggedin() && isset($_SESSION['user']['session'])) {
-        // Unset invalid user key
-        unset($_SESSION['user']['session']);
-    }
-    // Set user object on Kernel so it is available everywhere
-    $kernel->user($user);
-    // ==================================
-    
+    $kernel->events()->trigger('plugins_loaded');
+
     // Required params
+    $content = false;
     if(isset($params['module']) && isset($params['action'])) {
-        $module = $params['module'];
-        $action = $params['action'];
+        $request->module = $params['module'];
+        $request->action = $params['action'];
         
-        // Run/execute
-        $content = $kernel->dispatchRequest($module, $action);
+        // Matched route
+        $kernel->events()->trigger('route_match');
     } else {
-        $content = false;
+        $content = $kernel->events()->filter('route_not_found', $content);
     }
+
+    // Run/execute
+    $content = $kernel->dispatchRequest($request->module, $request->action);
     
     // Raise 404 error on boolean false result
     if(false === $content) {
         throw new \Alloy\Exception_FileNotFound("Requested file or page not found. Please check the URL and try again.");
-    }
-    
-    // Wrap returned content in a layout
-    if($request->format == 'html' && !$request->isAjax() && !$request->isCli()) {
-        $response->contentType('text/html');
-        
-    } elseif(in_array($request->format, array('json', 'xml'))) {
-        // No cache and hide potential errors
-        ini_set('display_errors', 0);
-        $response->header("Expires", "Mon, 26 Jul 1997 05:00:00 GMT"); 
-        $response->header("Last-Modified", gmdate( "D, d M Y H:i:s" ) . "GMT"); 
-        $response->header("Cache-Control", "no-cache, must-revalidate"); 
-        $response->header("Pragma", "no-cache");
-        
-        // Correct content-type
-        if('json' == $request->format) {
-            $response->contentType('application/json');
-        } elseif('xml' == $request->format) {
-            $response->contentType('text/xml');
-        }
     }
 
 // Authentication Error
 } catch(\Alloy\Exception_Auth $e) {
     $responseStatus = 403;
     $content = $e;
-    $kernel->dispatch('user', 'loginAction', array($request));
  
 // 404 Errors
 } catch(\Alloy\Exception_FileNotFound $e) {
@@ -135,12 +118,15 @@ try {
 } catch(\Alloy\Exception $e) {
     $responseStatus = 500;
     $content = $e;
- 
+
 // Generic Error
 } catch(\Exception $e) {
     $responseStatus = 500;
     $content = $e;
 }
+
+// Run resulting content through filter
+$content = $kernel->events()->filter('dispatch_content', $content);
 
 // Exception detail depending on mode
 if($content instanceof Exception) {
@@ -164,19 +150,16 @@ if($kernel) {
     
     // Debugging on?
     if($kernel->config('debug')) {
-        /*
-        // Trace of hooks/events - not currently used
         echo "<hr />";
         echo "<pre>";
         print_r($kernel->trace());
         echo "</pre>";
-        */
         
         // Executed queries
         echo "<hr />";
-        echo "<h1>Executed Queries (" . Spot\Log::queryCount() . ")</h1>";
+        echo "<h1>Executed Queries (" . \Spot\Log::queryCount() . ")</h1>";
         echo "<pre>";
-        print_r(Spot\Log::queries());
+        print_r(\Spot\Log::queries());
         echo "</pre>";
     }
 

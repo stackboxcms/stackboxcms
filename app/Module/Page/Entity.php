@@ -1,48 +1,60 @@
 <?php
 namespace Module\Page;
+use Stackbox;
+use Spot;
 
-class Entity extends \Cx\EntityAbstract
+class Entity extends Stackbox\EntityAbstract
 {
     // Table
     protected static $_datasource = "pages";
     
-    // Fields
-    protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);
-    protected $site_id = array('type' => 'int', 'default' => 0, 'unique' => 'site_page');
-    protected $parent_id = array('type' => 'int', 'index' => true, 'default' => 0);
-    protected $title = array('type' => 'string', 'required' => true);
-    protected $url = array('type' => 'string', 'required' => true, 'unique' => 'site_page');
-    protected $meta_keywords = array('type' => 'string');
-    protected $meta_description = array('type' => 'string');
-    protected $theme = array('type' => 'string');
-    protected $template = array('type' => 'string');
-    protected $ordering = array('type' => 'int', 'length' => 3, 'default' => 0);
-    protected $date_created = array('type' => 'datetime');
-    protected $date_modified = array('type' => 'datetime');
+    /**
+     * Fields
+     */
+    public static function fields() {
+        return array(
+            'id' => array('type' => 'int', 'primary' => true, 'serial' => true),
+            'site_id' => array('type' => 'int', 'default' => 0, 'unique' => 'site_page'),
+            'parent_id' => array('type' => 'int', 'index' => true, 'default' => 0),
+            'title' => array('type' => 'string', 'required' => true),
+            'url' => array('type' => 'string', 'required' => true, 'unique' => 'site_page'),
+            'meta_keywords' => array('type' => 'string'),
+            'meta_description' => array('type' => 'string'),
+            'theme' => array('type' => 'string'),
+            'template' => array('type' => 'string'),
+            'ordering' => array('type' => 'int', 'length' => 3, 'default' => 0),
+            'date_created' => array('type' => 'datetime'),
+            'date_modified' => array('type' => 'datetime')
+        ) + parent::fields();
+    }
     
-    // Subpages / hierarchy
-    protected $children = array(
-        'type' => 'relation',
-        'relation' => 'HasMany',
-        'entity' => ':self',
-        'where' => array('site_id' => ':entity.site_id', 'parent_id' => ':entity.id'),
-        'order' => array('ordering' => 'ASC')
-        );
-    
-    // Modules in regions on page
-    protected $modules = array(
-        'type' => 'relation',
-        'relation' => 'HasMany',
-        'entity' => 'Module\Page\Module\Entity',
-        'where' => array('site_id' => ':entity.site_id', 'page_id' => ':entity.id'),
-        'order' => array('ordering' => 'ASC')
-        );
+    /**
+     * Fields
+     */
+    public static function relations() {
+        return array(
+            // Subpages / hierarchy
+            'children' => array(
+                'type' => 'HasMany',
+                'entity' => ':self',
+                'where' => array('site_id' => ':entity.site_id', 'parent_id' => ':entity.id'),
+                'order' => array('ordering' => 'ASC')
+                ),
+            // Modules in regions on page
+            'modules' => array(
+                'type' => 'HasMany',
+                'entity' => 'Module\Page\Module\Entity',
+                'where' => array('site_id' => ':entity.site_id', 'page_id' => ':entity.id'),
+                'order' => array('ordering' => 'ASC')
+                )
+        ) + parent::relations();
+    }
     
     
     /**
      * Formats URL on save
      */
-    public function beforeSave(\Spot\Mapper $mapper)
+    public function beforeSave(Spot\Mapper $mapper)
     {
         $this->__set('site_id', \Kernel()->config('site.id'));
         $this->__set('url', self::formatPageUrl($this->__get('url')));

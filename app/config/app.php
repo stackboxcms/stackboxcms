@@ -9,28 +9,22 @@ $cfg['dir']['app'] = '/app/';
 $cfg['dir']['config'] = $cfg['dir']['app'] . 'config/';
 $cfg['dir']['www'] = '/www/';
 $cfg['dir']['assets'] = $cfg['dir']['www'] . 'assets/';
-$cfg['dir']['assets_admin'] = $cfg['dir']['assets'] . 'admin/';
 $cfg['dir']['lib'] = '/lib/';
-$cfg['dir']['modules'] = $cfg['dir']['app'];
+$cfg['dir']['vendor'] = '/vendor/';
 $cfg['dir']['layouts'] = $cfg['dir']['app'] . 'layouts/';
-$cfg['dir']['cx_modules'] = $cfg['dir']['www'] . 'content/';
-$cfg['dir']['themes'] = $cfg['dir']['www'] . 'themes/';
 
 $cfg['path']['app'] = dirname(__DIR__);
 $cfg['path']['config'] = __DIR__;
+$cfg['path']['www'] = $cfg['path']['root'] . $cfg['dir']['www'];
 $cfg['path']['lib'] = $cfg['path']['root'] . $cfg['dir']['lib'];
-$cfg['path']['modules'] = $cfg['path']['root'] . $cfg['dir']['modules'];
-$cfg['path']['public'] = $cfg['path']['root'] . $cfg['dir']['www'];
+$cfg['path']['vendor'] = $cfg['path']['root'] . $cfg['dir']['vendor'];
 $cfg['path']['layouts'] = $cfg['path']['root'] . $cfg['dir']['layouts'];
-$cfg['path']['cx_modules'] = $cfg['path']['root'] . $cfg['dir']['cx_modules'];
-$cfg['path']['themes'] = $cfg['path']['root'] . $cfg['dir']['themes'];
 
 // URLs
 $cfg['url']['request'] = (isset($_GET['url']) ? urldecode($_GET['url']) : '' );
 $cfg['url']['root'] = 'http' . (($cfg['env']['https']) ? 's' : '' ) . '://' . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost') . '/' . str_replace('\\', '/', substr($cfg['path']['root'] . $cfg['dir']['www'], strlen($_SERVER['DOCUMENT_ROOT'])+1));
 $cfg['url']['assets'] = $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['dir']['assets']);
-$cfg['url']['assets_admin'] = $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['dir']['assets_admin']);
-$cfg['url']['themes'] = $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['dir']['themes']);
+
 
 // Use Apache/IIS rewrite on URLs?
 $cfg['url']['rewrite'] = true;
@@ -40,16 +34,16 @@ $cfg['site']['id'] = 1;
 $cfg['site']['title'] = '';
 
 // Debug?
-$cfg['debug'] = true;
+$cfg['debug'] = false;
 
 // In Development Mode?
 $cfg['mode']['development'] = true;
 
-// Defaults
-$cfg['default']['module'] = 'page';
-$cfg['default']['action'] = 'index';
-$cfg['default']['theme'] = 'default';
-$cfg['default']['theme_template'] = 'index';
+// Plugins loaded
+$cfg['plugins'] = array(
+	'Spot', # vendor/Plugin/Spot
+	'Stackbox' # app/Plugin/Stackbox
+);
 
 // Database - Param names to match Zend_Config
 $cfg['database']['master']['adapter'] = 'mysql';
@@ -70,5 +64,6 @@ $cfg['session']['lifetime'] = 28000;
 $cfg['i18n']['charset'] = 'UTF-8';
 $cfg['i18n']['language'] = 'en_US';
 $cfg['i18n']['timezone'] = 'America/Chicago';
+
 
 return $cfg;

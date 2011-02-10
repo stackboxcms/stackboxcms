@@ -1,10 +1,12 @@
 <?php
 namespace Module\User;
+use Stackbox;
+use Alloy;
 
 /**
  * User Module
  */
-class Controller extends \Cx\Module\ControllerAbstract
+class Controller extends Stackbox\Module\ControllerAbstract
 {
     /**
      * Access control
@@ -26,7 +28,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         }
         
         if(!$access) {
-            throw new \Alloy\Exception_Auth("User is not logged in or does not have proper permissions to perform requested action");
+            throw new Alloy\Exception_Auth("User is not logged in or does not have proper permissions to perform requested action");
         }
         
         return parent::init();
@@ -141,7 +143,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     /**
      * Install Module
      *
-     * @see \Cx\Module\ControllerAbstract
+     * @see \Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
@@ -154,7 +156,7 @@ class Controller extends \Cx\Module\ControllerAbstract
     /**
      * Uninstall Module
      *
-     * @see \Cx\Module\ControllerAbstract
+     * @see \Stackbox\Module\ControllerAbstract
      */
     public function uninstall()
     {

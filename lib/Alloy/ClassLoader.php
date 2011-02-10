@@ -75,6 +75,7 @@ class ClassLoader
         foreach($namespaces as $ns => $path) {
             $this->registerNamespace($ns, $path);
         }
+        return $this;
     }
 
     /**
@@ -87,9 +88,10 @@ class ClassLoader
     {
         // If namespace has already been specified, add path to array of possible paths -- don't overwrite
         if(isset($this->namespaces[$namespace])) {
-            $path = array_merge($this->namespaces[$namespace], $path);
+            $path = array_merge($this->namespaces[$namespace], (array) $path);
         }
         $this->namespaces[$namespace] = (array) $path;
+        return $this;
     }
 
     /**
@@ -102,6 +104,7 @@ class ClassLoader
         foreach($classes as $prefix => $path) {
             $this->registerPrefix($prefix, $path);
         }
+        return $this;
     }
 
     /**
@@ -114,9 +117,10 @@ class ClassLoader
     {
         // If prefix has already been specified, add path to array of possible paths -- don't overwrite
         if(isset($this->prefixes[$prefix])) {
-            $path = array_merge($this->prefixes[$prefix], $path);
+            $path = array_merge($this->prefixes[$prefix], (array) $path);
         }
         $this->prefixes[$prefix] = (array) $path;
+        return $this;
     }
 
     /**
@@ -125,6 +129,7 @@ class ClassLoader
     public function register()
     {
         spl_autoload_register(array($this, 'loadClass'));
+        return $this;
     }
 
     /**

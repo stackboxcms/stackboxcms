@@ -1,10 +1,11 @@
 <?php
 namespace Module\Page;
+use Stackbox;
 
 /**
  * Page controller - sets up whole page for display
  */
-class Controller extends \Cx\Module\ControllerAbstract
+class Controller extends Stackbox\Module\ControllerAbstract
 {
     /**
      * @method GET
@@ -86,12 +87,12 @@ class Controller extends \Cx\Module\ControllerAbstract
         }
         
         // Load page template
-        $activeTheme = ($page->theme) ? $page->theme : $kernel->config('default.theme');
-        $activeTemplate = ($page->template) ? $page->template : $kernel->config('default.theme_template');
-        $themeUrl = $kernel->config('url.themes') . $activeTheme . '/';
+        $activeTheme = ($page->theme) ? $page->theme : $kernel->config('stackbox.default.theme');
+        $activeTemplate = ($page->template) ? $page->template : $kernel->config('stackbox.default.theme_template');
+        $themeUrl = $kernel->config('stackbox.url.themes') . $activeTheme . '/';
         $template = new Template($activeTemplate);
         $template->format($request->format);
-        $template->path($kernel->config('path.themes') . $activeTheme . '/');
+        $template->path($kernel->config('stackbox.path.themes') . $activeTheme . '/');
         $template->parse();
         
         // Template Region Defaults
@@ -117,7 +118,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         }
         
         // Replace region content
-        $kernel->trigger('module_page_template_regions', array(&$regionModules));
+        $regionModules = $kernel->events('stackbox')->filter('module_page_template_regions', $regionModules);
         foreach($regionModules as $region => $modules) {
             if(is_array($modules)) {
                 // Array = Region has modules
@@ -131,7 +132,7 @@ class Controller extends \Cx\Module\ControllerAbstract
         
         // Replace template tags
         $tags = $mapper->data($page);
-        $kernel->trigger('module_page_template_data', array(&$tags));
+        $tags = $kernel->events('stackbox')->filter('module_page_template_data', $tags);
         foreach($tags as $tagName => $tagValue) {
             $template->replaceTag($tagName, $tagValue);
         }
@@ -149,18 +150,20 @@ class Controller extends \Cx\Module\ControllerAbstract
                 $templateHead->script('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js');
                 
                 // Setup javascript variables for use
-                $templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('url.assets_admin') . '"}};</script>' . "\n");
-                $templateHead->script($kernel->config('url.assets_admin') . 'scripts/ckeditor/ckeditor.js');
-                $templateHead->script($kernel->config('url.assets_admin') . 'scripts/ckeditor/adapters/jquery.js');
-                $templateHead->script($kernel->config('url.assets_admin') . 'scripts/cx_admin.js');
+                $templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('stackbox.url.assets_admin') . '"}};</script>' . "\n");
+                $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/ckeditor/ckeditor.js');
+                $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/ckeditor/adapters/jquery.js');
+                $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/cx_admin.js');
                 $templateHead->stylesheet('jquery-ui/aristo/aristo.css');
-                $templateHead->stylesheet($kernel->config('url.assets_admin') . 'styles/cx_admin.css');
+                $templateHead->stylesheet($kernel->config('stackbox.url.assets_admin') . 'styles/cx_admin.css');
                 
                 // Grab template contents
                 $template = $template->content();
                 
                 // Admin bar and edit controls
-                $templateBodyContent = $this->template('_adminBar')->path(__DIR__ . '/views/')->set('page', $page);
+                $templateBodyContent = $this->template('_adminBar')
+                    ->path(__DIR__ . '/views/')
+                    ->set('page', $page);
                 $template = str_replace("</body>", $templateBodyContent . "\n</body>", $template);
             }
             

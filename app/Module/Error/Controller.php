@@ -1,10 +1,11 @@
 <?php
 namespace Module\Error;
+use Stackbox;
 
 /**
  * $Id$
  */
-class Controller extends \Cx\Module\ControllerAbstract
+class Controller extends Stackbox\Module\ControllerAbstract
 {
     /**
      * Error display and handling function
@@ -33,11 +34,12 @@ class Controller extends \Cx\Module\ControllerAbstract
         // Response
         if($request->format == 'html') {
             // Assign template variables
-            return $this->view(__FUNCTION__)->set(array(
-                'title' => $title,
-                'errorCode' => $errorCode,
-                'errorMessage' => $errorMessage,
-                'responseText' => $responseText
+            return $this->view(__FUNCTION__)
+                ->set(array(
+                    'title' => $title,
+                    'errorCode' => $errorCode,
+                    'errorMessage' => $errorMessage,
+                    'responseText' => $responseText
                 ));
         } else {
             return $kernel->resource(array(
