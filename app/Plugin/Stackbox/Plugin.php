@@ -23,8 +23,8 @@ class Plugin
         $kernel->config(array(
             'stackbox' => array(
                 'dir' => array(
-                    'modules' => $cfg['dir']['www'] . 'content/',
-                    'themes' => $cfg['dir']['www'] . 'themes/',
+                    'modules' => 'content/',
+                    'themes' => 'themes/',
                     'assets_admin' => $cfg['dir']['assets'] . 'admin/'
                 ),
 
@@ -46,8 +46,8 @@ class Plugin
                     'themes' => $cfg['path']['root'] . $cfg['dir']['www'] . 'themes/'
                 ),
                 'url' => array(
-                    'assets_admin' => $cfg['dir']['www'] . $cfg['stackbox']['dir']['assets_admin'],
-                    'themes' => $cfg['dir']['www'] . $cfg['stackbox']['dir']['themes']
+                    'assets_admin' => $cfg['url']['root'] . $cfg['stackbox']['dir']['assets_admin'],
+                    'themes' => $cfg['url']['root'] . $cfg['stackbox']['dir']['themes']
                 )
             )
         ));
