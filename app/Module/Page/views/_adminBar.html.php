@@ -17,11 +17,17 @@
 <div id="cms_admin_modules" class="cms_ui cms_ui_pane">
   <h2>Modules</h2>
   <div class="cms_ui_pane_content">
-    <!-- @todo: Make this dynamically generted from installed modules -->
-    <div id="cms_module_tile_Text" class="cms_module_tile">Text Module</div>
-    <div id="cms_module_tile_Code" class="cms_module_tile">Code Module</div>
-    <div id="cms_module_tile_Navigation" class="cms_module_tile">Navigation Module</div>
-    <div id="cms_module_tile_Blog" class="cms_module_tile">Blog Module</div>
+    <?php
+    // Module Files
+    $moduleDirsPath = $kernel->config('stackbox.path.modules');
+    $moduleDirs = $kernel->finder()
+      ->directories()
+      ->in($moduleDirsPath)
+      ->depth(1)
+      ->sortByName();
+    foreach($moduleDirs as $mDir): ?>
+      <div id="cms_module_tile_<?php echo $mDir->getFilename(); ?>" class="cms_module_tile"><?php echo $mDir->getFilename(); ?> Module</div>
+    <?php endforeach; ?>
   </div>
   <div class="cms_ui_pane_info">
     <p>Drag and drop modules into content regions on the page.</p>
