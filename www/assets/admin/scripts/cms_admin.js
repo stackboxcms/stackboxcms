@@ -243,7 +243,7 @@ $(function() {
     cms_modules.live('hover', function(e) {
         nModule = $(this);
         // Note: 'hover' actually binds to custom events 'mouseenter' and 'mouseleave'
-        if(e.type == 'mouseover') {
+        if(e.type == 'mouseenter') {
             nModule.addClass('cms_ui_hover');
         } else {
             nModule.removeClass('cms_ui_hover');
