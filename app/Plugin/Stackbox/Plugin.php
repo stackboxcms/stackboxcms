@@ -46,7 +46,7 @@ class Plugin
                     'themes' => $cfg['path']['root'] . $cfg['dir']['www'] . 'themes/'
                 ),
                 'url' => array(
-                    'assets_admin' => $cfg['url']['root'] . $cfg['stackbox']['dir']['assets_admin'],
+                    'assets_admin' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['stackbox']['dir']['assets_admin']),
                     'themes' => $cfg['url']['root'] . $cfg['stackbox']['dir']['themes']
                 )
             )
@@ -61,6 +61,9 @@ class Plugin
 
         // Ensure API type output is served correctly
         $kernel->events()->addFilter('dispatch_content', 'sb_api_output', array($this, 'apiOutput'));
+
+        // Add sub-plugins
+        $kernel->plugin('Stackbox_User');
     }
 
 

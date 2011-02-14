@@ -13,10 +13,10 @@ class Entity extends Stackbox\Module\EntityAbstract
     public static function fields()
     {
         return array(
-            protected $content = array('type' => 'text', 'required' => true),
-            protected $type = array('type' => 'string'),
-            protected $date_created = array('type' => 'datetime'),
-            protected $date_modified = array('type' => 'datetime')
+            'content' => array('type' => 'text', 'required' => true),
+            'type' => array('type' => 'string'),
+            'date_created' => array('type' => 'datetime'),
+            'date_modified' => array('type' => 'datetime')
         ) + parent::fields();
     }
 }

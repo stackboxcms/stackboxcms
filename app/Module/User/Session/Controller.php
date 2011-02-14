@@ -86,7 +86,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         $user = $this->kernel->user();
         if(!$user) {
-            throw new Alloy_Exception_FileNotFound("Unable to logout. User not logged in");
+            throw new Alloy\Exception_FileNotFound("Unable to logout. User not logged in");
         }
         
         // Clear all session values for 'user'

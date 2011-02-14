@@ -143,6 +143,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         // Admin stuff for HTML format
         if($template->format() == 'html') {
+
             // Add user and admin stuff to the page
             if($user && $user->isAdmin()) {
                 // Admin toolbar, javascript, styles, etc.
@@ -150,12 +151,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $templateHead->script('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js');
                 
                 // Setup javascript variables for use
-                $templateHead->prepend('<script type="text/javascript">var cx = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('stackbox.url.assets_admin') . '"}};</script>' . "\n");
+                $templateHead->prepend('<script type="text/javascript">var cms = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('stackbox.url.assets_admin') . '"}};</script>' . "\n");
                 $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/ckeditor/ckeditor.js');
                 $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/ckeditor/adapters/jquery.js');
-                $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/cx_admin.js');
+                $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/cms_admin.js');
                 $templateHead->stylesheet('jquery-ui/aristo/aristo.css');
-                $templateHead->stylesheet($kernel->config('stackbox.url.assets_admin') . 'styles/cx_admin.css');
+                $templateHead->stylesheet($kernel->config('stackbox.url.assets_admin') . 'styles/cms_admin.css');
                 
                 // Grab template contents
                 $template = $template->content();
@@ -168,7 +169,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             }
             
             // Global styles and scripts
-            $templateHead->stylesheet($kernel->config('url.assets') . 'styles/cx_modules.css');
+            $templateHead->stylesheet($kernel->config('url.assets') . 'styles/cms_modules.css');
             
             // Render head
             $template = str_replace("</head>", $templateHead->content() . "\n</head>", $template);
@@ -337,7 +338,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     protected function regionFormat($request, $regionName, $regionContent)
     {
         if('html' == $request->format) {
-            $content = '<div id="cx_region_' . $regionName . '" class="cx_region">' . $regionContent . '</div>';
+            $content = '<div id="cms_region_' . $regionName . '" class="cms_region">' . $regionContent . '</div>';
         }
         return $content;
     }
@@ -358,13 +359,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     $moduleResponse = "<p>&lt;" . $module->name . " Placeholder&gt;</p>";
                 }
                 $content = '
-                <div id="cx_module_' . $module->id . '" class="cx_module module_' . strtolower($module->name) . '">
+                <div id="cms_module_' . $module->id . '" class="cms_module module_' . strtolower($module->name) . '">
                   ' . $moduleResponse;
                 // Show controls only for authorized users and requests that are not AJAX
                 if($includeControls && false !== $user && $user->isAdmin()) {
                     $content .= '
-                  <div class="cx_ui cx_ui_controls">
-                    <div class="cx_ui_title"><span>' . $module->name . '</span></div>
+                  <div class="cms_ui cms_ui_controls">
+                    <div class="cms_ui_title"><span>' . $module->name . '</span></div>
                     <ul>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit'), 'module') . '">Edit</a></li>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>
@@ -382,7 +383,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Install Module
      *
-     * @see Cx_Module_Controller_Abstract
+     * @see cms_Module_Controller_Abstract
      */
     public function install($action = null, array $params = array())
     {
@@ -395,7 +396,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Uninstall Module
      *
-     * @see Cx_Module_Controller_Abstract
+     * @see cms_Module_Controller_Abstract
      */
     public function uninstall()
     {

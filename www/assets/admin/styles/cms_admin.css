@@ -8,34 +8,34 @@ body {
 /*
 ADMIN UI
 ================================================== */
-.cx_ui { 
+.cms_ui { 
     font-size: 12px;
     font-family: Arial, Tahoma, sans-serif;
     line-height: 1;
 }
     /* FORM styles */
-    .cx_ui form {
+    .cms_ui form {
         margin: 0;
         padding: 0;
     }
-    .cx_ui form ol.app_form input, .cx_ui form ol.app_form textarea, .cx_ui form ol.app_form button, .cx_ui form ol.app_form input {
+    .cms_ui form ol.app_form input, .cms_ui form ol.app_form textarea, .cms_ui form ol.app_form button, .cms_ui form ol.app_form input {
         font-size: 14px;
         padding: 4px;
         font-family: Arial, Helvetica, sans-serif;
     }
-    .cx_ui form ol.app_form {
+    .cms_ui form ol.app_form {
         margin: 0;
         padding: 0;
         border: 0;
         list-style: none;
     }
-    .cx_ui form li.app_form_field {
+    .cms_ui form li.app_form_field {
         display: block;
         margin: 5px 0;
         padding: 3px;
         clear: both;
     }
-    .cx_ui form li.app_form_field label.app_form_field_label {
+    .cms_ui form li.app_form_field label.app_form_field_label {
         display: block;
         margin: 0;
         padding: 5px 10px 0 10px;
@@ -45,16 +45,16 @@ ADMIN UI
         cursor: pointer;
         font-size: 14px;
     }
-    .cx_ui form li.app_form_field span.app_form_field_element {
+    .cms_ui form li.app_form_field span.app_form_field_element {
         display: block;
         margin: 0;
         padding: 0;
         float: left;
     }
-    .cx_ui form li.app_form_hidden {
+    .cms_ui form li.app_form_hidden {
         display: none;
     }
-    .cx_ui form li.app_form_actions {
+    .cms_ui form li.app_form_actions {
         clear: both;
         padding-top: 20px;
         padding-left: 120px;
@@ -63,7 +63,7 @@ ADMIN UI
 /*
 ADMIN BAR
 ================================================== */
-#cx_admin_bar {
+#cms_admin_bar {
     position: fixed;
     top: 0;
     left: 0;
@@ -75,11 +75,11 @@ ADMIN BAR
     background-image: -moz-linear-gradient(100% 100% 90deg, #222, #444);
     z-index: 999;
 }
-    #cx_admin_bar_inside { height: 24px; overflow: hidden; }
+    #cms_admin_bar_inside { height: 24px; overflow: hidden; }
     /* Navigation */
-    #cx_admin_bar ul { list-style: none; margin: 0; padding: 0; }
-    #cx_admin_bar ul li { float: left; margin: 0; }
-    #cx_admin_bar ul li a {
+    #cms_admin_bar ul { list-style: none; margin: 0; padding: 0; }
+    #cms_admin_bar ul li { float: left; margin: 0; }
+    #cms_admin_bar ul li a {
         display: block;
         padding: 7px 10px 8px 10px;
         color: #eee;
@@ -87,9 +87,9 @@ ADMIN BAR
         border-left: 1px solid #666;
         border-right: 1px solid #333;
     }
-    #cx_admin_bar ul li a:hover, #imNav li.active a { background-color: #444; }
+    #cms_admin_bar ul li a:hover, #imNav li.active a { background-color: #444; }
     /* add content button */
-    a#cx_admin_bar_addContent {
+    a#cms_admin_bar_addContent {
         display: block;
         float: left;
         font-weight: bold;
@@ -113,21 +113,21 @@ ADMIN BAR
 /*
 MODAL / DIALOG
 ============================= */
-#cx_modal {
+#cms_modal {
     background: #fff;
     display: none;
 }
-    #cx_modal_content {
+    #cms_modal_content {
         color: #333;
         overflow: auto;
     }
-    #cx_modal .cx_ui_controls {
+    #cms_modal .cms_ui_controls {
         display: none!important;
     }
-    #cx_modal .cx_module.cx_ui_hover {
+    #cms_modal .cms_module.cms_ui_hover {
         background-color: transparent!important;
     }
-    #cx_modal .cx_module.cx_ui_modulebar {
+    #cms_modal .cms_module.cms_ui_modulebar {
         display: none!important;
     }
 /*
@@ -138,13 +138,13 @@ MODAL / DIALOG
     font-size: 12px;
     font-weight: bold;
 }
-    #cx_modal .cx_ui_controls {
+    #cms_modal .cms_ui_controls {
         display: none!important;
     }
-    #cx_modal .cx_module.cx_ui_hover {
+    #cms_modal .cms_module.cms_ui_hover {
         background-color: transparent!important;
     }
-    #cx_modal .cx_module.cx_ui_modulebar {
+    #cms_modal .cms_module.cms_ui_modulebar {
         display: none!important;
     }
 */
@@ -152,7 +152,7 @@ MODAL / DIALOG
 /*
 ADMIN PANES
 ================================================== */
-div.cx_ui_pane {
+div.cms_ui_pane {
     position: fixed;
     left: 0;
     width: 150px;
@@ -162,29 +162,29 @@ div.cx_ui_pane {
     opacity: 0.8;
     z-index: 980;
 }
-    div.cx_ui_pane h2 {
+    div.cms_ui_pane h2 {
         margin: 0;
         padding: 6px 10px;
         background: #333;
         color: #fff;
         font-size: 14px;
     }
-    div.cx_ui_pane_info {
+    div.cms_ui_pane_info {
         margin: 1px;
         padding: 5px;
         background-color: #ffff99;
         color: #000;
     }
-    div.cx_ui_pane_content {
+    div.cms_ui_pane_content {
         margin: 5px;
     }
 
-#cx_admin_modules.cx_ui_pane {
+#cms_admin_modules.cms_ui_pane {
     top: 25px;
     right: 0;
     display: none;
 }
-    #cx_admin_modules .cx_module_tile {
+    #cms_admin_modules .cms_module_tile {
         margin-bottom: 5px;
         padding: 10px;
         background: #fff;
@@ -194,39 +194,39 @@ div.cx_ui_pane {
         cursor: move;
         font-weight: bold;
     }
-    #cx_admin_modules .cx_module_tile:hover {
+    #cms_admin_modules .cms_module_tile:hover {
         background: #CFE9FF;
     }
 
 /*
 REGION / MODULE UI
 ============================= */
-.cx_region {
+.cms_region {
     min-height: 10px;
 }
-.cx_region_highlight {
+.cms_region_highlight {
     background-color: #DFEBFF;
     -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.9);
     -moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.9);
 }
-.cx_module_placeholder {
+.cms_module_placeholder {
     background: #ccc;
     border: 2px solid #333;
     opacity: 0.6;
 }
 /* Module admin controls */
-.cx_region .cx_module {
+.cms_region .cms_module {
     position: relative;
     min-height: 20px;
 }
-.cx_module .cx_ui_controls {
+.cms_module .cms_ui_controls {
     position: absolute;
     top: 0;
     right: 0;
     width: 100px;
     overflow: visible;
 }
-.cx_module .cx_ui_controls {
+.cms_module .cms_ui_controls {
     display: none;
     position: absolute;
     top: -21px;
@@ -247,23 +247,23 @@ REGION / MODULE UI
     -webkit-border-bottom-right-radius: 0;
     cursor: move;
 }
-    .cx_module .cx_ui_controls {
+    .cms_module .cms_ui_controls {
         font-size: 11px;
     }
-    .cx_module .cx_ui_controls .cx_ui_title {
+    .cms_module .cms_ui_controls .cms_ui_title {
         display: block;
         padding: 5px 8px;
     }
-.cx_module.cx_ui_hover {
+.cms_module.cms_ui_hover {
     background-color: #EFEFEF;
 }
-.cx_module.cx_ui_hover .cx_ui_modulebar {
+.cms_module.cms_ui_hover .cms_ui_modulebar {
     display: block!important;
 }
-.cx_module.cx_ui_hover .cx_ui_controls {
+.cms_module.cms_ui_hover .cms_ui_controls {
     display: block!important;
 }
-.cx_module .cx_ui_controls ul {
+.cms_module .cms_ui_controls ul {
     position: absolute;
     top: 0;
     right: 5px;
@@ -272,18 +272,18 @@ REGION / MODULE UI
     padding: 0;
 }
     /* Module Controls */
-    .cx_module .cx_ui_controls ul li {
+    .cms_module .cms_ui_controls ul li {
         float: left;
         margin: 0;
         padding: 0 1px;
     }
-    .cx_module .cx_ui_controls ul li a {
+    .cms_module .cms_ui_controls ul li a {
         display: block;
         padding: 5px;
         color: #fff;
         text-decoration: none;
     }
-    .cx_module .cx_ui_controls ul li a:hover, #imNav li.active a {
+    .cms_module .cms_ui_controls ul li a:hover, #imNav li.active a {
         background-color: #AFAFAF;
         color: #000;
     }

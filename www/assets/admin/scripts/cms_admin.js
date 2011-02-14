@@ -1,9 +1,9 @@
-var cx = cx || {};
+var cms = cms || {};
 
 /**
  * MODAL / Content Area
  */
-cx.modal = (function (cx, $) {
+cms.modal = (function (cms, $) {
     // PRIVATE
     var p = {};
     
@@ -52,8 +52,8 @@ cx.modal = (function (cx, $) {
     var m = {};
     m.init = function() {
         // Setup selectors
-        p.el = $('#cx_modal');
-        p.elContent = $('#cx_modal_content');
+        p.el = $('#cms_modal');
+        p.elContent = $('#cms_modal_content');
         
         // Setup dialog
         p.el.dialog({
@@ -124,7 +124,7 @@ cx.modal = (function (cx, $) {
     
     // Expose public methods
     return m;
-}(cx, jQuery));
+}(cms, jQuery));
 
 
 /**
@@ -134,31 +134,31 @@ $(function() {
     /**
      * Initialize commonly referenced elements to avoid multiple DOM lookups
      */
-    var cx_admin_bar = $('#cx_admin_bar');
-    var cx_regions = $('div.cx_region');
-    var cx_modules = $('div.cx_module');
+    var cms_admin_bar = $('#cms_admin_bar');
+    var cms_regions = $('div.cms_region');
+    var cms_modules = $('div.cms_module');
     
     
     /**
      * Initialize dialog window
      */
-    cx.modal.init();
+    cms.modal.init();
     
     
     /**
      * Open link in the admin bar in a modal window
      */
-    $('#cx_admin_bar a[rel=modal], div.cx_ui_controls a').live('click', function() {
+    $('#cms_admin_bar a[rel=modal], div.cms_ui_controls a').live('click', function() {
         var tLink = $(this);
-        cx.modal.loading();
+        cms.modal.loading();
         $.ajax({
             type: "GET",
             url: tLink.attr('href'),
             success: function(data, textStatus, req) {
-                cx.modal.content(data);
+                cms.modal.content(data);
             },
             error: function(req) { // req = XMLHttpRequest object
-                cx.modal.error("[ERROR] Unable to load URL: " + req.responseText);
+                cms.modal.error("[ERROR] Unable to load URL: " + req.responseText);
             }
         });
         return false;
@@ -168,11 +168,11 @@ $(function() {
     /**
      * Clieck 'ADD CONTENT' button
      */
-    $('#cx_admin_bar_addContent').toggle(function() {
-        $('#cx_admin_modules').slideDown();
+    $('#cms_admin_bar_addContent').toggle(function() {
+        $('#cms_admin_modules').slideDown();
         return false;
     }, function() {
-        $('#cx_admin_modules').slideUp();
+        $('#cms_admin_modules').slideUp();
         return false;
     });
     
@@ -180,38 +180,38 @@ $(function() {
     /**
      * Module drag-n-drop, adding to page regions
      */
-    $('#cx_admin_modules div.cx_module_tile').draggable({
+    $('#cms_admin_modules div.cms_module_tile').draggable({
         helper: 'clone',
-        connectToSortable: cx_regions,
+        connectToSortable: cms_regions,
         start: function(e, ui) {
-            cx_regions.addClass('cx_region_highlight');
+            cms_regions.addClass('cms_region_highlight');
         },
         stop: function(e, ui) {
-            cx_regions.removeClass('cx_region_highlight');
+            cms_regions.removeClass('cms_region_highlight');
         }
     });
-    cx_regions.sortable({
-        items: 'div.cx_module, div.cx_module_tile',
-        connectWith: cx_regions,
-        handle: 'div.cx_ui_controls .cx_ui_title',
-        placeholder: 'cx_module_placeholder',
+    cms_regions.sortable({
+        items: 'div.cms_module, div.cms_module_tile',
+        connectWith: cms_regions,
+        handle: 'div.cms_ui_controls .cms_ui_title',
+        placeholder: 'cms_module_placeholder',
         forcePlaceholderSize: true,
         start: function(e, ui) {
-            cx_regions.addClass('cx_region_highlight');
+            cms_regions.addClass('cms_region_highlight');
         },
         stop: function(e, ui) {
             // Remove region highlight
-            cx_regions.removeClass('cx_region_highlight');
+            cms_regions.removeClass('cms_region_highlight');
             
             var nRegion = $(e.target); // region will be drop target
-            var nRegionName = nRegion.attr('id').replace('cx_region_', '');
+            var nRegionName = nRegion.attr('id').replace('cms_region_', '');
             // Admin module, dragged from floating pane
-            if(ui.item.is('div.cx_module_tile')) {
+            if(ui.item.is('div.cms_module_tile')) {
                 var nModule = $('#' + ui.item.context.id);
-                var nModuleName = nModule.attr('id').replace('cx_module_tile_', '');
+                var nModuleName = nModule.attr('id').replace('cms_module_tile_', '');
                 $.ajax({
                     type: "POST",
-                    url: cx.config.url + cx.page.url + 'm,Page_Module,0.html',
+                    url: cms.config.url + cms.page.url + 'm,Page_Module,0.html',
                     data: {'region': nRegionName, 'name': nModuleName},
                     success: function(data, textStatus, req) {
                         nModule.replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000).css({border: '1px solid red'});
@@ -224,8 +224,8 @@ $(function() {
             // Serialize modules to save module/region positions
             $.ajax({
                 type: "GET",
-                url: cx.config.url + cx.page.url + 'm,Page_Module,0/saveSort.html',
-                data: 'ajax=1' + cx_serializeRegionModules(),
+                url: cms.config.url + cms.page.url + 'm,Page_Module,0/saveSort.html',
+                data: 'ajax=1' + cms_serializeRegionModules(),
                 success: function(data, textStatus, req) {
                     // Do nothing for now, eventually might show some sort of activity notice in UI, etc.
                 },
@@ -240,13 +240,13 @@ $(function() {
     /**
      * Module editing - display controls on hover
      */
-    cx_modules.live('hover', function(e) {
+    cms_modules.live('hover', function(e) {
         nModule = $(this);
         // Note: 'hover' actually binds to custom events 'mouseenter' and 'mouseleave'
         if(e.type == 'mouseover') {
-            nModule.addClass('cx_ui_hover');
+            nModule.addClass('cms_ui_hover');
         } else {
-            nModule.removeClass('cx_ui_hover');
+            nModule.removeClass('cms_ui_hover');
         }
     });
     
@@ -262,12 +262,12 @@ $(function() {
     /**
      * Serialize module order in regions into URL for Cont-xt to handle saving
      */
-    function cx_serializeRegionModules() {
+    function cms_serializeRegionModules() {
         var str = "";
-        $('div.cx_region').each(function() {
-            var regionName = this.id.replace('cx_region_', '');
-            $('div.cx_module', this).not('.ui-helper').each(function() {
-                var moduleId = parseInt($(this).attr('id').replace('cx_module_', ''));
+        $('div.cms_region').each(function() {
+            var regionName = this.id.replace('cms_region_', '');
+            $('div.cms_module', this).not('.ui-helper').each(function() {
+                var moduleId = parseInt($(this).attr('id').replace('cms_module_', ''));
                 str += "&modules["+regionName+"][]="+moduleId+"";
             });
         });

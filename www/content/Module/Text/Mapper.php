@@ -1,7 +1,9 @@
 <?php
 namespace Module\Text;
+use Stackbox;
+use Spot;
 
-class Mapper extends \Cx\Module\MapperAbstract
+class Mapper extends Stackbox\Module\MapperAbstract
 {
     /**
      * Get current text entity
