@@ -12,7 +12,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function indexAction($request, $page, $module)
     {
-        $item = $this->kernel->mapper('Module\Text\Mapper')->currentTextEntity($module);
+        $item = $this->kernel->mapper('Module\Text\Mapper')->currentEntity($module);
         if(!$item) {
             return false;
         }
@@ -36,7 +36,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $form = $this->formView()
             ->method('post')
             ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'), 'module');
-        return $this->template('editAction')->set(compact('form'));
+        return $this->template('editAction')
+            ->set(compact('form'));
     }
     
     
@@ -56,7 +57,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $form->method('POST');
         }
         
-        $item = $mapper->currentTextEntity($module);
+        $item = $mapper->currentEntity($module);
         
         // Set item data on form
         $form->data($mapper->data($item));
@@ -82,7 +83,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if($request->format == 'html') {
                 return $this->indexAction($request, $page, $module);
             } else {
-                return $this->kernel->resource($mapper->data($item))->status(201)->location($itemUrl);
+                return $this->kernel->resource($item->data())
+                    ->status(201)
+                    ->location($itemUrl);
             }
         } else {
             $this->kernel->response(400);
@@ -98,20 +101,23 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function putMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper('Module\Text\Mapper');
-        $item = $mapper->currentTextEntity($module);
+        $item = $mapper->currentEntity($module);
         if(!$item) {
-            throw new \Alloy\Exception_FileNotFound($this->name() . " module item not found");
+            throw new Exception_FileNotFound($this->name() . " module item not found");
         }
         $item->data($request->post());
         $item->module_id = $module->id;
-        $item->date_modified = $mapper->connection('Module\Text\Entity')->dateTime();
-        
+        $item->date_modified = new \DateTime();
+
         if($mapper->save($item)) {
+            //var_dump($module, $item->data());
             $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
             if($request->format == 'html') {
                 return $this->indexAction($request, $page, $module);
             } else {
-                return $this->kernel->resource($mapper->data($item))->status(201)->location($itemUrl);
+                return $this->kernel->resource($item->data())
+                    ->status(201)
+                    ->location($itemUrl);
             }
         } else {
             $this->kernel->response(400);

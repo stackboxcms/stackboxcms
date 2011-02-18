@@ -240,14 +240,10 @@ $(function() {
     /**
      * Module editing - display controls on hover
      */
-    cms_modules.live('hover', function(e) {
-        nModule = $(this);
-        // Note: 'hover' actually binds to custom events 'mouseenter' and 'mouseleave'
-        if(e.type == 'mouseenter') {
-            nModule.addClass('cms_ui_hover');
-        } else {
-            nModule.removeClass('cms_ui_hover');
-        }
+    $('#cms_admin_bar_editPage').toggle(function(e) {
+        cms_modules.addClass('cms_ui_edit');
+    }, function(e) {
+        cms_modules.removeClass('cms_ui_edit');
     });
     
     

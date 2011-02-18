@@ -89,9 +89,10 @@ ADMIN BAR
     }
     #cms_admin_bar ul li a:hover, #imNav li.active a { background-color: #444; }
     /* add content button */
-    a#cms_admin_bar_addContent {
+    #cms_admin_bar_primary ul li a {
         display: block;
         float: left;
+        font-size: 12px;
         font-weight: bold;
         text-transform: uppercase;
         text-decoration: none;
@@ -100,6 +101,7 @@ ADMIN BAR
         margin: 0 10px;
         padding: 10px 15px;
         border-radius: 5px;
+        border-color: #089B07;
         -moz-border-radius: 5px;
         -webkit-border-radius: 5px;
         -moz-border-radius-topleft: 0;
@@ -108,6 +110,17 @@ ADMIN BAR
         -webkit-border-top-right-radius: 0;
         background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#61E510), to(#089B07));
         background-image: -moz-linear-gradient(100% 100% 90deg, #089B07, #61E510);
+    }
+    #cms_admin_bar_primary a#cms_admin_bar_editPage {
+        margin-right: 0;
+        -moz-border-radius-bottomright: 0;
+        -webkit-border-bottom-right-radius: 0;
+    }
+    #cms_admin_bar_primary a#cms_admin_bar_addContent {
+        margin-left: 0;
+        border-left: 0;
+        -moz-border-radius-bottomleft: 0;
+        -webkit-border-bottom-left-radius: 0;
     }
 
 /*
@@ -124,7 +137,7 @@ MODAL / DIALOG
     #cms_modal .cms_ui_controls {
         display: none!important;
     }
-    #cms_modal .cms_module.cms_ui_hover {
+    #cms_modal .cms_module.cms_ui_edit {
         background-color: transparent!important;
     }
     #cms_modal .cms_module.cms_ui_modulebar {
@@ -141,7 +154,7 @@ MODAL / DIALOG
     #cms_modal .cms_ui_controls {
         display: none!important;
     }
-    #cms_modal .cms_module.cms_ui_hover {
+    #cms_modal .cms_module.cms_ui_edit {
         background-color: transparent!important;
     }
     #cms_modal .cms_module.cms_ui_modulebar {
@@ -254,13 +267,13 @@ REGION / MODULE UI
         display: block;
         padding: 5px 8px;
     }
-.cms_module.cms_ui_hover {
-    background-color: #EFEFEF;
+.cms_module.cms_ui_edit {
+    border: 2px dashed #bbb;
 }
-.cms_module.cms_ui_hover .cms_ui_modulebar {
+.cms_module.cms_ui_edit .cms_ui_modulebar {
     display: block!important;
 }
-.cms_module.cms_ui_hover .cms_ui_controls {
+.cms_module.cms_ui_edit .cms_ui_controls {
     display: block!important;
 }
 .cms_module .cms_ui_controls ul {

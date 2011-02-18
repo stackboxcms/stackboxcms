@@ -4,6 +4,14 @@ use Stackbox;
 
 abstract class EntityAbstract extends Stackbox\EntityAbstract
 {
-    protected $id = array('type' => 'int', 'primary' => true, 'serial' => true);
-    protected $module_id = array('type' => 'int', 'index' => true, 'required' => true);
+    /**
+	 * Base fields on all CMS module entities
+	 */
+	public static function fields()
+	{
+		// Site id for multi-site installations
+		return array(
+    		'module_id' => array('type' => 'int', 'index' => true, 'required' => true)
+		) + parent::fields();
+	}
 }

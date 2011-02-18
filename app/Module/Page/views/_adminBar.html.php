@@ -1,5 +1,10 @@
 <div id="cms_admin_bar" class="cms_ui">
-  <a id="cms_admin_bar_addContent" href="#"><span>Add Module</span></a>
+  <div id="cms_admin_bar_primary">
+    <ul>
+      <li><a id="cms_admin_bar_editPage" href="#"><span>Edit Page</span></a></li>
+      <li><a id="cms_admin_bar_addContent" href="#"><span>Add Module</span></a></li>
+    </ul>
+  </div>
   <div id="cms_admin_bar_inside">
     <ul>
       <li><a href="<?php echo $kernel->url(array('action' => 'new'), 'index_action'); ?>" rel="modal">New Page</a></li>

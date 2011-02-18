@@ -3,7 +3,7 @@ namespace Stackbox;
 use Spot;
 
 /**
- * Base Cont-xt Entity
+ * Base Stackbox Entity
  */
 abstract class EntityAbstract extends Spot\Entity
 {

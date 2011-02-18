@@ -1,6 +1,7 @@
 <?php
 namespace Module\Code;
 use Stackbox;
+use Spot;
 
 class Mapper extends Stackbox\Module\MapperAbstract
 {
