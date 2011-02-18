@@ -135,6 +135,7 @@ $(function() {
      * Initialize commonly referenced elements to avoid multiple DOM lookups
      */
     var cms_admin_bar = $('#cms_admin_bar');
+    var cms_admin_modules = $('#cms_admin_modules');
     var cms_regions = $('div.cms_region');
     var cms_modules = $('div.cms_module');
     
@@ -166,13 +167,19 @@ $(function() {
     
     
     /**
-     * Clieck 'ADD CONTENT' button
+     * Click 'ADD CONTENT' button
      */
     $('#cms_admin_bar_addContent').toggle(function() {
-        $('#cms_admin_modules').slideDown();
+        var elModHeight = cms_admin_modules.height();
+        cms_admin_modules.css({visibility: 'visible', height: 0}).animate({height: elModHeight});
+        $('body').animate({paddingTop: '+=' + elModHeight});
         return false;
     }, function() {
-        $('#cms_admin_modules').slideUp();
+        var elModHeight = cms_admin_modules.height();
+        cms_admin_modules.slideUp().animate({height: 0}, 500, function() {
+            cms_admin_modules.css({visibility: 'hidden', height: elModHeight});
+        });
+        $('body').animate({paddingTop: cms_admin_bar.height()});
         return false;
     });
     

@@ -19,7 +19,7 @@
     <div class="clear"></div>
   </div>
 </div>
-<div id="cms_admin_modules" class="cms_ui cms_ui_pane">
+<div id="cms_admin_modules" class="cms_ui">
   <h2>Modules</h2>
   <div class="cms_ui_pane_content">
     <?php

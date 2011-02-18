@@ -192,14 +192,29 @@ div.cms_ui_pane {
         margin: 5px;
     }
 
-#cms_admin_modules.cms_ui_pane {
+#cms_admin_modules {
+    position: fixed;
     top: 25px;
-    right: 0;
-    display: none;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    visibility: hidden;
+    overflow: auto;
+    z-index: 980;
+    background: #666;
 }
+    #cms_admin_modules h2 {
+        margin: 0;
+        padding: 6px 10px;
+        background: #333;
+        color: #fff;
+        font-size: 14px;
+    }
     #cms_admin_modules .cms_module_tile {
-        margin-bottom: 5px;
-        padding: 10px;
+        float: left;
+        width: 100px;
+        height: 75px;
+        margin: 5px;
         background: #fff;
         border-radius: 10px;
         -webkit-border-radius: 10px;
