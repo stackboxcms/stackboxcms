@@ -7,15 +7,19 @@ cms.modal = (function (cms, $) {
     // PRIVATE
     var p = {};
     
-    // Bind submit button
-    p.bindSubmit = function() {
-        p.el.find('form').submit(function(e) {
+    // Bind submit button and link events
+    p.bindEvents = function() {
+        p.elContent.delegate('a', 'click', function(e) {
+            m.openLink($(this));
+            return false;
+        })
+        .delegate('form', 'submit', function(e) {
             var tForm = $(this);
             
             // Assemble form data into object for use below
             formData = tForm.serializeArray();
             tData = {};
-            $.each(formData, function(i, field){
+            $.each(formData, function(i, field) {
                 tData[field.name] = field.value;
             });
             
@@ -26,8 +30,8 @@ cms.modal = (function (cms, $) {
                 success: function(data, textStatus, req) {
                     nData = $(data);
                     if(tData._method == 'DELETE') {
-                        if(tData.item_dom_id) {
-                            nModule = $('#' + tData.item_dom_id).remove();
+                        if(tData.item_id) {
+                            nModule = $('#' + nData.attr('id') + tData.item_id).remove();
                         }
                     } else {
                         nModule = $('#' + nData.attr('id')).replaceWith(data);
@@ -75,7 +79,7 @@ cms.modal = (function (cms, $) {
         
         // Initialize...
         m.hide();
-        p.bindSubmit();
+        p.bindEvents();
         
         // Close modal window on 'cancel'
         $('a.app_action_cancel', p.el).live('click', function() {
@@ -91,6 +95,20 @@ cms.modal = (function (cms, $) {
     };
     m.loading = function() {
         m.content('Loading...');
+    };
+    m.openLink = function(a) {
+        cms.modal.loading();
+        $.ajax({
+            type: "GET",
+            url: a.attr('href'),
+            success: function(data, textStatus, req) {
+                cms.modal.content(data);
+            },
+            error: function(req) { // req = XMLHttpRequest object
+                cms.modal.error("[ERROR] Unable to load URL: " + req.responseText);
+            }
+        });
+        return false;
     };
     m.content = function(content) {
         p.elContent.html(content);
@@ -115,7 +133,6 @@ cms.modal = (function (cms, $) {
             baseFloatZIndex: 9000
         });
         
-        p.bindSubmit();
         m.show();
     };
     m.error = function(msg) {
@@ -136,7 +153,7 @@ $(function() {
      */
     var cms_admin_bar = $('#cms_admin_bar');
     var cms_admin_modules = $('#cms_admin_modules');
-    var cms_regions = $('div.cms_region');
+    var cms_regions = $('.cms_region');
     var cms_modules = $('div.cms_module');
     
     
@@ -149,19 +166,8 @@ $(function() {
     /**
      * Open link in the admin bar in a modal window
      */
-    $('#cms_admin_bar a[rel=modal], div.cms_ui_controls a').live('click', function() {
-        var tLink = $(this);
-        cms.modal.loading();
-        $.ajax({
-            type: "GET",
-            url: tLink.attr('href'),
-            success: function(data, textStatus, req) {
-                cms.modal.content(data);
-            },
-            error: function(req) { // req = XMLHttpRequest object
-                cms.modal.error("[ERROR] Unable to load URL: " + req.responseText);
-            }
-        });
+    $('#cms_admin_bar a[rel=modal], div.cms_ui_controls a').live('click', function(e) {
+        cms.modal.openLink($(this));
         return false;
     });
     
@@ -169,14 +175,13 @@ $(function() {
     /**
      * Click 'ADD CONTENT' button
      */
+    var elModHeight = cms_admin_modules.height();
     $('#cms_admin_bar_addContent').toggle(function() {
-        var elModHeight = cms_admin_modules.height();
-        cms_admin_modules.css({visibility: 'visible', height: 0}).animate({height: elModHeight});
+        cms_admin_modules.css({visibility: 'visible', height: 0}).stop().animate({height: elModHeight});
         $('body').animate({paddingTop: '+=' + elModHeight});
         return false;
     }, function() {
-        var elModHeight = cms_admin_modules.height();
-        cms_admin_modules.slideUp().animate({height: 0}, 500, function() {
+        cms_admin_modules.animate({height: 0}, 500, function() {
             cms_admin_modules.css({visibility: 'hidden', height: elModHeight});
         });
         $('body').animate({paddingTop: cms_admin_bar.height()});
@@ -187,18 +192,8 @@ $(function() {
     /**
      * Module drag-n-drop, adding to page regions
      */
-    $('#cms_admin_modules div.cms_module_tile').draggable({
-        helper: 'clone',
-        connectToSortable: cms_regions,
-        start: function(e, ui) {
-            cms_regions.addClass('cms_region_highlight');
-        },
-        stop: function(e, ui) {
-            cms_regions.removeClass('cms_region_highlight');
-        }
-    });
     cms_regions.sortable({
-        items: 'div.cms_module, div.cms_module_tile',
+        items: '.cms_region div.cms_module, div.cms_module_tile',
         connectWith: cms_regions,
         handle: 'div.cms_ui_controls .cms_ui_title',
         placeholder: 'cms_module_placeholder',
@@ -242,7 +237,18 @@ $(function() {
             });
         }
     });
-    
+    $('#cms_admin_modules div.cms_module_tile').draggable({
+        helper: 'clone',
+        connectToSortable: cms_regions,
+        start: function(e, ui) {
+            $(this).hide();
+            cms_regions.addClass('cms_region_highlight');
+        },
+        stop: function(e, ui) {
+            $(this).show();
+            cms_regions.removeClass('cms_region_highlight');
+        }
+    });
     
     /**
      * Module editing - display controls on hover

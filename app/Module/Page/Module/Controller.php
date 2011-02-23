@@ -86,7 +86,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $form = $view
                 ->method('delete')
                 ->action($this->kernel->url(array('page' => '/', 'module_name' => $this->urlName(), 'module_id' => 0, 'module_item' => $request->module_item), 'module_item'))
-                ->data(array('item_dom_id' => 'cx_module_' . $request->module_item))
+                ->data(array('item_id' => $request->module_item))
                 ->submitButtonText('Delete');
             return "<p>Are you sure you want to delete this module?</p>" . $form;
         }

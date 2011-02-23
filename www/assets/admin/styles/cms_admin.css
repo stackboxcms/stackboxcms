@@ -199,11 +199,10 @@ div.cms_ui_pane {
     width: 100%;
     height: 150px;
     visibility: hidden;
-    overflow: auto;
     z-index: 980;
     background: #666;
 }
-    #cms_admin_modules h2 {
+    #cms_admin_modules h3 {
         margin: 0;
         padding: 6px 10px;
         background: #333;
@@ -212,8 +211,8 @@ div.cms_ui_pane {
     }
     #cms_admin_modules .cms_module_tile {
         float: left;
-        width: 100px;
-        height: 75px;
+        width: 80px;
+        height: 80px;
         margin: 5px;
         background: #fff;
         border-radius: 10px;

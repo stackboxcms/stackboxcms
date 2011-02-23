@@ -20,7 +20,6 @@
   </div>
 </div>
 <div id="cms_admin_modules" class="cms_ui">
-  <h2>Modules</h2>
   <div class="cms_ui_pane_content">
     <?php
     // Module Files
@@ -31,11 +30,12 @@
       ->depth(1)
       ->sortByName();
     foreach($moduleDirs as $mDir): ?>
-      <div id="cms_module_tile_<?php echo $mDir->getFilename(); ?>" class="cms_module_tile"><?php echo $mDir->getFilename(); ?> Module</div>
+      <div id="cms_module_tile_<?php echo $mDir->getFilename(); ?>" class="cms_module_tile">
+        <h3><?php echo $mDir->getFilename(); ?></h3>
+      </div>
     <?php endforeach; ?>
-  </div>
-  <div class="cms_ui_pane_info">
-    <p>Drag and drop modules into content regions on the page.</p>
+    <div class="clear"></div>
   </div>
 </div>
+<div id="cms_ui_helper" class="cms_ui"></div>
 <div id="cms_modal" class="cms_ui"><div id="cms_modal_content">Loading...</div></div>

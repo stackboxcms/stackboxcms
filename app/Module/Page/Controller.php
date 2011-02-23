@@ -147,8 +147,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // Add user and admin stuff to the page
             if($user && $user->isAdmin()) {
                 // Admin toolbar, javascript, styles, etc.
-                $templateHead->script('https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js');
-                $templateHead->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js');
+                $templateHead->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
+                $templateHead->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js');
                 
                 // Setup javascript variables for use
                 $templateHead->prepend('<script type="text/javascript">var cms = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('stackbox.url.assets_admin') . '"}};</script>' . "\n");
