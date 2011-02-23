@@ -5,6 +5,10 @@ use Spot;
 
 class Entity extends Stackbox\EntityAbstract
 {
+    const VISIBILITY_HIDDEN = 0;
+    const VISIBILITY_VISIBLE = 1;
+
+
     // Table
     protected static $_datasource = "pages";
     
@@ -23,13 +27,14 @@ class Entity extends Stackbox\EntityAbstract
             'theme' => array('type' => 'string'),
             'template' => array('type' => 'string'),
             'ordering' => array('type' => 'int', 'length' => 3, 'default' => 0),
+            'visibility' => array('type' => 'int', 'default' => static::VISIBILITY_VISIBLE),
             'date_created' => array('type' => 'datetime'),
             'date_modified' => array('type' => 'datetime')
         ) + parent::fields();
     }
     
     /**
-     * Fields
+     * Relations
      */
     public static function relations() {
         return array(
