@@ -1,5 +1,6 @@
 <?php
 namespace Spot\Entity;
+use Spot;
 
 /**
  * Entity Manager for storing information about entities
@@ -20,6 +21,7 @@ class Manager
     // Connection and datasource info
     protected static $_connection = array();
     protected static $_datasource = array();
+    protected static $_datasourceOptions = array();
     
     
     /**
@@ -32,11 +34,11 @@ class Manager
     public function fields($entityName)
     {
         if(!is_string($entityName)) {
-            throw new namespace\Exception(__METHOD__ . " only accepts a string. Given (" . gettype($entityName) . ")");
+            throw new \Spot\Exception(__METHOD__ . " only accepts a string. Given (" . gettype($entityName) . ")");
         }
         
-        if(!is_subclass_of($entityName, 'Spot\Entity')) {
-            throw new namespace\Exception($entityName . " must be subclass of 'Spot\Entity'.");
+        if(!is_subclass_of($entityName, '\Spot\Entity')) {
+            throw new \Spot\Exception($entityName . " must be subclass of '\Spot\Entity'.");
         }
         
         if(isset(self::$_fields[$entityName])) {
@@ -50,7 +52,10 @@ class Manager
                 throw new \InvalidArgumentException("Entity must have a datasource defined. Please define a protected property named '_datasource' on your '" . $entityName . "' entity class.");
             }
             self::$_datasource[$entityName] = $entityDatasource;
-            
+
+            // Datasource Options
+            $entityDatasourceOptions = $entityName::datasourceOptions();
+            self::$_datasourceOptions[$entityName] = $entityDatasourceOptions;
             
             // Connection info
             $entityConnection = $entityName::connection();
@@ -65,6 +70,7 @@ class Manager
                 'required' => false,
                 'null' => true,
                 'unsigned' => false,
+                'fulltext' => false,
     
                 'primary' => false,
                 'index' => false,
@@ -253,5 +259,20 @@ class Manager
             $this->fields($entityName);
         }
         return self::$_datasource[$entityName];
+    }
+
+
+    /**
+     * Get datasource options for given entity class
+     *
+     * @param array Options to pass
+     * @return string
+     */
+    public function datasourceOptions($entityName)
+    {
+        if(!isset(self::$_datasourceOptions[$entityName])) {
+            $this->fields($entityName);
+        }
+        return self::$_datasourceOptions[$entityName];
     }
 }
