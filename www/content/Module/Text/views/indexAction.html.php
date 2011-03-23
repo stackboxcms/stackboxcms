@@ -1,6 +1,4 @@
 <?php
-$item = $this->item;
-
 // Note
 if('note' == $item->type):
 ?>

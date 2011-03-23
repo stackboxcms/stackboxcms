@@ -8,11 +8,11 @@
   <div id="cms_admin_bar_inside">
     <ul>
       <li><a href="<?php echo $kernel->url(array('action' => 'new'), 'index_action'); ?>" rel="modal">New Page</a></li>
-      <?php if('/' == $this->page->url): // ugly hack until routes are fixed for good ?>
+      <?php if('/' == $page->url): // ugly hack until routes are fixed for good ?>
         <li><a href="<?php echo $kernel->url(array('action' => 'edit'), 'index_action'); ?>" rel="modal">Edit Page</a></li>
       <?php else: ?>
-        <li><a href="<?php echo $kernel->url(array('page' => $this->page->url, 'action' => 'edit'), 'page_action'); ?>" rel="modal">Edit Page</a></li>
-        <li><a href="<?php echo $kernel->url(array('page' => $this->page->url, 'action' => 'delete'), 'page_action'); ?>" rel="modal">Delete Page</a></li>
+        <li><a href="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'edit'), 'page_action'); ?>" rel="modal">Edit Page</a></li>
+        <li><a href="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'delete'), 'page_action'); ?>" rel="modal">Delete Page</a></li>
       <?php endif; ?>
       <li><a href="<?php echo $kernel->url('logout'); ?>">Logout</a></li>
     </ul>

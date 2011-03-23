@@ -21,9 +21,30 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // Return only content for HTML
         if($request->format == 'html') {
             $view = $this->template(__FUNCTION__)
-                ->set(array(
-                    'posts' => $posts
-                ));
+                ->set(compact('posts', 'page', 'module'));
+            return $view;
+        }
+        return $this->kernel->resource($posts);
+    }
+
+
+    /**
+     * View single post
+     * @method GET
+     */
+    public function viewAction($request, $page, $module)
+    {
+        $mapper = $this->kernel->mapper();
+        $post = $mapper->get('Module\Blog\Post\Entity', $request->module_item);
+        
+        if(!$post) {
+            return false;
+        }
+        
+        // Return only content for HTML
+        if($request->format == 'html') {
+            $view = $this->template(__FUNCTION__)
+                ->set(compact('post', 'page', 'module'));
             return $view;
         }
         return $this->kernel->resource($posts);

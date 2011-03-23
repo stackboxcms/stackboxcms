@@ -1,3 +1,3 @@
 <code><pre>
-<?php echo Nijikodo\Parser::toHtml($this->item->content, $this->item->type); ?>
+<?php echo Nijikodo\Parser::toHtml($item->content, $item->type); ?>
 </pre></code>
