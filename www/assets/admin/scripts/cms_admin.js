@@ -130,7 +130,15 @@ cms.modal = (function (cms, $) {
                 ['ShowBlocks','-','Source']
             ],
             autoUpdateElementJquery: true,
-            baseFloatZIndex: 9000
+            baseFloatZIndex: 9000,
+
+            /* file upload support */
+            filebrowserBrowseUrl : cms.editor.fileBrowseUrl,
+            filebrowserUploadUrl : cms.editor.fileUploadUrl,
+            filebrowserImageBrowseUrl : cms.editor.imageBrowseUrl,
+            filebrowserImageUploadUrl : cms.editor.imageUploadUrl,
+            filebrowserWindowWidth  : 800,
+            filebrowserWindowHeight : 500
         });
         
         m.show();

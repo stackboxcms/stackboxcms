@@ -151,7 +151,18 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $templateHead->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js');
                 
                 // Setup javascript variables for use
-                $templateHead->prepend('<script type="text/javascript">var cms = {page: {id: ' . $page->id . ', url: "' . $pageUrl . '"}, config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('stackbox.url.assets_admin') . '"}};</script>' . "\n");
+                $templateHead->prepend('<script type="text/javascript">
+                var cms = {
+                    page: {id: ' . $page->id . ', url: "' . $pageUrl . '"},
+                    config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('stackbox.url.assets_admin') . '"},
+                    editor: {
+                        fileUploadUrl: "",
+                        imageUploadUrl: "",
+                        fileBrowseUrl: "",
+                        imageBrowseUrl: ""
+                    }
+                };
+                </script>' . "\n");
                 $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/ckeditor/ckeditor.js');
                 $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/ckeditor/adapters/jquery.js');
                 $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/cms_admin.js');
