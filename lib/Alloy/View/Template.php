@@ -11,11 +11,14 @@ use Alloy\Module;
  */
 class Template extends Module\Response
 {
+    const BLOCK_DEFAULT = 1;
+
     // Template specific stuff
     protected $_file;
     protected $_fileFormat;
     protected $_vars = array();
     protected $_path;
+    protected $_layout;
     
     // Extension type
     protected $_default_format = 'html';
@@ -23,6 +26,9 @@ class Template extends Module\Response
     
     // Helpers
     protected static $_helpers = array();
+
+    // Content blocks
+    protected static $_blocks = array();
     
     
     /**
@@ -44,6 +50,20 @@ class Template extends Module\Response
      * Setup for view, used for extensibility without overriding constructor
      */
     public function init() {}
+
+
+    /**
+     * Layout template getter/setter
+     */
+    public function layout($layout = null)
+    {
+        if(null === $layout) {
+            return $this->_layout;
+        }
+
+        $this->_layout = $layout;
+        return $this;
+    }
     
     
     /**
@@ -61,7 +81,7 @@ class Template extends Module\Response
      */
     public function cache($closure, $name)
     {
-        if(is_array($closure) || !is_callable($closure)) {
+        if(is_array($closure) || is_string($closure) || !is_callable($closure)) {
             throw new \InvalidArgumentException("Cache helper expected a closure");
         }
         
@@ -71,6 +91,21 @@ class Template extends Module\Response
             $cached = $helper->set($name, $closure);
         }
         echo $cached($this);
+    }
+
+    
+    /**
+     * Load and return named block
+     * 
+     * @param string $name Name of the block
+     * @return Alloy\View\Template\Block
+     */
+    public function block($name, $closure = null)
+    {
+        if(!isset(self::$_blocks[$name])) {
+            self::$_blocks[$name] = new Template\Block($name, $closure);
+        }
+        return self::$_blocks[$name];
     }
 
 
@@ -149,6 +184,7 @@ class Template extends Module\Response
     /**
      * Load and return generic view template
      * 
+     * @todo Look in config settings for custom view generics added or overriden by shortname
      * @return Alloy\View\Template
      */
     public function generic($name, $template = null)
@@ -162,6 +198,7 @@ class Template extends Module\Response
     /**
      * Load and return view helper
      * 
+     * @todo Look in config settings for custom view helpers added or overriden by shortname
      * @return Alloy\View\Helper\HelperAbstract
      */
     public function helper($name)

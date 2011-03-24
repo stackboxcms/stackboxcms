@@ -87,12 +87,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
         }
         
         // Load page template
-        $activeTheme = ($page->theme) ? $page->theme : $kernel->config('stackbox.default.theme');
-        $activeTemplate = ($page->template) ? $page->template : $kernel->config('stackbox.default.theme_template');
-        $themeUrl = $kernel->config('stackbox.url.themes') . $activeTheme . '/';
+        $activeTheme = ($page->theme) ? $page->theme : $kernel->config('cms.default.theme');
+        $activeTemplate = ($page->template) ? $page->template : $kernel->config('cms.default.theme_template');
+        $themeUrl = $kernel->config('cms.url.themes') . $activeTheme . '/';
         $template = new Template($activeTemplate);
         $template->format($request->format);
-        $template->path($kernel->config('stackbox.path.themes') . $activeTheme . '/');
+        $template->path($kernel->config('cms.path.themes') . $activeTheme . '/');
         $template->parse();
         
         // Template Region Defaults
@@ -118,7 +118,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         }
         
         // Replace region content
-        $regionModules = $kernel->events('stackbox')->filter('module_page_template_regions', $regionModules);
+        $regionModules = $kernel->events('cms')->filter('module_page_template_regions', $regionModules);
         foreach($regionModules as $region => $modules) {
             if(is_array($modules)) {
                 // Array = Region has modules
@@ -132,7 +132,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         // Replace template tags
         $tags = $mapper->data($page);
-        $tags = $kernel->events('stackbox')->filter('module_page_template_data', $tags);
+        $tags = $kernel->events('cms')->filter('module_page_template_data', $tags);
         foreach($tags as $tagName => $tagValue) {
             $template->replaceTag($tagName, $tagValue);
         }
@@ -154,20 +154,20 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $templateHead->prepend('<script type="text/javascript">
                 var cms = {
                     page: {id: ' . $page->id . ', url: "' . $pageUrl . '"},
-                    config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('stackbox.url.assets_admin') . '"},
+                    config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('cms.url.assets_admin') . '"},
                     editor: {
-                        fileUploadUrl: "",
-                        imageUploadUrl: "",
-                        fileBrowseUrl: "",
-                        imageBrowseUrl: ""
+                        fileUploadUrl: "' . $kernel->url(array('action' => 'upload'), 'filebrowser') . '",
+                        imageUploadUrl: "' . $kernel->url(array('action' => 'upload'), 'filebrowser') . '",
+                        fileBrowseUrl: "' . $kernel->url(array('action' => 'files'), 'filebrowser') . '",
+                        imageBrowseUrl: "' . $kernel->url(array('action' => 'images'), 'filebrowser') . '"
                     }
                 };
                 </script>' . "\n");
-                $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/ckeditor/ckeditor.js');
-                $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/ckeditor/adapters/jquery.js');
-                $templateHead->script($kernel->config('stackbox.url.assets_admin') . 'scripts/cms_admin.js');
+                $templateHead->script($kernel->config('cms.url.assets_admin') . 'scripts/ckeditor/ckeditor.js');
+                $templateHead->script($kernel->config('cms.url.assets_admin') . 'scripts/ckeditor/adapters/jquery.js');
+                $templateHead->script($kernel->config('cms.url.assets_admin') . 'scripts/cms_admin.js');
                 $templateHead->stylesheet('jquery-ui/aristo/aristo.css');
-                $templateHead->stylesheet($kernel->config('stackbox.url.assets_admin') . 'styles/cms_admin.css');
+                $templateHead->stylesheet($kernel->config('cms.url.assets_admin') . 'styles/cms_admin.css');
                 
                 // Grab template contents
                 $template = $template->content();

@@ -7,6 +7,10 @@ use Stackbox;
  */
 class Controller extends Stackbox\Module\ControllerAbstract
 {
+    // So template helper knows where to find views... (not in standard modules directory at www/content)
+    protected $_path = __DIR__;
+
+
     /**
      * @method GET
      */
@@ -15,16 +19,45 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $kernel = $this->kernel;
         $request = $kernel->request();
         $user = $kernel->user();
-        
-        /*
-        // Ensure page exists
-        $mapper = $kernel->mapper();
-        $pageMapper = $kernel->mapper('Module\Page\Mapper');
-        $pageUrl = Entity::formatPageUrl($pageUrl);
-        $page = $pageMapper->getPageByUrl($pageUrl);
-        */
 
-        // return
+        // Ensure proper directories exist and are writable
+        $uploadDir = \Kernel()->config('cms.path.uploads');
+        $imagesDir = $uploadDir . 'images/';
+        $filesDir = $uploadDir . 'files/';
+
+        $this->ensureDirectoryAvailable($imagesDir);
+        $this->ensureDirectoryAvailable($filesDir);
+        
+        // Template
+        return $this->template(__FUNCTION__);
+    }
+
+
+    /**
+     * List all images
+     * @method GET
+     */
+    public function imagesAction($request)
+    {
+        $kernel = $this->kernel;
+        $request = $kernel->request();
+        $user = $kernel->user();
+        
+        return $this->template(__FUNCTION__);
+    }
+
+
+    /**
+     * List all other files
+     * @method GET
+     */
+    public function filesAction($request)
+    {
+        $kernel = $this->kernel;
+        $request = $kernel->request();
+        $user = $kernel->user();
+        
+        return $this->template(__FUNCTION__);
     }
     
     
@@ -139,7 +172,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
-        // Ensure proper directory exists and is writable
+        // Ensure proper directories exist and are writable
+        $uploadDir = \Kernel()->config('cms.path.uploads');
+        $imagesDir = $uploadDir . 'images/';
+        $filesDir = $uploadDir . 'files/';
+
+        $this->ensureDirectoryAvailable($imagesDir);
+        $this->ensureDirectoryAvailable($filesDir);
     }
     
     
@@ -151,5 +190,30 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function uninstall()
     {
         
+    }
+
+
+    /**
+     * Kind of helper function to ensure the proper directories exist and are writable.
+     * 
+     * Private because this particular implementation may be changed soon.
+     *   Not sure I like a helper function on a controller...
+     */
+    private function ensureDirectoryAvailable($dir, $chmod = 0755)
+    {
+        // Directory exists?
+        $dirAvailable = false;
+        if(is_dir($dir)) {
+            $dirAvailable = true;
+        } else {
+            $dirAvailable = @mkdir($dir, $chmod, true);
+        }
+
+        // Directory is writeable?
+        if(!is_writable($dir)) {
+            $dirAvailable = @chmod($dir, $chmod);
+        }
+
+        return $dirAvailable;
     }
 }

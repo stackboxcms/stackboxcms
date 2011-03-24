@@ -8,6 +8,9 @@ use Alloy;
  */
 abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
 {
+    protected $_path;
+
+
     /**
      * Access control list for controller methods
      */
@@ -101,11 +104,17 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
     
     /**
      * Return current class path
+     * Attempts to guess based on common 'modules' directory
+     * Can be overridded by setting a varialbe to the $_path directoy on the extending class (like __DIR__)
      */
     public function path()
     {
+        if(null !== $this->_path) {
+            return $this->_path;
+        }
+
         $class = get_called_class();
         $path = str_replace('\\', '/', str_replace('\\Controller', '', $class));
-        return $this->kernel->config('stackbox.path.modules') . '/' . $path;
+        return $this->kernel->config('cms.path.modules') . '/' . $path;
     }
 }

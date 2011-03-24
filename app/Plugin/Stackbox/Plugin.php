@@ -18,13 +18,20 @@ class Plugin
     {
         $this->kernel = $kernel;
 
-        // Add config settings
+        // Get current config settings
         $cfg = $kernel->config();
+
+        // @todo Determine which site HOST is and set site_id
+        // @todo Set file paths with current site_id
+        $siteFilesDir = 'files/' . $cfg['site']['id'] . '/';
+
+        // Add config settings
         $kernel->config(array(
-            'stackbox' => array(
+            'cms' => array(
                 'dir' => array(
                     'modules' => 'content/',
                     'themes' => 'themes/',
+                    'files' => $siteFilesDir,
                     'assets_admin' => $cfg['dir']['assets'] . 'admin/'
                 ),
 
@@ -40,14 +47,16 @@ class Plugin
         // Get config again because we need to use settings we just added
         $cfg = $kernel->config();
         $kernel->config(array(
-            'stackbox' => array(
+            'cms' => array(
                 'path' => array(
                     'modules' => $cfg['path']['root'] . $cfg['dir']['www'] . 'content/',
-                    'themes' => $cfg['path']['root'] . $cfg['dir']['www'] . 'themes/'
+                    'themes' => $cfg['path']['root'] . $cfg['dir']['www'] . 'themes/',
+                    'files' => $cfg['path']['root'] . $cfg['dir']['www'] . $siteFilesDir
                 ),
                 'url' => array(
-                    'assets_admin' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['stackbox']['dir']['assets_admin']),
-                    'themes' => $cfg['url']['root'] . $cfg['stackbox']['dir']['themes']
+                    'assets_admin' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['cms']['dir']['assets_admin']),
+                    'themes' => $cfg['url']['root'] . $cfg['cms']['dir']['themes'],
+                    'files' => $cfg['url']['root'] . $cfg['cms']['dir']['files']
                 )
             )
         ));
@@ -57,10 +66,10 @@ class Plugin
         $kernel->loader()->registerNamespace('Nijikodo', __DIR__ . '/lib');
 
         // This adds to the load path because it already exists (does not replace it)
-        $kernel->loader()->registerNamespace('Module', $kernel->config('stackbox.path.modules'));
+        $kernel->loader()->registerNamespace('Module', $kernel->config('cms.path.modules'));
 
         // Ensure API type output is served correctly
-        $kernel->events()->addFilter('dispatch_content', 'sb_api_output', array($this, 'apiOutput'));
+        $kernel->events()->addFilter('dispatch_content', 'cms_api_output', array($this, 'apiOutput'));
 
         // Add sub-plugins
         $kernel->plugin('Stackbox_User');

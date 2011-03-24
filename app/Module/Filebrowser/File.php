@@ -13,6 +13,8 @@ class File
     public function __construct($fileInfo)
     {
         $this->file = $fileInfo;
+
+        $this->isDir($fileInfo->isDir());
     }
 
 
@@ -34,5 +36,14 @@ class File
         // Get and set extension
         $fileNameParts = explode('.', $fileData['name']);
         return end($fileNameParts);
+    }
+
+
+    /**
+     * Passthru call to file object
+     */
+    public function __call($method, array $args)
+    {
+        return call_user_func_array(array($this->file, $method), $args);
     }
 }

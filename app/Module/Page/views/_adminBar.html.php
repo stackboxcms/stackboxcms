@@ -23,7 +23,7 @@
   <div class="cms_ui_pane_content">
     <?php
     // Module Files
-    $moduleDirsPath = $kernel->config('stackbox.path.modules');
+    $moduleDirsPath = $kernel->config('cms.path.modules');
     $moduleDirs = $kernel->finder()
       ->directories()
       ->in($moduleDirsPath)

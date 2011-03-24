@@ -18,9 +18,7 @@ class Plugin
     public function __construct(Alloy\Kernel $kernel)
     {
         $this->kernel = $kernel;
-
-        //var_dump(__CLASS__ . " Plugin ACTIVE");
-
+        
         // Add 'user' method to Kernel
         $kernel->addMethod('user', array($this, 'user'));
         $this->user();

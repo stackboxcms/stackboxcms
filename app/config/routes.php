@@ -24,6 +24,12 @@ $router->route('user', '/user/<:action>(.<:format>)')
 $router->route('admin', '/admin/<:action>(.<:format>)')
     ->defaults(array('module' => 'Page_Admin', 'format' => 'html'));
 
+// Filebrowser reserved route
+$router->route('filebrowser', '/filebrowser/<:action>')
+    ->defaults(array('module' => 'Filebrowser', 'action' => 'index', 'format' => 'html'))
+    ->post(array('action' => 'post'))
+    ->delete(array('action' => 'delete'));
+
 /*
 $router->route('module_item_action', $pageRouteItem . 'm,<:module_name>,<#module_id>/<#module_item>/<:module_action>(.<:format>)')
     ->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));
