@@ -10,16 +10,15 @@ class File
      * Constructor
      * @return string Format: <hash>.ext
      */
-    public function __construct($fileInfo)
+    public function __construct(\SplFileInfo $fileInfo)
     {
         $this->file = $fileInfo;
-
-        $this->isDir($fileInfo->isDir());
     }
 
 
     /**
      * Is file image?
+     * 
      * @return boolean
      */
     public function isImage()
@@ -30,6 +29,8 @@ class File
 
     /**
      * Return file extension
+     * 
+     * @return string
      */
     public function getExtension()
     {
@@ -41,9 +42,14 @@ class File
 
     /**
      * Passthru call to file object
+     * 
+     * @throws \BadMethodCallException
      */
-    public function __call($method, array $args)
+    public function __call($method, $args)
     {
-        return call_user_func_array(array($this->file, $method), $args);
+        if(is_callable(array($this->file, $method))) {
+            return call_user_func_array(array($this->file, $method), $args);   
+        }
+        throw new \BadMethodCallException("Method '" . $method . "' does not exist");
     }
 }

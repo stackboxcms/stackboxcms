@@ -1,6 +1,6 @@
 <?php
 namespace Module\Filebrowser;
-use Stackbox;
+use Alloy, Stackbox;
 
 /**
  * Filebrowser Controller
@@ -14,19 +14,19 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function indexAction($request)
+    public function indexAction(Alloy\Request $request)
     {
         $kernel = $this->kernel;
         $request = $kernel->request();
         $user = $kernel->user();
 
         // Ensure proper directories exist and are writable
-        $uploadDir = \Kernel()->config('cms.path.uploads');
+        $uploadDir = \Kernel()->config('cms.path.files');
         $imagesDir = $uploadDir . 'images/';
         $filesDir = $uploadDir . 'files/';
 
-        $this->ensureDirectoryAvailable($imagesDir);
         $this->ensureDirectoryAvailable($filesDir);
+        $this->ensureDirectoryAvailable($imagesDir);
         
         // Template
         return $this->template(__FUNCTION__);
@@ -37,13 +37,19 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * List all images
      * @method GET
      */
-    public function imagesAction($request)
+    public function imagesAction(Alloy\Request $request)
     {
         $kernel = $this->kernel;
         $request = $kernel->request();
         $user = $kernel->user();
+
+        // Ensure proper directories exist and are writable
+        $uploadDir = \Kernel()->config('cms.path.files');
+        $imagesDir = $uploadDir . 'images/';
+        $this->ensureDirectoryAvailable($imagesDir);
         
-        return $this->template(__FUNCTION__);
+        return $this->template('directoryList')
+            ->set(array('directory' => $imagesDir));
     }
 
 
@@ -51,13 +57,19 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * List all other files
      * @method GET
      */
-    public function filesAction($request)
+    public function filesAction(Alloy\Request $request)
     {
         $kernel = $this->kernel;
         $request = $kernel->request();
         $user = $kernel->user();
         
-        return $this->template(__FUNCTION__);
+        // Ensure proper directories exist and are writable
+        $uploadDir = \Kernel()->config('cms.path.files');
+        $imagesDir = $uploadDir . 'images/';
+        $this->ensureDirectoryAvailable($imagesDir);
+        
+        return $this->template('directoryList')
+            ->set(array('directory' => $imagesDir));
     }
     
     
@@ -65,18 +77,16 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Form to create a new page
      * @method GET
      */
-    public function newAction($request)
+    public function newAction(Alloy\Request $request)
     {
-        return $this->formView()
-            ->method('post')
-            ->action($this->kernel->url(array('page' => '/'), 'page'));
+        return $this->template(__FUNCTION__);
     }
     
     
     /**
      * @method GET
      */
-    public function editAction($request)
+    public function editAction(Alloy\Request $request)
     {
         $kernel = $this->kernel;
         
@@ -87,7 +97,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             throw new \Alloy\Exception_FileNotFound("Page not found: '" . $request->page . "'");
         }
         
-        return $this->formView()
+        return $this->newAction($request)
             ->data($page->data());
     }
     
@@ -109,6 +119,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // Project file path (full root path)
         $uploadDir = '';
         
+        var_dump($_FILES);
+
         // Loop over each uploaded file
         $fileData = $_FILES['upload'];
         $fileName = $fileData['name'];
@@ -141,7 +153,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Display delete confirmation
      * @method GET
      */
-    public function deleteAction($request)
+    public function deleteAction(Alloy\Request $request)
     {
         if($request->format == 'html') {
             $view = new \Alloy\View\Generic\Form('form');
@@ -159,7 +171,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Delete file
      * @method DELETE
      */
-    public function deleteMethod($request)
+    public function deleteMethod(Alloy\Request $request)
     {
         
     }
@@ -198,6 +210,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * 
      * Private because this particular implementation may be changed soon.
      *   Not sure I like a helper function on a controller...
+     * 
+     * @throws \Exception
      */
     private function ensureDirectoryAvailable($dir, $chmod = 0755)
     {
@@ -206,12 +220,19 @@ class Controller extends Stackbox\Module\ControllerAbstract
         if(is_dir($dir)) {
             $dirAvailable = true;
         } else {
-            $dirAvailable = @mkdir($dir, $chmod, true);
+            $dirAvailable = mkdir($dir, $chmod, true);
         }
 
         // Directory is writeable?
-        if(!is_writable($dir)) {
-            $dirAvailable = @chmod($dir, $chmod);
+        if($dirAvailable && !is_writable($dir)) {
+            $dirAvailable = chmod($dir, $chmod);
+        }
+
+        // Exception if not available
+        if(!$dirAvailable) {
+            throw new \Exception("Unable to ensure directory exists and are writable.\n
+                Directory: " . $dir . "\n
+            ");
         }
 
         return $dirAvailable;
