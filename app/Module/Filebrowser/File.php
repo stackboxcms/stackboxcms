@@ -41,6 +41,18 @@ class File
 
 
     /**
+     * Return the full URL to the image
+     * 
+     * @return string
+     */
+    public function getUrl()
+    {
+        $filesDir = \Kernel()->config('cms.path.files');
+        return \Kernel()->config('cms.url.files') . str_replace($filesDir, '', $this->getPathname());
+    }
+
+
+    /**
      * Passthru call to file object
      * 
      * @throws \BadMethodCallException

@@ -44,12 +44,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $user = $kernel->user();
 
         // Ensure proper directories exist and are writable
-        $uploadDir = \Kernel()->config('cms.path.files');
-        $imagesDir = $uploadDir . 'images/';
-        $this->ensureDirectoryAvailable($imagesDir);
+        $dir = \Kernel()->config('cms.path.files') . 'images/';
+        $this->ensureDirectoryAvailable($dir);
         
         return $this->template('directoryList')
-            ->set(array('directory' => $imagesDir));
+            ->set(array('directory' => $dir));
     }
 
 
@@ -64,12 +63,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $user = $kernel->user();
         
         // Ensure proper directories exist and are writable
-        $uploadDir = \Kernel()->config('cms.path.files');
-        $imagesDir = $uploadDir . 'images/';
-        $this->ensureDirectoryAvailable($imagesDir);
+        $dir = \Kernel()->config('cms.path.files') . 'files/';
+        $this->ensureDirectoryAvailable($dir);
         
         return $this->template('directoryList')
-            ->set(array('directory' => $imagesDir));
+            ->set(array('directory' => $dir));
     }
     
     
@@ -117,28 +115,54 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $saveResult = false;
 
         // Project file path (full root path)
-        $uploadDir = '';
+        $uploadDir = $kernel->config('cms.path.files');
         
-        var_dump($_FILES);
+        // @todo Support multiple file uploads
+        $subDir = 'files';
+        if(isset($_FILES['upload'])) {
+            $fileData = $_FILES['upload'];
+            $fileName = $kernel->formatUrl($fileData['name']);
+            $fileName = substr($fileName, 0, strrpos($fileName, '-')) . strrchr($fileData['name'], '.');
 
-        // Loop over each uploaded file
-        $fileData = $_FILES['upload'];
-        $fileName = $fileData['name'];
+            // May want to take into account all the file upload errors...
+            // @link http://us3.php.net/manual/en/features.file-upload.errors.php
+            if($fileData['error'] == UPLOAD_ERR_OK) {
+                // See if file is image or not
+                if(false !== strpos($fileData['type'], 'image')) {
+                    $subDir = 'images';
+                }
 
-        // May want to take into account all the file upload errors...
-        // @link http://us3.php.net/manual/en/features.file-upload.errors.php
-        if($fileData['error'] == UPLOAD_ERR_OK) {
-            // Attempt to move file to new location
-            if(move_uploaded_file($fileData['tmp_name'], $uploadDir . '/' . $fileName)) {
-                $saveResult = true;
+                // Attempt to move file to new location
+                $uploadDir .= $subDir; // 'images' or 'files'
+
+                // Save file to new location
+                $this->ensureDirectoryAvailable($uploadDir);
+                if(move_uploaded_file($fileData['tmp_name'], $uploadDir . '/' . $fileName)) {
+                    $saveResult = true;
+                }
             }
         }
         // ===========================================================================
 
         if($saveResult) {
-            // @todo Set name of file
-            return $kernel->resource()
-                ->status(201);
+            // CKEditor custom response
+            // @see http://docs.cksource.com/CKEditor_3.x/Developers_Guide/File_Browser_(Uploader)/Custom_File_Browser
+            if($request->get('CKEditor')) {
+                $callback = $request->get('CKEditorFuncNum');
+                $url = $kernel->config('cms.url.files') . $subDir . '/' . $fileName;
+                $err = '';
+
+                // CKEditor relies on receiving this custom callback after successful upload
+                return '
+                <script type="text/javascript">
+                  try {
+                    window.parent.CKEDITOR.tools.callFunction(' . $callback . ', "' . $url . '", "' . $err . '");
+                  } catch(e) {}
+                </script>
+                ';
+            }
+
+            return $kernel->redirect($kernel->url(array('action' => 'index'), 'filebrowser'));
         } else {
             return $kernel->resource()
                 ->status(400)
