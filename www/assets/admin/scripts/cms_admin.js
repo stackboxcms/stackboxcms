@@ -10,8 +10,12 @@ cms.modal = (function (cms, $) {
     // Bind submit button and link events
     p.bindEvents = function() {
         p.elContent.delegate('a', 'click', function(e) {
-            m.openLink($(this));
-            return false;
+            // @todo Implement/fix this
+            // This is just a bit greedy right now...
+            // Have to set it not to mess with CKEditor links
+
+            //m.openLink($(this));
+            //return false;
         })
         .delegate('form', 'submit', function(e) {
             var tForm = $(this);
@@ -114,13 +118,15 @@ cms.modal = (function (cms, $) {
         p.elContent.html(content);
         
         // Load CKEditor in editor fields
-        $("form li.app_form_field_editor textarea", p.elContent).ckeditor(function() {}, {
+        $("form li.app_form_field_editor textarea", p.elContent).ckeditor(function(e) {
+            //alert(CKEDITOR.instances[$(e).attr('name')]);
+        }, {
             toolbar: [
                 ['PasteText','PasteFromWord'],
                 ['Bold','Italic','Underline','Strike'],
                 ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
                 ['Link','Unlink','Anchor'],
-                ['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','-','About'],
+                ['Image','File','Flash','Table','HorizontalRule','Smiley','SpecialChar','-','About'],
                 '/',
                 ['Format','FontSize'],
                 ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
