@@ -108,7 +108,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         $mapper = $this->kernel->mapper();
         $user = false;
-        
+
         // Return user based on session key, if valid
         if($sessionKey && strpos($sessionKey, ':')) {
             list($userId, $userSession) = explode(':', $sessionKey);

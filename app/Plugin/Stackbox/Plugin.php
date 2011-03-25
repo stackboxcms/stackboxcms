@@ -23,7 +23,7 @@ class Plugin
 
         // @todo Determine which site HOST is and set site_id
         // @todo Set file paths with current site_id
-        $siteFilesDir = 'files/' . $cfg['site']['id'] . '/';
+        $siteFilesDir = 'site/' . $cfg['site']['id'] . '/';
 
         // Add config settings
         $kernel->config(array(
@@ -55,8 +55,8 @@ class Plugin
                 ),
                 'url' => array(
                     'assets_admin' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['cms']['dir']['assets_admin']),
-                    'themes' => $cfg['url']['root'] . $cfg['cms']['dir']['themes'],
-                    'files' => $cfg['url']['root'] . $cfg['cms']['dir']['files']
+                    'themes' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['cms']['dir']['themes']),
+                    'files' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['cms']['dir']['files'])
                 )
             )
         ));

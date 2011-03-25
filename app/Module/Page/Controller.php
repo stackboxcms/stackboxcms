@@ -147,8 +147,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // Add user and admin stuff to the page
             if($user && $user->isAdmin()) {
                 // Admin toolbar, javascript, styles, etc.
-                $templateHead->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
-                $templateHead->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js');
+                $templateHead->script($kernel->config('cms.url.assets') . 'jquery-1.5.1.min.js');
+                $templateHead->script($kernel->config('cms.url.assets') . 'jquery-ui-1.8.11.min.js');
                 
                 // Setup javascript variables for use
                 $templateHead->prepend('<script type="text/javascript">
@@ -156,8 +156,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     page: {id: ' . $page->id . ', url: "' . $pageUrl . '"},
                     config: {url: "' . $kernel->config('url.root') . '", url_assets: "' . $kernel->config('url.assets') . '", url_assets_admin: "' . $kernel->config('cms.url.assets_admin') . '"},
                     editor: {
-                        fileUploadUrl: "' . $kernel->url(array('action' => 'upload'), 'filebrowser') . '",
-                        imageUploadUrl: "' . $kernel->url(array('action' => 'upload'), 'filebrowser') . '",
+                        fileUploadUrl: "' . $kernel->url(array('action' => 'upload'), 'filebrowser', array('type' => 'file')) . '",
+                        imageUploadUrl: "' . $kernel->url(array('action' => 'upload'), 'filebrowser', array('type' => 'image')) . '",
                         fileBrowseUrl: "' . $kernel->url(array('action' => 'files'), 'filebrowser') . '",
                         imageBrowseUrl: "' . $kernel->url(array('action' => 'images'), 'filebrowser') . '"
                     }

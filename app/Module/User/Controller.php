@@ -11,7 +11,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Access control
      */
-    public function init()
+    public function init($action = null)
     {
         // Ensure user has rights to create new user account
         $access = false;
