@@ -117,4 +117,22 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
         $path = str_replace('\\', '/', str_replace('\\Controller', '', $class));
         return $this->kernel->config('cms.path.modules') . '/' . $path;
     }
+
+
+    /**
+     * Settings display
+     */
+    public function settingsAction($request, $page, $module)
+    {
+        // @todo Settings implementation
+        /**
+         
+         Want: $module->settings to be collection object with all module settings loaded:
+            - Spot Relation (maybe new custom relation type?)
+            - Object access: $module->settings->display_type
+                NULL or default value if no setting exists yet in datastore
+
+         */
+        return $this->response("No settings are available for this module.");
+    }
 }

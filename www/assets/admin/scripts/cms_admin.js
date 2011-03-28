@@ -1,5 +1,9 @@
 var cms = cms || {};
 
+cms.config = {
+    editMode: false
+};
+
 /**
  * MODAL / Content Area
  */
@@ -9,20 +13,29 @@ cms.modal = (function (cms, $) {
     
     // Bind submit button and link events
     p.bindEvents = function() {
-        p.el.delegate('a', 'click', function(e) {
+        // Links inside modal window
+        p.elContent.delegate('a:not(.app_action_cancel)', 'click', function(e) {
             var link = $(this);
 
-            alert("CLICKED LINK IN MODAL WINDOW");
-            
             // Not in CKEditor window
-            if(link.has('#cke_content')) {
+            if(link.closest('#cke_content').length) {
+                //alert("... BUT it's in a CKEditor, so I won't touch it...");
                 return;
             }
 
+            //alert("Wait...");
+
             // Re-open in window
             m.openLink(link);
+            e.preventDefault();
             return false;
         })
+        // Close modal window on 'cancel'
+        .delegate('a.app_action_cancel', 'click', function(e) {
+            m.hide();
+            return false;
+        })
+        // AJAX form submit
         .delegate('form', 'submit', function(e) {
             var tForm = $(this);
             
@@ -45,6 +58,10 @@ cms.modal = (function (cms, $) {
                         }
                     } else {
                         nModule = $('#' + nData.attr('id')).replaceWith(data);
+                        // Show edit controls if in edit mode
+                        if(cms.config.editMode) {
+                            nModule.addClass('cms_ui_edit');
+                        }
                     }
                     m.hide();
                 },
@@ -90,12 +107,6 @@ cms.modal = (function (cms, $) {
         // Initialize...
         m.hide();
         p.bindEvents();
-        
-        // Close modal window on 'cancel'
-        $('a.app_action_cancel', p.el).live('click', function() {
-            m.hide();
-            return false;
-        });
     };
     m.show = function() {
         p.el.dialog('open');
@@ -175,6 +186,7 @@ $(function() {
     var cms_admin_modules = $('#cms_admin_modules');
     var cms_regions = $('.cms_region');
     var cms_modules = $('div.cms_module');
+    var cms_admin_edit_mode = false;
     
     
     /**
@@ -237,6 +249,9 @@ $(function() {
                     data: {'region': nRegionName, 'name': nModuleName},
                     success: function(data, textStatus, req) {
                         nModule.replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000).css({border: '1px solid red'});
+                        if(cms.config.editMode) {
+                            nModule.addClass('cms_ui_edit');
+                        }
                     },
                     error: function(req) { // req = XMLHttpRequest object
                         alert("[ERROR "+req.status+"] Unable to save data:\n\n" + req.responseText);
@@ -274,9 +289,11 @@ $(function() {
      * Module editing - display controls on hover
      */
     $('#cms_admin_bar_editPage').toggle(function(e) {
-        cms_modules.addClass('cms_ui_edit');
+        $('div.cms_module').addClass('cms_ui_edit');
+        cms.config.editMode = true;
     }, function(e) {
-        cms_modules.removeClass('cms_ui_edit');
+        $('div.cms_module').removeClass('cms_ui_edit');
+        cms.config.editMode = false;
     });
     
     

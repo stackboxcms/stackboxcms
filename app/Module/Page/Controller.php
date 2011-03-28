@@ -1,6 +1,6 @@
 <?php
 namespace Module\Page;
-use Stackbox;
+use Stackbox, Alloy;
 
 /**
  * Page controller - sets up whole page for display
@@ -41,10 +41,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $page->date_created = $pageMapper->connection('Module\Page\Entity')->dateTime();
                 $page->date_modified = $page->date_created;
                 if(!$pageMapper->save($page)) {
-                    throw new \Alloy\Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
+                    throw new Alloy\Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
                 }
             } else {
-                throw new \Alloy\Exception_FileNotFound("Page not found: '" . $pageUrl . "'");
+                throw new Alloy\Exception_FileNotFound("Page not found: '" . $pageUrl . "'");
             }
         }
         
@@ -77,7 +77,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             
             // Ensure user can execute requested action
             if(!$moduleObject->userCanExecute($user, $moduleAction)) {
-                throw new Alloy_Exception_Auth("User does not have sufficient permissions to execute requested action (" . $moduleAction . "). Please login and try again.");
+                throw new Alloy\Exception_Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
             }
             
             // Emulate REST for browsers
@@ -393,6 +393,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     <div class="cms_ui_title"><span>' . $module->name . '</span></div>
                     <ul>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit'), 'module') . '">Edit</a></li>
+                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'settings'), 'module') . '">Settings</a></li>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>
                     </ul>
                   </div>
