@@ -55,19 +55,20 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $moduleName = $request->module_name;
             $moduleAction = $request->module_action;
             
-            if($moduleId == 0) {
+            if($moduleId) {
+                // Get module by ID
+                $module = $mapper->first('Module\Page\Module\Entity', array('id' => $moduleId));
+            } else {
                 // Get new module entity, no ID supplied
                 // @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
                 $module = $mapper->get('Module\Page\Module\Entity');
                 $module->name = $request->name;
-            } else {
-                // Module belongs to current page
-                $module = $page->modules->where(array('id' => $moduleId))->first();
             }
             
             // Setup dummy module object if there is none loaded
             if(!$module) {
                 $module = $mapper->get('Module\Page\Module\Entity');
+                $module->id = 0;
                 $module->name = $request->name;
             }
             
@@ -79,8 +80,21 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 throw new Alloy_Exception_Auth("User does not have sufficient permissions to execute requested action (" . $moduleAction . "). Please login and try again.");
             }
             
+            // Emulate REST for browsers
+            $requestMethod = $request->method();
+            if($request->isPost() && $request->post('_method')) {
+                $requestMethod = $request->post('_method');
+            }
+            
+            // Append 'Action' or 'Method' depending on HTTP method
+            if(strtolower($requestMethod) == strtolower($moduleAction)) {
+                $moduleAction = $moduleAction . (false === strpos($moduleAction, 'Method') ? 'Method' : '');
+            } else {
+                $moduleAction = $moduleAction . (false === strpos($moduleAction, 'Action') ? 'Action' : '');
+            }
+
             // Dispatch to single module
-            $moduleResponse = $kernel->dispatchRequest($moduleObject, $moduleAction, array($page, $module));
+            $moduleResponse = $kernel->dispatch($moduleObject, $moduleAction, array($request, $page, $module));
             
             // Return content immediately, currently not wrapped in template
             return $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
