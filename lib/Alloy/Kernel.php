@@ -412,8 +412,12 @@ class Kernel
         }
         
         // Ensure class exists / can be loaded
-        if(!class_exists($sPluginClass, $init)) {
-            throw new \InvalidArgumentException("Unable to load plugin '" . $sPluginClass . "'. Remove from app config or ensure plugin files exist in 'app' or 'vendor' load paths.");
+        if(!class_exists($sPluginClass, (boolean)$init)) {
+            if ($init) {
+                throw new \InvalidArgumentException("Unable to load plugin '" . $sPluginClass . "'. Remove from app config or ensure plugin files exist in 'app' or 'vendor' load paths.");
+            }
+
+            return false;
         }
         
         // Instantiate module class
@@ -436,6 +440,7 @@ class Kernel
         if($module instanceof \Alloy\Module\ControllerAbstract) {
             // Use current module instance
             $sModuleObject = $module;
+            $module = get_class($module);
         } else {
             // Get module instance
             $sModuleObject = $this->module($module, true, $action);
@@ -464,7 +469,7 @@ class Kernel
      *
      * @param string $moduleName Name of module to be called
      * @param optional string $action function name to call on module
-     * @param optional array $params parameters to pass to module function
+     * @param optional array $params parameters to merge onto Request object
      *
      * @return mixed String or object that has __toString method
      */
@@ -472,6 +477,7 @@ class Kernel
     {
         $request = $this->request();
         $requestMethod = $request->method();
+        
         // Emulate REST for browsers
         if($request->isPost() && $request->post('_method')) {
             $requestMethod = $request->post('_method');
@@ -484,11 +490,11 @@ class Kernel
             $action = $action . (false === strpos($action, 'Action') ? 'Action' : ''); // Append with 'Action' to limit scope of available functions from HTTP request
         }
         
-        // Prepend request object as first parameter
-        array_unshift($params, $request);
+        // Set params on Request object
+        $request->setParams($params);
         
         // Run normal dispatch
-        return $this->dispatch($module, $action, $params);
+        return $this->dispatch($module, $action, array($request));
     }
     
     

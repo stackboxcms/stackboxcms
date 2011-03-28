@@ -44,7 +44,8 @@ try {
         
         $requestUrl = isset($cliArgs['u']) ? $cliArgs['u'] : '/';
         $qs = parse_url($requestUrl, PHP_URL_QUERY);
-        $cliRequestParams = $request->queryStringToArray($qs);
+        $cliRequestParams = array();
+        parse_str($qs, $cliRequestParams);
         
         // Set parsed query params back on request object
         $request->setParams($cliRequestParams);
