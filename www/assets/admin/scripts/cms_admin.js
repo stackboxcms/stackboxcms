@@ -9,13 +9,19 @@ cms.modal = (function (cms, $) {
     
     // Bind submit button and link events
     p.bindEvents = function() {
-        p.elContent.delegate('a', 'click', function(e) {
-            // @todo Implement/fix this
-            // This is just a bit greedy right now...
-            // Have to set it not to mess with CKEditor links
+        p.el.delegate('a', 'click', function(e) {
+            var link = $(this);
 
-            //m.openLink($(this));
-            //return false;
+            alert("CLICKED LINK IN MODAL WINDOW");
+            
+            // Not in CKEditor window
+            if(link.has('#cke_content')) {
+                return;
+            }
+
+            // Re-open in window
+            m.openLink(link);
+            return false;
         })
         .delegate('form', 'submit', function(e) {
             var tForm = $(this);
