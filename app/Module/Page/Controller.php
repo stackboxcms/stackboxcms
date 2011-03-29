@@ -141,7 +141,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 // Use default content between tags in template (no other content)
                 $regionContent = (string) $modules;
             }
-            $template->replaceRegion($region, $this->regionFormat($request, $region, $regionContent));
+            $template->regionContent($region, $regionContent);
         }
         
         // Replace template tags
@@ -353,19 +353,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
             ->fields($fields)
             ->removeFields(array('id', 'theme', 'template', 'ordering', 'date_created', 'date_modified'));
         return $view;
-    }
-    
-    
-    
-    /**
-     * Format region return content for display on page response
-     */
-    protected function regionFormat($request, $regionName, $regionContent)
-    {
-        if('html' == $request->format) {
-            $content = '<div id="cms_region_' . $regionName . '" class="cms_region">' . $regionContent . '</div>';
-        }
-        return $content;
     }
     
     

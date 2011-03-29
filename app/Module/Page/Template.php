@@ -17,6 +17,7 @@ class Template extends Alloy\View\Template
     protected $_default_extenstion = 'tpl';
     
     // Parsing storage
+    protected $_dom;
     protected $_content;
     protected $_tokens;
     
@@ -42,67 +43,57 @@ class Template extends Alloy\View\Template
         // Get template content
         $content = $this->content();
         
-        // Match all template tags
-        $matches = array();
-        preg_match_all("@<([\w]+):([^\s]*)([^>]*)>(.*)<\/\\1:\\2>@", $content, $matches, PREG_SET_ORDER);
-        
-        // Assemble list of tags by type
-        $tokens = array();
-        $ri = 0;
-        foreach ($matches as $val) {
-            $tagFull = $val[0];
-            $tagNamespace = $val[1];
-            $tagType = $val[2];
-            $tagAttributes = trim($val[3]);
-            $tagContent = $val[4];
-            $matchedAttributes = array();
-            if(!empty($tagAttributes)) {
-                // Match all attributes (key="value")
-                preg_match_all("/([^\s=]*)=\"([^\"]*)\"/", $tagAttributes, $matchedAttributes, PREG_SET_ORDER);
-                // Assemble tag attributes
-                $tagAttributes = array();
-                foreach($matchedAttributes as $attr) {
-                    $tagAttributes[$attr[1]] = $attr[2];
-                }
-            } else {
-                $tagAttributes = array();
+        $dom = new \DOMDocument();
+        $dom->registerNodeClass('DOMElement', 'Module\Page\Template\DOMElement');
+        $dom->loadHTML($content);
+
+        // REGIONS
+        $xpath = new \DOMXPath($dom);
+        $regions = $xpath->query("//*[@class='cms_region' or @class='cms_region_global']");
+        foreach($regions as $region) {
+
+            $regionName = $region->getAttribute('id');
+            $regionClass = $region->getAttribute('class');
+            if(!$regionName) {
+                throw new Template\Exception("Template region does not have an id attribute.\n<br /> Parsing (" . \htmlentities($region->saveHTML()) . ")");
             }
-            
+
             // Ouput array
             $token = array(
-                'tag' => $tagFull,
-                'type' => $tagType,
-                'namespace' => $tagNamespace,
-                'attributes' => $tagAttributes,
-                'content' => $tagContent
-                );
+                'element' => $region,
+                'type' => $this->_tokenRegionType,
+                'namespace' => 'cms',
+                'attributes' => $region->getAttributes(),
+                'content' => $region->innerHTML
+            );
             
-            // Store found tags
-            if($tagType == $this->_tokenTagType) {
-                // Set key as name or number
-                if(isset($tagAttributes['name'])) {
-                    $tokenName = $tagAttributes['name'];
-                } else {
-                    $tokenName = $ti++;
-                }
-                $this->_tags[$tokenName] = $token;
-                
-            // Store found regions
-            } elseif($tagType == $this->_tokenRegionType) {
-                // Set key as name or number
-                if(isset($tagAttributes['name'])) {
-                    $tokenName = $tagAttributes['name'];
-                } else {
-                    $tokenName = $ti++;
-                }
-                $regionType = isset($tagAttributes['type']) ? $tagAttributes['type'] : 'page';
-                $this->_regions[$tokenName] = $token;
-                $this->_regionsType[$regionType][] = $tokenName;
-            }
+            $regionType = (false !== strpos($regionClass, 'cms_region_global')) ? 'global' : 'page';
+            $this->_regions[$regionName] = $token;
+            $this->_regionsType[$regionType][] = $regionName;
             
             $tokens[] = $token;
         }
+
+
+        // TAGS
+        $xpath = new \DOMXPath($dom);
+        $tags = $xpath->query("//*[contains(@class, 'cms_tag_')]");
+        foreach($tags as $tag) {
+            $tagName = str_replace('cms_tag_', '', $tag->getAttribute('class'));
+
+            $token = array(
+                'element' => $tag,
+                'type' => $this->_tokenTagType,
+                'namespace' => 'cms',
+                'attributes' => $tag->getAttributes(),
+                'content' => $tag->innerHTML
+            );
+            $this->_tags[$tagName][] = $token;
+
+            $tokens[] = $token;
+        }
         
+        $this->_dom = $dom;
         $this->_tokens = $tokens;
         return $tokens;
     }
@@ -173,16 +164,23 @@ class Template extends Alloy\View\Template
     
     
     /**
-     * Remove lingering tags that have not been replaced with other content
-     * Leaves any default text in place (text between <cx:tag></cx:tag>)
+     * Cleans up template and replaces content with current DOM tree
      */
     public function clean()
     {
-        $cleanContent = $this->content();
-        foreach($this->tokens() as $tag) {
-            $cleanContent = str_replace($tag['tag'], $tag['content'], $cleanContent);
+        $this->_content = $this->_dom->saveHTML();
+
+        // Remove unused tags
+        foreach($this->tags() as $tags) {
+            foreach($tags as $tag) {
+                $el = $tag['element'];
+                $this->_content = str_replace($el->saveHTML(), '', $this->_content);
+            }
+
+            //var_dump($el->saveHTML());
+            //$el->replaceWith($tag['content']);
+            //$el->innerHTML = $tag['content'];
         }
-        return $this->_content = $cleanContent;
     }
     
     
@@ -213,7 +211,12 @@ class Template extends Alloy\View\Template
     {
         $tags = $this->tags();
         if(isset($tags[$tagName])) {
-            $this->_content = str_replace($tags[$tagName]['tag'], $replacement, $this->content());
+            $tags = $tags[$tagName];
+            foreach($tags as $tag) {
+                //$this->_content = str_replace($tags[$tagName]['tag'], $replacement, $this->content());
+                $el = $tag['element'];
+                $el->replaceWith($replacement);
+            }
             return true;
         } else {
             return false;
@@ -222,18 +225,20 @@ class Template extends Alloy\View\Template
     
     
     /**
-     * Replace template region with content
+     * Place content inside template region
      *
      * @param $regionName string Name of template region to replace
-     * @param $replacement string
+     * @param $content string
      * 
      * @return boolean
      */
-    public function replaceRegion($regionName, $replacement)
+    public function regionContent($regionName, $content)
     {
         $regions = $this->regions();
         if(isset($regions[$regionName])) {
-            $this->_content = str_replace($regions[$regionName]['tag'], $replacement, $this->content());
+            //$region = $this->_dom->getElementById($regionName);
+            $region = $regions[$regionName]['element'];
+            $region->innerHTML = $content;
             return true;
         } else {
             return false;
