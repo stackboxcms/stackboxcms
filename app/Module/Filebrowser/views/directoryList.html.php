@@ -10,6 +10,8 @@ $request = $kernel->request();
   $dirs = $kernel->finder()
     ->directories()
     ->in($directory)
+    ->depth(0)
+    ->notName('_*') // Hide dirs that begin with underscore (_size)
     ->sortByName();
     
     foreach($dirs as $mDir):
@@ -27,14 +29,23 @@ $request = $kernel->request();
   $files = $kernel->finder()
     ->files()
     ->in($directory)
+    ->depth(0)
+    ->notName('index.html') // Hide index file placeholder
+    ->notName('.*') // Hide files that begin with dot, like .DS_Store
     ->sortByName();
     
     foreach($files as $mFile):
       $file = new File($mFile);
     ?>
-      <div class="cms_filebrowser_tile cms_filebrowser_file">
+      <?php if($file->isImage()): // Image ?>
+      <div class="cms_filebrowser_tile cms_filebrowser_image cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">
+        <a href="<?php echo $file->getUrl(); ?>"><img src="<?php echo $file->getSizeUrl(100, 100); ?>" alt="<?php echo $file->getFilename(); ?>" /></a>
+      </div>
+      <?php else: // File ?>
+      <div class="cms_filebrowser_tile cms_filebrowser_file cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">
         <a href="<?php echo $file->getUrl(); ?>"><?php echo $file->getFilename(); ?></a>
       </div>
+      <?php endif; ?>
     <?php endforeach; ?>
 </div>
 

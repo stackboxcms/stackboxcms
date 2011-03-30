@@ -23,7 +23,7 @@ class File
      */
     public function isImage()
     {
-        return (false !== strpos($this->file->getFileName(), 'image'));
+        return in_array($this->getExtension(), array('bmp', 'gif', 'ico', 'iff', 'jb2', 'jp2', 'jpc', 'jpg', 'jpeg', 'jpx', 'gif', 'png', 'psd', 'swf', 'tiff', 'tiff', 'unknown', 'wbmp', 'xbm'));
     }
 
 
@@ -34,9 +34,7 @@ class File
      */
     public function getExtension()
     {
-        // Get and set extension
-        $fileNameParts = explode('.', $fileData['name']);
-        return end($fileNameParts);
+        return str_replace('.', '', strrchr($this->file->getFileName(), '.'));
     }
 
 
@@ -49,6 +47,26 @@ class File
     {
         $filesDir = \Kernel()->config('cms.path.files');
         return \Kernel()->config('cms.url.files') . str_replace($filesDir, '', $this->getPathname());
+    }
+
+
+    /**
+     * Return the full URL to the image for a specific size
+     * 
+     * @return string
+     */
+    public function getSizeUrl($width, $height)
+    {
+        $kernel = \Kernel();
+        $siteId = $kernel->config('site.id');
+        $filesDir = $kernel->config('cms.path.files') . 'images/';
+        $imageFile = str_replace($filesDir, '', $this->getPathname());
+        return $kernel->url(array(
+            'site_id' => $siteId,
+            'width' => $width,
+            'height' => $height,
+            'image' => $imageFile
+        ), 'image_size');
     }
 
 

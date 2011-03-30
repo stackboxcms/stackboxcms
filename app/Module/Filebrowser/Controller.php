@@ -1,6 +1,7 @@
 <?php
 namespace Module\Filebrowser;
 use Alloy, Stackbox;
+use Imagine, Imagine\Image;
 
 /**
  * Filebrowser Controller
@@ -68,6 +69,53 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         return $this->template('directoryList')
             ->set(array('directory' => $dir));
+    }
+
+
+    /**
+     * Resize and save image on the fly
+     * @method GET
+     */
+    public function imageSizeAction(Alloy\Request $request)
+    {
+        $kernel = $this->kernel;
+        $request = $kernel->request();
+        $user = $kernel->user();
+
+        // Ensure proper directories exist and are writable
+        $dir = \Kernel()->config('cms.path.files') . 'images';
+        $this->ensureDirectoryAvailable($dir);
+        
+        // Sort out request data
+        $image = $request->image;
+        $width = (int) $request->width;
+        $height = (int) $request->height;
+        $imagePath = realpath(dirname($dir . '/' . $image));
+
+        // Ensure directory is beginning part of fully expanded path (security issues with '../' in path)
+        if(0 !== strpos($imagePath, $dir)) {
+            return false;
+        }
+
+        // Ensure image file exists
+        if(!file_exists($imagePath . '/' . $image)) {
+            return false;
+        }
+
+        // Ensure resize directory exists and is writable
+        $resizeDir = $dir . '/_size/' . $width . 'x' . $height . '/';
+        $this->ensureDirectoryAvailable(dirname($resizeDir . $image));
+
+        // Resize to requested width/height
+        $image = $kernel->imagine()
+            ->open($imagePath . '/' . $image)
+            ->thumbnail(new Imagine\Image\Box($width, $height), Imagine\ImageInterface::THUMBNAIL_INSET)
+            ->save($resizeDir . $image);
+
+        // Send image content to browser
+        header('Content-type: image/png');
+        echo $image->get('png');
+        exit();
     }
     
     
@@ -162,7 +210,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 ';
             }
 
-            return $kernel->redirect($kernel->url(array('action' => 'index'), 'filebrowser'));
+            // Redirect to images or files
+            if($subDir = 'images') {
+                return $kernel->redirect($kernel->url(array('action' => 'images'), 'filebrowser'));
+            }
+            return $kernel->redirect($kernel->url(array('action' => 'files'), 'filebrowser'));
         } else {
             return $kernel->resource()
                 ->status(400)

@@ -43,7 +43,8 @@ $cfg['mode']['development'] = true;
 $cfg['plugins'] = array(
 	'Spot', # vendor/Plugin/Spot
 	'Stackbox', # app/Plugin/Stackbox
-	'Finder' # vendor/Plugin/Finder
+	'Finder', # vendor/Plugin/Finder
+	'Imagine' # vendor/Plugin/Imagine
 );
 
 // Database - Param names to match Zend_Config
