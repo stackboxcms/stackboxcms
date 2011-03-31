@@ -34,19 +34,27 @@ $request = $kernel->request();
     ->notName('.*') // Hide files that begin with dot, like .DS_Store
     ->sortByName();
     
-    foreach($files as $mFile):
-      $file = new File($mFile);
+    // Generic cellgrid layout
+    $grid = $view->generic('cellgrid');
+    $grid->data($files)
+      ->columns(6)
+      ->cell(function($mFile) {
+        // Get into File object
+        $file = new File($mFile);
+      ?>
+        <?php if($file->isImage()): // Image ?>
+        <div class="cms_filebrowser_tile cms_filebrowser_image cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">
+          <a href="<?php echo $file->getUrl(); ?>"><img src="<?php echo $file->getSizeUrl(100, 100); ?>" alt="<?php echo $file->getFilename(); ?>" /></a>
+        </div>
+        <?php else: // File ?>
+        <div class="cms_filebrowser_tile cms_filebrowser_file cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">
+          <a href="<?php echo $file->getUrl(); ?>"><?php echo $file->getFilename(); ?></a>
+        </div>
+        <?php endif; ?>
+    <?php
+      });
+    echo $grid->content();
     ?>
-      <?php if($file->isImage()): // Image ?>
-      <div class="cms_filebrowser_tile cms_filebrowser_image cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">
-        <a href="<?php echo $file->getUrl(); ?>"><img src="<?php echo $file->getSizeUrl(100, 100); ?>" alt="<?php echo $file->getFilename(); ?>" /></a>
-      </div>
-      <?php else: // File ?>
-      <div class="cms_filebrowser_tile cms_filebrowser_file cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">
-        <a href="<?php echo $file->getUrl(); ?>"><?php echo $file->getFilename(); ?></a>
-      </div>
-      <?php endif; ?>
-    <?php endforeach; ?>
 </div>
 
 <div class="cms_filebrowser_upload">

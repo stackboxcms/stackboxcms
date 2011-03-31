@@ -17,20 +17,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function indexAction(Alloy\Request $request)
     {
-        $kernel = $this->kernel;
-        $request = $kernel->request();
-        $user = $kernel->user();
-
-        // Ensure proper directories exist and are writable
-        $uploadDir = \Kernel()->config('cms.path.files');
-        $imagesDir = $uploadDir . 'images/';
-        $filesDir = $uploadDir . 'files/';
-
-        $this->ensureDirectoryAvailable($filesDir);
-        $this->ensureDirectoryAvailable($imagesDir);
-        
-        // Template
-        return $this->template(__FUNCTION__);
+        return false;
     }
 
 
@@ -49,7 +36,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $this->ensureDirectoryAvailable($dir);
         
         return $this->template('directoryList')
-            ->set(array('directory' => $dir));
+            ->set(array('directory' => $dir))
+            ->layout('ajax');
     }
 
 
@@ -68,7 +56,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $this->ensureDirectoryAvailable($dir);
         
         return $this->template('directoryList')
-            ->set(array('directory' => $dir));
+            ->set(array('directory' => $dir))
+            ->layout('ajax');
     }
 
 
