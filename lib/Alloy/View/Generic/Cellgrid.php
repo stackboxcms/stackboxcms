@@ -4,13 +4,13 @@ use Alloy\View\Template;
 use Alloy\View\Exception;
 
 /**
- * Generic Datagrid View
+ * Generic Cellgrid View
  * 
  * @package Alloy
  * @license http://www.opensource.org/licenses/bsd-license.php
  * @link http://alloyframework.com/
  */
-class Datagrid extends Template
+class Cellgrid extends Template
 {
     protected $_columns = array();
     
@@ -37,7 +37,7 @@ class Datagrid extends Template
             throw new Exception("Data provided must be defined by using either an array or Traversable object - given (" . gettype($data) . ").");
         }
         
-        $this->set('columnData', $data);
+        $this->set('cellData', $data);
         return $this;
     }
     
@@ -63,11 +63,13 @@ class Datagrid extends Template
     
     
     /**
-     * Column setter/getter
+     * Number of columns setter/getter
+     *
+     * @param integer $columns
      */
-    public function columns(array $columns = array())
+    public function columns($columns = null)
     {
-        if(count($columns) > 0 ) {
+        if(null !== $columns) {
             $this->_columns = $columns;
             return $this;
         }
@@ -76,25 +78,19 @@ class Datagrid extends Template
     
     
     /**
-     * Define new column
+     * Cell callback
      *
-     * @param string $name Name of the field to return data for
-     * @param string $callback Closure for displaying content when there is no data to display
+     * @param string $callback Closure for displaying cell content
      * @throws \Alloy\View\Exception
      */
-    public function column($name, $callback)
+    public function cell($callback)
     {
         // Check callback
         if(!is_callable($callback)) {
-            throw new \Alloy\View\Exception("Column must be defined by using a closure or callback");
+            throw new Exception("Cell must be defined by using a closure or callback");
         }
-        
-        // Set column
-        $this->_columns[$name] = array(
-            'title' => $name,
-            'callback' => $callback
-        );
-        
+
+        $this->set('cellCallback', $callback);
         return $this;
     }
     
