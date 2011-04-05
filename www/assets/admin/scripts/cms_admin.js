@@ -98,7 +98,7 @@ cms.modal = (function (cms, $) {
             close: function(e,ui) {
                 // Destroy CKEditor instance so it can be re-created for next AJAX call
                 try {
-                    $("form li.app_form_field_editor textarea", p.elContent).ckeditorGet().destroy();
+                    $("form .app_form_field_editor textarea", p.elContent).ckeditorGet().destroy();
                 } catch(e) {}
             }
 
@@ -135,7 +135,7 @@ cms.modal = (function (cms, $) {
         p.elContent.html(content);
         
         // Load CKEditor in editor fields
-        $("form li.app_form_field_editor textarea", p.elContent).ckeditor(function(e) {
+        $("form .app_form_field_editor textarea", p.elContent).ckeditor(function(e) {
             //alert(CKEDITOR.instances[$(e).attr('name')]);
         }, {
             toolbar: [

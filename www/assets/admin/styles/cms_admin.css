@@ -18,24 +18,27 @@ ADMIN UI
         margin: 0;
         padding: 0;
     }
-    .cms_ui form ol.app_form input, .cms_ui form ol.app_form textarea, .cms_ui form ol.app_form button, .cms_ui form ol.app_form input {
+    .cms_ui form .app_form input, .cms_ui form .app_form textarea, .cms_ui form .app_form button, .cms_ui form .app_form input {
         font-size: 14px;
         padding: 4px;
         font-family: Arial, Helvetica, sans-serif;
     }
-    .cms_ui form ol.app_form {
+    .cms_ui form .app_form textarea {
+        width: 80%;
+    }
+    .cms_ui form .app_form {
         margin: 0;
         padding: 0;
         border: 0;
         list-style: none;
     }
-    .cms_ui form li.app_form_field {
+    .cms_ui form .app_form_field {
         display: block;
         margin: 5px 0;
         padding: 3px;
         clear: both;
     }
-    .cms_ui form li.app_form_field label.app_form_field_label {
+    .cms_ui form .app_form_field label.app_form_field_label {
         display: block;
         margin: 0;
         padding: 5px 10px 0 10px;
@@ -45,16 +48,16 @@ ADMIN UI
         cursor: pointer;
         font-size: 14px;
     }
-    .cms_ui form li.app_form_field span.app_form_field_element {
+    .cms_ui form .app_form_field span.app_form_field_element {
         display: block;
         margin: 0;
         padding: 0;
         float: left;
     }
-    .cms_ui form li.app_form_hidden {
+    .cms_ui form .app_form_hidden {
         display: none;
     }
-    .cms_ui form li.app_form_actions {
+    .cms_ui form .app_form_actions {
         clear: both;
         padding-top: 20px;
         padding-left: 120px;
@@ -162,6 +165,48 @@ MODAL / DIALOG
     }
 */
 
+
+/*
+FILEBROWSER
+================================================== */
+div.cms_filebrowser ul,
+div.cms_filebrowser ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+div.cms_filebrowser li {
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+div.cms_filebrowser_tile {
+    z-index: 1;
+    position: relative;
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+}
+div.cms_filebrowser_tile nav {
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 6px;
+    opacity: 0.8;
+    background-color: #000;
+    color: #fff;
+    font-size: 11px;
+}
+div.cms_filebrowser_tile nav li {
+    padding: 0 0 4px 0;
+}
+div.cms_filebrowser_tile nav a {
+    color: #fff;
+}
+
 /*
 ADMIN PANES
 ================================================== */
@@ -242,16 +287,9 @@ REGION / MODULE UI
     opacity: 0.6;
 }
 /* Module admin controls */
-.cms_region .cms_module {
+.cms_module {
     position: relative;
     min-height: 20px;
-}
-.cms_module .cms_ui_controls {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100px;
-    overflow: visible;
 }
 .cms_module .cms_ui_controls {
     display: none;

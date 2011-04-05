@@ -38,7 +38,7 @@ $templateHead->stylesheet($kernel->config('cms.url.assets_admin') . 'styles/cms_
     <title><?php echo $title; ?></title>
     <?php echo $templateHead; ?>
 </head>
-<body>
+<body class="cms_ui">
     
     <?php
     // Display errors

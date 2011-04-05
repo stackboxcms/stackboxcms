@@ -4,6 +4,7 @@ use Module\Filebrowser\File;
 $request = $kernel->request();
 ?>
 
+<div class="cms_filebrowser">
 <div class="cms_filebrowser_list_dirs">
   <?php
   // Directories
@@ -44,6 +45,16 @@ $request = $kernel->request();
       ?>
         <?php if($file->isImage()): // Image ?>
         <div class="cms_filebrowser_tile cms_filebrowser_image cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">
+          <nav class="cms_filebrowser_hover_nav">
+            <ul>
+              <li><a href="<?php echo $file->getSizeUrl(100, 100); ?>">Thumbnail (100x100)</a></li>
+              <li><a href="<?php echo $file->getSizeUrl(250, 250); ?>">Small (250x250)</a></li>
+              <li><a href="<?php echo $file->getSizeUrl(400, 400); ?>">Medium (400x400)</a></li>
+              <li><a href="<?php echo $file->getSizeUrl(600, 600); ?>">Large (600x600)</a></li>
+              <li><a href="<?php echo $file->getSizeUrl(1024, 768); ?>">X-Large (1024x768)</a></li>
+              <li><a href="<?php echo $file->getUrl(); ?>">Full Size</a></li>
+            </ul>
+          </nav>
           <a href="<?php echo $file->getUrl(); ?>"><img src="<?php echo $file->getSizeUrl(100, 100); ?>" alt="<?php echo $file->getFilename(); ?>" /></a>
         </div>
         <?php else: // File ?>
@@ -61,6 +72,17 @@ $request = $kernel->request();
   <?php echo $kernel->dispatchRequest('Filebrowser', 'new'); ?>
 </div>
 
+<!-- Image sizes hover menu -->
+<script type="text/javascript">
+  // Bind click events to use CKEditor callback
+  $('div.cms_filebrowser_image nav').hide();
+  $('div.cms_filebrowser_image').hover(function (e) {
+    $(this).find('nav').show();  
+  }, function() {
+    $(this).find('nav').hide();
+  });
+</script>
+
 <?php
 if($request->get('CKEditor')):
   $callback = $request->get('CKEditorFuncNum');
@@ -68,18 +90,11 @@ if($request->get('CKEditor')):
   <!-- CKEditor callback integration -->
   <script type="text/javascript">
   // Bind click events to use CKEditor callback
-  var links = document.getElementsByTagName("a");
-  var link = '';
-  for(var i = 0; i < links.length; i++) {
-    //alert("FOUND LINKS: " + links.length);
-    link = links.item(i);
-    // Set onClick property
-    link.addEventListener('click',function (e) {
-      this.style.backgroundColor = 'yellow';
+  $('a').bind('click',function (e) {
       window.opener.CKEDITOR.tools.callFunction('<?php echo $callback; ?>', this.href);
       window.close();
       return false;
-    }, false);
-  }
+  });
   </script>
 <?php endif; ?>
+</div>
