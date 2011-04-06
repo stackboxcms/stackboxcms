@@ -414,7 +414,7 @@ class Kernel
         // Ensure class exists / can be loaded
         if(!class_exists($sPluginClass, (boolean)$init)) {
             if ($init) {
-                throw new \InvalidArgumentException("Unable to load plugin '" . $sPluginClass . "'. Remove from app config or ensure plugin files exist in 'app' or 'vendor' load paths.");
+                throw new \InvalidArgumentException("Unable to load plugin '" . $sPluginClass . "'. Remove from app config or ensure plugin files exist in 'app' or 'alloy' load paths.");
             }
 
             return false;
@@ -440,7 +440,6 @@ class Kernel
         if($module instanceof \Alloy\Module\ControllerAbstract) {
             // Use current module instance
             $sModuleObject = $module;
-            $module = get_class($module);
         } else {
             // Get module instance
             $sModuleObject = $this->module($module, true, $action);
@@ -477,7 +476,6 @@ class Kernel
     {
         $request = $this->request();
         $requestMethod = $request->method();
-        
         // Emulate REST for browsers
         if($request->isPost() && $request->post('_method')) {
             $requestMethod = $request->post('_method');
