@@ -1,8 +1,8 @@
 var cms = cms || {};
 
-cms.config = {
-    editMode: false
-};
+// Additional config settings (some config on-page already)
+cms.config = cms.config || {};
+cms.config.editMode = false;
 
 /**
  * MODAL / Content Area

@@ -23,7 +23,7 @@ try {
         }
     }
     $kernel->events()->trigger('boot_start');
-    
+
     // Global setup based on config settings
     date_default_timezone_set($kernel->config('i18n.timezone', 'America/Chicago'));
     ini_set("session.gc_maxlifetime", $kernel->config('session.lifetime', 28000));
@@ -35,7 +35,7 @@ try {
     // Router - Add routes we want to match
     $router = $kernel->router();
     require $kernel->config('path.config') . '/routes.php';
-    
+
     // Handle both HTTP and CLI requests
     $request = $kernel->request();
     if($request->isCli()) {
@@ -89,29 +89,29 @@ try {
     
     // Raise 404 error on boolean false result
     if(false === $content) {
-        throw new \Alloy\Exception_FileNotFound("Requested file or page not found. Please check the URL and try again.");
+        throw new \Alloy\Exception\FileNotFound("Requested file or page not found. Please check the URL and try again.");
     }
 
     // Run resulting content through filter
     $content = $kernel->events()->filter('dispatch_content', $content);
 
 // Authentication Error
-} catch(\Alloy\Exception_Auth $e) {
+} catch(\Alloy\Exception\Auth $e) {
     $responseStatus = 403;
     $content = $e;
  
 // 404 Errors
-} catch(\Alloy\Exception_FileNotFound $e) {
+} catch(\Alloy\Exception\FileNotFound $e) {
     $responseStatus = 404;
     $content = $e;
 
 // Method Not Allowed
-} catch(\Alloy\Exception_Method $e) {
+} catch(\Alloy\Exception\Method $e) {
     $responseStatus = 405; // 405 - Method Not Allowed
     $content = $e;
 
 // HTTP Exception
-} catch(\Alloy\Exception_Http $e) {
+} catch(\Alloy\Exception\Http $e) {
     $responseStatus = $e->getCode(); 
     $content = $e;
 

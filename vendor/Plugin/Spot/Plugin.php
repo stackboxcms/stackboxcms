@@ -126,7 +126,8 @@ class Plugin
               ||'42S02' == $content->getCode()
               || false !== stripos($content->getMessage(), 'Base table or view not found')) {
                 // Table not found - auto-install module to cause Entity migrations
-                $content = $kernel->dispatch($kernel->request()->module, 'install');
+                $ld = $kernel->lastDispatch();
+                $content = $kernel->dispatch($ld['module'], 'install');
             }
         }
 

@@ -24,8 +24,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $kernel = $this->kernel;
         $request = $kernel->request();
         $user = $kernel->user();
-
-        $this->install();
         
         // Ensure page exists
         $mapper = $kernel->mapper();
@@ -49,7 +47,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 throw new Alloy\Exception\FileNotFound("Page not found: '" . $pageUrl . "'");
             }
         }
-        
+
         // Single module call?
         // @todo Check against matched route name instead of general request params (? - may restict query string params from being used)
         if($request->module_name && $request->module_action) {
@@ -76,7 +74,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             
             // Load requested module
             $moduleObject = $kernel->module($moduleName);
-            
+
             // Ensure user can execute requested action
             if(!$moduleObject->userCanExecute($user, $moduleAction)) {
                 throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
