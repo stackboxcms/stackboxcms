@@ -134,6 +134,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
+        $this->kernel->mapper()->migrate('Module\User\Entity');
         $this->kernel->mapper()->migrate('Module\User\Session\Entity');
         return parent::install($action, $params);
     }

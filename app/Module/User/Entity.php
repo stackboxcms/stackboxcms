@@ -17,8 +17,8 @@ class Entity extends Stackbox\EntityAbstract
             'id' => array('type' => 'int', 'primary' => true, 'serial' => true),
             'username' => array('type' => 'string', 'required' => true, 'unique' => true),
             'password' => array('type' => 'password', 'required' => true),
-            'salt' => array('type' => 'string', 'length' => 20, 'required' => true),
-            'email' => array('type' => 'string', 'required' => true),
+            'salt' => array('type' => 'string', 'length' => 42, 'required' => true),
+            'email' => array('type' => 'email', 'required' => true),
             'is_admin' => array('type' => 'boolean', 'default' => 0),
             'date_created' => array('type' => 'datetime')
         ) + parent::fields();
@@ -86,7 +86,7 @@ class Entity extends Stackbox\EntityAbstract
      */
     public function randomSalt()
     {
-        $length = 20;
+        $length = 42;
         $string = "";
         $possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()[]{}<>-_+=|\/;:,.";
         $possibleLen = strlen($possible);
@@ -109,6 +109,6 @@ class Entity extends Stackbox\EntityAbstract
     public function encryptedPassword($pass)
     {
         // Hash = <salt>:<password>
-        return sha1($this->__get('salt') . ':' . $pass);
+        return hash('sha256', $this->__get('salt') . ':' . $pass);
     }
 }
