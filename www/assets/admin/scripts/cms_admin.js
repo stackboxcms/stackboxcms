@@ -184,7 +184,7 @@ $(function() {
      */
     var cms_admin_bar = $('#cms_admin_bar');
     var cms_admin_modules = $('#cms_admin_modules');
-    var cms_regions = $('.cms_region');
+    var cms_regions = $('.cms_region, .cms_region_global');
     var cms_modules = $('div.cms_module');
     var cms_admin_edit_mode = false;
     
@@ -225,7 +225,7 @@ $(function() {
      * Module drag-n-drop, adding to page regions
      */
     cms_regions.sortable({
-        items: '.cms_region div.cms_module, div.cms_module_tile',
+        items: '.cms_region div.cms_module, .cms_region_global div.cms_module, div.cms_module_tile',
         connectWith: cms_regions,
         handle: 'div.cms_ui_controls .cms_ui_title',
         placeholder: 'cms_module_placeholder',
@@ -310,7 +310,7 @@ $(function() {
      */
     function cms_serializeRegionModules() {
         var str = "";
-        $('div.cms_region').each(function() {
+        $('.cms_region, .cms_region_global').each(function() {
             var regionName = this.id.replace('cms_region_', '');
             $('div.cms_module', this).not('.ui-helper').each(function() {
                 var moduleId = parseInt($(this).attr('id').replace('cms_module_', ''));
