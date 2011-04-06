@@ -24,6 +24,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $kernel = $this->kernel;
         $request = $kernel->request();
         $user = $kernel->user();
+
+        $this->install();
         
         // Ensure page exists
         $mapper = $kernel->mapper();
@@ -41,10 +43,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $page->date_created = $pageMapper->connection('Module\Page\Entity')->dateTime();
                 $page->date_modified = $page->date_created;
                 if(!$pageMapper->save($page)) {
-                    throw new Alloy\Exception_FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
+                    throw new Alloy\Exception\FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
                 }
             } else {
-                throw new Alloy\Exception_FileNotFound("Page not found: '" . $pageUrl . "'");
+                throw new Alloy\Exception\FileNotFound("Page not found: '" . $pageUrl . "'");
             }
         }
         
@@ -77,7 +79,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             
             // Ensure user can execute requested action
             if(!$moduleObject->userCanExecute($user, $moduleAction)) {
-                throw new Alloy\Exception_Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+                throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
             }
             
             // Emulate REST for browsers
@@ -234,10 +236,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $mapper = $this->kernel->mapper('Module\Page\Mapper');
         $page = $mapper->getPageByUrl($request->page);
         if(!$page) {
-            throw new \Alloy\Exception_FileNotFound("Page not found: '" . $request->page . "'");
+            return false;
         }
         
-        return $this->formView()->data($page->data());
+        return $this->formView()->data($page->toArray());
     }
     
     
@@ -347,11 +349,23 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 'ordering' => 'ASC'
             ))->toArray('id', 'title'); // Return records in 'id' => 'title' key/value array
         $fields['parent_id']['title'] = 'Parent Page';
+
+        // Add field to select page template
+        $fields['template']['type'] = 'select';
+        $fields['template']['options'] = Entity::getPageTemplates();
+
+        // Update 'visibility' field to set allowed options
+        $fields['visibility']['type'] = 'select';
+        $fields['visibility']['options'] = array(
+            Entity::VISIBILITY_VISIBLE => 'Visible in Navigation',
+            Entity::VISIBILITY_HIDDEN => 'Hidden from Navigation'
+        );
         
         // Prepare view
         $view->action("")
+            ->method('post')
             ->fields($fields)
-            ->removeFields(array('id', 'theme', 'template', 'ordering', 'date_created', 'date_modified'));
+            ->removeFields(array('id', 'ordering', 'date_created', 'date_modified'));
         return $view;
     }
     

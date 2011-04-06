@@ -24,10 +24,9 @@ class Entity extends Stackbox\EntityAbstract
             'url' => array('type' => 'string', 'required' => true, 'unique' => 'site_page'),
             'meta_keywords' => array('type' => 'string'),
             'meta_description' => array('type' => 'string'),
-            'theme' => array('type' => 'string'),
             'template' => array('type' => 'string'),
-            'ordering' => array('type' => 'int', 'length' => 3, 'default' => 0),
-            'visibility' => array('type' => 'int', 'default' => static::VISIBILITY_VISIBLE),
+            'ordering' => array('type' => 'int', 'length' => 4, 'default' => 0),
+            'visibility' => array('type' => 'int', 'length' => 1, 'default' => self::VISIBILITY_VISIBLE),
             'date_created' => array('type' => 'datetime'),
             'date_modified' => array('type' => 'datetime')
         ) + parent::fields();
@@ -81,5 +80,31 @@ class Entity extends Stackbox\EntityAbstract
             $url = '/' . trim($url, '/') . '/';
         }
         return $url;
+    }
+
+
+    /**
+     * Get templates available to page
+     */
+    public static function getPageTemplates()
+    {
+        $kernel = \Kernel();
+
+        // Find template files
+        $tplDir = $kernel->config('cms.path.themes');
+        $templates = $kernel->finder()
+            ->in($tplDir)
+            ->files()
+            ->name('*.html.tpl')
+            ->depth(1)
+            ->sortByName();
+        
+        $tpls = array();
+        foreach($templates as $tpl) {
+            $tplRelPath = str_replace($tplDir, '', $tpl->getPathname());
+            $tpls[$tplRelPath] = $tplRelPath;
+        }
+
+        return $tpls;
     }
 }
