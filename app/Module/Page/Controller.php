@@ -102,11 +102,23 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         // Load page template
         $activeTheme = ($page->theme) ? $page->theme : $kernel->config('cms.default.theme');
-        $activeTemplate = ($page->template) ? $page->template : $kernel->config('cms.default.theme_template');
+        // Default template or page template
+        if(!$page->template) {
+            $activeTemplate = $activeTheme . '/' . $kernel->config('cms.default.theme_template');
+        } else {
+            $activeTemplate = $page->template;   
+        }
         $themeUrl = $kernel->config('cms.url.themes') . $activeTheme . '/';
         $template = new Template($activeTemplate);
         $template->format($request->format);
-        $template->path($kernel->config('cms.path.themes') . $activeTheme . '/');
+        $template->path($kernel->config('cms.path.themes'));
+
+        // Ensure template exists and set to default if not
+        // @todo Also display warning for logged-in users that page fell back to default template
+        if(!$template->exists()) {
+            $template->file($kernel->config('cms.default.theme') . '/' . $kernel->config('cms.default.theme_template'), 'html');
+        }
+
         $template->parse();
         
         // Template Region Defaults
