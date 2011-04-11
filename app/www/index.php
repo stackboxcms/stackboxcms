@@ -1,5 +1,5 @@
 <?php
-require dirname(__DIR__) . '/app/init.php';
+require dirname(__DIR__) . '/init.php';
 
 
 /**
@@ -13,7 +13,7 @@ try {
     session_start();
     
     // Load plugins
-    if($plugins = $kernel->config('plugins', false)) {
+    if($plugins = $kernel->config('app.plugins', false)) {
         if(!is_array($plugins)) {
             throw new \InvalidArgumentException("Plugin configuration from app config must be an array. Given (" . gettype($plugins) . ").");
         }
@@ -23,10 +23,10 @@ try {
         }
     }
     $kernel->events()->trigger('boot_start');
-
+    
     // Global setup based on config settings
-    date_default_timezone_set($kernel->config('i18n.timezone', 'America/Chicago'));
-    ini_set("session.gc_maxlifetime", $kernel->config('session.lifetime', 28000));
+    date_default_timezone_set($kernel->config('app.i18n.timezone', 'America/Chicago'));
+    ini_set("session.gc_maxlifetime", $kernel->config('app.session.lifetime', 28000));
     
     // Initial response code (not sent to browser yet)
     $responseStatus = 200;
@@ -34,8 +34,8 @@ try {
     
     // Router - Add routes we want to match
     $router = $kernel->router();
-    require $kernel->config('path.config') . '/routes.php';
-
+    require $kernel->config('app.path.config') . '/routes.php';
+    
     // Handle both HTTP and CLI requests
     $request = $kernel->request();
     if($request->isCli()) {
@@ -95,6 +95,11 @@ try {
     // Run resulting content through filter
     $content = $kernel->events()->filter('dispatch_content', $content);
 
+    // Explicitly convert response to string so Exceptions won't get caught in __toString method
+    if($content instanceof Alloy\Module\Response) {
+        $content = $content->content();
+    }
+
 // Authentication Error
 } catch(\Alloy\Exception\Auth $e) {
     $responseStatus = 403;
@@ -138,7 +143,7 @@ if($content instanceof \Exception) {
         $e = $content;
         $content = "<h1>ERROR</h1><p>" . get_class($e) . " (Code: " . $e->getCode() . ")<br />" . $e->getMessage() . "</p>";
         // Show debugging info?
-        if($kernel && ($kernel->config('debug') || $kernel->config('mode.development'))) {
+        if($kernel && ($kernel->config('app.debug') || $kernel->config('app.mode.development'))) {
             $content .= "<p>File: " . $e->getFile() . " (" . $e->getLine() . ")</p>";
             $content .= "<pre>" . $e->getTraceAsString() . "</pre>";
         }
@@ -163,7 +168,7 @@ if($kernel) {
     $response->send();
     
     // Debugging on?
-    if($kernel->config('debug')) {
+    if($kernel->config('app.debug')) {
         echo "<hr />";
         echo "<pre>";
         print_r($kernel->trace());

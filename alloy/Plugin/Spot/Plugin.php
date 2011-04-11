@@ -63,7 +63,7 @@ class Plugin
         $kernel = $this->kernel;
 
         if(!$this->spotConfig) {
-            $dbCfg = $kernel->config('database');
+            $dbCfg = $kernel->config('app.database');
             if($dbCfg) {
                 // New config
                 $this->spotConfig = new \Spot\Config();
@@ -101,7 +101,7 @@ class Plugin
      */
     public function debugQueryLog()
     {
-        if($this->kernel->config('debug')) {
+        if($this->kernel->config('app.debug')) {
             // Executed queries
             echo "<hr />";
             echo "<h1>Executed Queries (" . \Spot\Log::queryCount() . ")</h1>";

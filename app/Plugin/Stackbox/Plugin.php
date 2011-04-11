@@ -20,10 +20,11 @@ class Plugin
 
         // Get current config settings
         $cfg = $kernel->config();
+        $app = $cfg['app'];
 
         // @todo Determine which site HOST is and set site_id
         // @todo Set file paths with current site_id
-        $siteFilesDir = 'site/' . $cfg['site']['id'] . '/';
+        $siteFilesDir = 'site/' . $cfg['app']['site']['id'] . '/';
 
         // Add config settings
         $kernel->config(array(
@@ -32,7 +33,7 @@ class Plugin
                     'modules' => 'content/',
                     'themes' => 'themes/',
                     'files' => $siteFilesDir,
-                    'assets_admin' => $cfg['dir']['assets'] . 'admin/'
+                    'assets_admin' => $cfg['app']['dir']['assets'] . 'admin/'
                 ),
 
                 'default' => array(
@@ -49,14 +50,14 @@ class Plugin
         $kernel->config(array(
             'cms' => array(
                 'path' => array(
-                    'modules' => $cfg['path']['root'] . $cfg['dir']['www'] . 'content/',
-                    'themes' => $cfg['path']['root'] . $cfg['dir']['www'] . 'themes/',
-                    'files' => $cfg['path']['root'] . $cfg['dir']['www'] . $siteFilesDir
+                    'modules' => $app['path']['root'] . $app['dir']['www'] . 'content/',
+                    'themes' => $app['path']['root'] . $app['dir']['www'] . 'themes/',
+                    'files' => $app['path']['root'] . $app['dir']['www'] . $siteFilesDir
                 ),
                 'url' => array(
-                    'assets_admin' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['cms']['dir']['assets_admin']),
-                    'themes' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['cms']['dir']['themes']),
-                    'files' => $cfg['url']['root'] . str_replace($cfg['dir']['www'], '', $cfg['cms']['dir']['files'])
+                    'assets_admin' => $cfg['url']['root'] . str_replace($app['dir']['www'], '', $cfg['cms']['dir']['assets_admin']),
+                    'themes' => $cfg['url']['root'] . str_replace($app['dir']['www'], '', $cfg['cms']['dir']['themes']),
+                    'files' => $cfg['url']['root'] . str_replace($app['dir']['www'], '', $cfg['cms']['dir']['files'])
                 )
             )
         ));
@@ -95,7 +96,7 @@ class Plugin
         // Only if layout is explicitly given
         if($layoutName) {
             $layout = new \Alloy\View\Template($layoutName, $request->format);
-            $layout->path($kernel->config('path.layouts'))
+            $layout->path($kernel->config('app.path.layouts'))
                 ->format($request->format);
 
             // Ensure layout exists
