@@ -296,7 +296,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $form = $view
                 ->method('delete')
                 ->action($this->kernel->url(array('page' => $request->page), 'page'))
-                ->submitButtonText('Delete');
+                ->submit('Delete');
             return "<p>Are you sure you want to delete this page and ALL data and modules on it?</p>" . $form;
         }
         return false;
