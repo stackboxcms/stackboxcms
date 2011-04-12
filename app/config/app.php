@@ -19,9 +19,19 @@ $app['path']['www'] = $app['path']['root'] . $app['dir']['www'];
 $app['path']['lib'] = $app['path']['root'] . $app['dir']['lib'];
 $app['path']['layouts'] = $app['path']['root'] . $app['dir']['layouts'];
 
-// URLs
+// Request URL from .htaccess or query string
+// ------------------------------------------
+$requestUrl = isset($_GET['u']) ? $_GET['u'] : '';
+$requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$urlBase = str_replace($requestUrl, '', $requestPath);
+
+// URL info
 $isHttps = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? false : true;
-$cfg['url']['root'] = 'http' . (($isHttps) ? 's' : '' ) . '://' . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost') . '/' . str_replace('\\', '/', substr($app['path']['root'] . $app['dir']['www'], strlen($_SERVER['DOCUMENT_ROOT'])+1));
+$urlHost = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost');
+// ------------------------------------------
+
+// URL Config values
+$cfg['url']['root'] = 'http' . (($isHttps) ? 's' : '' ) . '://' . $urlHost . '' . $urlBase;
 $cfg['url']['assets'] = $cfg['url']['root'] . str_replace($app['dir']['www'], '', $app['dir']['assets']);
 
 // Use Apache/IIS/nginx rewrite on URLs?

@@ -1,4 +1,8 @@
 <?php
+// Save current directory as full path to www
+define('ALLOY_WEB_ROOT', __DIR__);
+
+// Require app init (inital framework setup)
 require dirname(__DIR__) . '/init.php';
 
 
@@ -97,6 +101,7 @@ try {
 
     // Explicitly convert response to string so Exceptions won't get caught in __toString method
     if($content instanceof Alloy\Module\Response) {
+        $responseStatus = $content->status();
         $content = $content->content();
     }
 
@@ -141,11 +146,19 @@ if($content instanceof \Exception) {
     // Content still an exception, default display
     if($content instanceof \Exception) {
         $e = $content;
-        $content = "<h1>ERROR</h1><p>" . get_class($e) . " (Code: " . $e->getCode() . ")<br />" . $e->getMessage() . "</p>";
-        // Show debugging info?
+        $content = "<h1>ERROR</h1>";
+        $content .= "<p>" . get_class($e) . " (Code: " . $e->getCode() . ")<br />\n";
+        $content .= $e->getMessage() . "</p>";
+
+        // Show debugging info
         if($kernel && ($kernel->config('app.debug') || $kernel->config('app.mode.development'))) {
-            $content .= "<p>File: " . $e->getFile() . " (" . $e->getLine() . ")</p>";
-            $content .= "<pre>" . $e->getTraceAsString() . "</pre>";
+            $content .= "<h2>Stack Trace</h2>";
+            $content .= "<p>File: " . $e->getFile() . " (" . $e->getLine() . ")</p>\n";
+            $content .= "<pre>" . $e->getTraceAsString() . "</pre>\n";
+
+            // Request Data
+            $content .= "<h2>Request Data</h2>";
+            $content .= $kernel->dump($request->params());
         }
     }
 }
@@ -155,24 +168,15 @@ if($kernel) {
     $response = $kernel->response();
     
     // Set content and send response
-    if($responseStatus != 200) {
-        $response->status($responseStatus);
-    }
-
-    // Pass along set response status and data if we can
-    if($content instanceof Alloy\Module\Response) {
-        $response->status($content->status());
-    }
-    
+    $response->status($responseStatus);
     $response->content($content);
     $response->send();
     
     // Debugging on?
     if($kernel->config('app.debug')) {
         echo "<hr />";
-        echo "<pre>";
-        print_r($kernel->trace());
-        echo "</pre>";
+        echo "<h2>Event Trace</h2>";
+        echo $kernel->dump($kernel->trace());
     }
 
     // Notify that response has been sent
