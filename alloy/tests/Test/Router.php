@@ -176,4 +176,26 @@ class Test_Router extends \PHPUnit_Framework_TestCase
         $this->router->route('module', '/<:module>')
             ->condition('funnystuff');
     }
+
+    public function testRouteAfterMatchCallback()
+    {
+        $this->router->route('module', '/<:module>')
+            ->afterMatch(function($params, $method, $url) {
+                // Override 'module' to 'someValue'
+                $params['module'] = 'someValue';
+                return $params;
+            });
+        
+        $params = $this->router->match("GET", "anything");
+        $this->assertEquals(array('module' => 'someValue'), $params);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testRouteAfterMatchCallbackInvalidThrowsException()
+    {
+        $this->router->route('module', '/<:module>')
+            ->afterMatch('non_existant_function_should_throw_exception');
+    }
 }

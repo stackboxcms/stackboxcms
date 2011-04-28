@@ -447,7 +447,7 @@ class Kernel
             
             // Does module exist?
             if(false === $sModuleObject) {
-                throw new Exception_FileNotFound("Module '" . $module ."' not found");
+                throw new Exception\FileNotFound("Module '" . $module ."' not found");
             }
         }
 
@@ -460,7 +460,7 @@ class Kernel
         
         // Module action callable (includes __call magic function if method missing)?
         if(!is_callable(array($sModuleObject, $action))) {
-            throw new Exception_FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
+            throw new Exception\FileNotFound("Module '" . $module ."' does not have a callable method '" . $action . "'");
         }
 
         // Handle result
@@ -484,10 +484,6 @@ class Kernel
     {
         $request = $this->request();
         $requestMethod = $request->method();
-        // Emulate REST for browsers
-        if($request->isPost() && $request->post('_method')) {
-            $requestMethod = $request->post('_method');
-        }
         
         // Append 'Action' or 'Method'
         if(strtolower($requestMethod) == strtolower($action)) {
@@ -771,12 +767,11 @@ class Kernel
     public function dump()
     {
         $objects = func_get_args();
+        $content = "\n<pre>\n";
         foreach($objects as $object) {
-            echo "<h1>Dumping " . gettype($object) . "</h1><br />\n";
-            echo "\n<pre>\n";
-            print_r($object);
-            echo "\n</pre>\n";
+            $content .= print_r($object, true);
         }
+        return $content . "\n</pre>\n";
     }
     
     
