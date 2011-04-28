@@ -16,6 +16,20 @@ class Request
     // Request parameters
     protected $_params = array();
     
+
+    /**
+     * Ensure magic quotes are not mucking up request data
+     */
+    public function __construct()
+    {
+        // Die magic_quotes, just die...
+        if(get_magic_quotes_gpc()) {
+            array_walk_recursive(array($_GET, $_POST, $_COOKIE, $_REQUEST), function(&$value, $key) {
+                $value = stripslashes($value);
+            });
+            
+        }
+    }
     
     /**
     * Access values contained in the superglobals as public members
