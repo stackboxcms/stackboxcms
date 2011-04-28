@@ -23,6 +23,11 @@ cms.modal = (function (cms, $) {
                 return;
             }
 
+            // Not anchor link
+            if(!link.attr('href') || link.attr('href').indexOf('#') === 0) {
+                return;
+            }
+
             //alert("Wait...");
 
             // Re-open in window
@@ -126,7 +131,8 @@ cms.modal = (function (cms, $) {
                 cms.modal.content(data);
             },
             error: function(req) { // req = XMLHttpRequest object
-                cms.modal.error("[ERROR] Unable to load URL: " + req.responseText);
+                cms.modal.error("[ERROR " + req.status + "]\nResponse returned HTTP " + req.status + " error status");
+                cms.modal.content(req.responseText);
             }
         });
         return false;

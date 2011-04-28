@@ -10,7 +10,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function indexAction($request, $page, $module)
+    public function indexAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
     {
         return $this->kernel->dispatch('Blog_Post', __FUNCTION__, compact('request', 'page', 'module'));
     }
@@ -19,21 +19,22 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editAction($request, $page, $module)
+    public function editAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
     {
         // Get all blog posts (remember - query is not actually executed yet and can be futher modified by the gridview)
         $mapper = $this->kernel->mapper();
         $posts = $mapper->all('Module\Blog\Post\Entity');
         
         // Return view template
-        return $this->template(__FUNCTION__)->set(compact('posts', 'page', 'module'));
+        return $this->template(__FUNCTION__)
+            ->set(compact('posts', 'page', 'module'));
     }
     
     
     /**
      * Install Module
      *
-     * @see \Stackbox\Module\Controller\Abstract
+     * @see \Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
@@ -46,7 +47,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Uninstall Module
      *
-     * @see \Stackbox\Module\Controller\Abstract
+     * @see \Stackbox\Module\ControllerAbstract
      */
     public function uninstall()
     {
