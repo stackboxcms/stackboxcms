@@ -58,7 +58,7 @@ class File
     public function getSizeUrl($width, $height)
     {
         $kernel = \Kernel();
-        $siteId = $kernel->config('site.id');
+        $siteId = $kernel->config('app.site.id');
         $filesDir = $kernel->config('cms.path.files') . 'images/';
         $imageFile = str_replace($filesDir, '', $this->getPathname());
         return $kernel->url(array(
