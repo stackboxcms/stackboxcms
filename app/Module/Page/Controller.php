@@ -390,10 +390,18 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $content = false;
         } else {
             if('html' == $request->format) {
-                // Module placeholder
+                // Module placeholder if empty response
                 if(true === $moduleResponse || empty($moduleResponse)) {
                     $moduleResponse = "<p>&lt;" . $module->name . " Placeholder&gt;</p>";
                 }
+
+                // Alloy Module Response type
+                if($moduleResponse instanceof \Alloy\Module\Response) {
+                    // Call 'content' explicitly so Exceptions are not trapped in __toString
+                    $moduleResponse = $moduleResponse->content();
+                }
+
+                // Build module HTML
                 $content = '
                 <div id="cms_module_' . $module->id . '" class="cms_module module_' . strtolower($module->name) . '">
                   ' . $moduleResponse;
