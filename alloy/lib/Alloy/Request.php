@@ -24,10 +24,13 @@ class Request
     {
         // Die magic_quotes, just die...
         if(get_magic_quotes_gpc()) {
-            array_walk_recursive(array($_GET, $_POST, $_COOKIE, $_REQUEST), function(&$value, $key) {
+            $stripslashes_gpc = function(&$value, $key) {
                 $value = stripslashes($value);
-            });
-            
+            };
+            array_walk_recursive($_GET, $stripslashes_gpc);
+            array_walk_recursive($_POST, $stripslashes_gpc);
+            array_walk_recursive($_COOKIE, $stripslashes_gpc);
+            array_walk_recursive($_REQUEST, $stripslashes_gpc);
         }
     }
     
@@ -565,28 +568,5 @@ class Request
     public function isFlash()
     {
         return ($this->header('USER_AGENT') == 'Shockwave Flash');
-    }
-    
-    
-    /**
-     * Apply a user-defined function to all request parameters
-     *
-     * @string $function user-defined function
-     */
-    public function map($function)
-    {
-        $in = array(&$_GET, &$_POST, &$_COOKIE);
-        while (list($k,$v) = each($in)) {
-            if(is_array($v)) {
-                foreach ($v as $key => $val) {
-                    if (!is_array($val)) {
-                        $in[$k][$key] = $function($val);
-                    }
-                    $in[] =& $in[$k][$key];
-                }
-            }
-        }
-        unset($in);
-        return true;
     }
 }
