@@ -14,7 +14,7 @@ cms.modal = (function (cms, $) {
     // Bind submit button and link events
     p.bindEvents = function() {
         // Links inside modal window
-        p.elContent.delegate('a:not(.app_action_cancel)', 'click', function(e) {
+        p.elContent.delegate('a:not(.app_action_cancel):not([rel=popup])', 'click', function(e) {
             var link = $(this);
 
             // Not in CKEditor window
@@ -32,6 +32,24 @@ cms.modal = (function (cms, $) {
 
             // Re-open in window
             m.openLink(link);
+            e.preventDefault();
+            return false;
+        })
+        // Open links inside popup window
+        p.elContent.delegate('a[rel=popup]', 'click', function(e) {
+            var link = $(this);
+
+            // Not anchor link
+            if(!link.attr('href') || link.attr('href').indexOf('#') === 0) {
+                return;
+            }
+
+            // Open in popup window
+            var newWindow = window.open(link.attr('href'), 'cms_popup', 'height=400,width=800');
+            if (window.focus) {
+                newWindow.focus();
+            }
+
             e.preventDefault();
             return false;
         })

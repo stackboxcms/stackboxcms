@@ -22,7 +22,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // If user has admin access
             $access = true;
         } else {
-            // If there are not currently any users that exist
+            // If there are not currently any users that exist, allow access to create a new one
             $userCount = $this->kernel->mapper()->all('Module\User\Entity')->count();
             if($userCount == 0) {
                 $access = true;
@@ -30,7 +30,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         }
         
         if(!$access) {
-            throw new Alloy\Exception_Auth("User is not logged in or does not have proper permissions to perform requested action");
+            throw new Alloy\Exception\Auth("User is not logged in or does not have proper permissions to perform requested action");
         }
         
         return parent::init();
@@ -66,9 +66,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function newAction($request, $page, $module)
     {
+        // Item URL
+        $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $module->name, 'module_id' => (int) $module->id), 'module');
+
         return $this->formView()
             ->method('post')
-            ->action($this->kernel->url(array('action' => 'post'), 'user'));
+            ->action($itemUrl);
     }
     
     
@@ -82,10 +85,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
             return false;
         }
 
+        // Item URL
+        $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $module->name, 'module_id' => (int) $module->id, 'module_item' => $user->id), 'module_item');
+
         $form = $this->formView()
-            ->action($this->kernel->url(array('action' => 'post'), 'user'))
+            ->action($itemUrl)
             ->method('put')
-            ->data($user->dataExcept(array('password')));
+            ->data($user->dataExcept(array('site_id', 'password', 'salt')));
         return $form;
     }
     
@@ -97,18 +103,26 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function postMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper();
-        $item = $mapper->data($mapper->get('Module\User\Entity'), $request->post());
-        $item->site_id = 0;
+        $item = $mapper->create('Module\User\Entity', $request->post());
+
+        // Overwrite site_id to ensure this is for same site
+        $item->site_id = $page->site_id;
+        
+        // Attempt save
         if($mapper->save($item)) {
-            $itemUrl = $this->kernel->url(array('page' => '/'), 'page');
+            $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $module->name, 'module_id' => (int) $module->id, 'module_action' => 'editlist'), 'module');
             if($request->format == 'html') {
-                return $this->kernel->redirect($itemUrl);
+                return $this->editlistAction($request, $page, $module);
             } else {
-                return $this->kernel->resource($item)->status(201)->location($itemUrl);
+                return $this->kernel->resource($item)
+                    ->status(201)
+                    ->location($itemUrl);
             }
         } else {
-            $this->kernel->response(400);
-            return $this->formView()->errors($mapper->errors())->data($request->post());
+            return $this->formView()
+                ->status(400)
+                ->errors($mapper->errors())
+                ->data($request->post());
         }
     }
     
@@ -120,23 +134,30 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function putMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper();
-        $item = $mapper->get('Module\User\Entity', $request->id);
+        $item = $mapper->get('Module\User\Entity', (int) $request->module_item);
         if(!$item) {
             return false;
         }
-        $mapper->data($item, $request->post());
-        $item->site_id = 0;
+        $item->data($request->post());
+
+        // Overwrite site_id to ensure this is for same site
+        $item->site_id = $page->site_id;
         
+        // Attempt save
         if($mapper->save($item)) {
-            $itemUrl = $this->kernel->url(array('action' => 'index'), 'user');
+            $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $module->name, 'module_id' => (int) $module->id, 'module_action' => 'editlist'), 'module');
             if($request->format == 'html') {
-                return $this->indexAction($request);
+                return $this->editlistAction($request, $page, $module);
             } else {
-                return $this->kernel->resource($item)->status(201)->location($itemUrl);
+                return $this->kernel->resource($item)
+                    ->status(201)
+                    ->location($itemUrl);
             }
         } else {
-            $this->kernel->response(400);
-            return $this->formView()->errors($mapper->errors());
+            return $this->formView()
+                ->status(400)
+                ->errors($mapper->errors())
+                ->data($request->post());
         }
     }
     

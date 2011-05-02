@@ -19,13 +19,13 @@ class Plugin
         $this->kernel = $kernel;
 
         // Link to FileBrowser module to get an image link
-        $kernel->addMethod('filebrowserSelectImageLink', function() use($kernel) {
-           return '<a href="' . $kernel->url(array('action' => 'images'), 'filebrowser') . '" class="filebrowser_selection filebrowser_select_image" rel="popup">Select Image...</a>';
+        $kernel->addMethod('filebrowserSelectImageLink', function($fieldId = null) use($kernel) {
+           return '<a href="' . $kernel->url(array('action' => 'images'), 'filebrowser', array('field_fill_id' => $fieldId)) . '" class="filebrowser_selection filebrowser_select_image" rel="popup">Select Image...</a>';
         });
 
         // Link to FileBrowser module to get an image link
-        $kernel->addMethod('filebrowserSelectFileLink', function() use($kernel) {
-           return '<a href="' . $kernel->url(array('action' => 'files'), 'filebrowser') . '" class="filebrowser_selection filebrowser_select_file" rel="popup">Select File...</a>';
+        $kernel->addMethod('filebrowserSelectFileLink', function($fieldId = null) use($kernel) {
+           return '<a href="' . $kernel->url(array('action' => 'files'), 'filebrowser', array('field_fill_id' => $fieldId)) . '" class="filebrowser_selection filebrowser_select_file" rel="popup">Select File...</a>';
         });
     }
 }

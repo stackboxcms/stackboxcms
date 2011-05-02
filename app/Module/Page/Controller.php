@@ -62,14 +62,15 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 // Get new module entity, no ID supplied
                 // @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
                 $module = $mapper->get('Module\Page\Module\Entity');
-                $module->name = $request->name;
+                $module->id = $moduleId;
+                $module->name = $moduleName;
             }
             
             // Setup dummy module object if there is none loaded
             if(!$module) {
                 $module = $mapper->get('Module\Page\Module\Entity');
-                $module->id = 0;
-                $module->name = $request->name;
+                $module->id = $moduleId;
+                $module->name = $moduleName;
             }
             
             // Load requested module
@@ -397,6 +398,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
                 // Alloy Module Response type
                 if($moduleResponse instanceof \Alloy\Module\Response) {
+                    // Pass status and errors
+                    $response = $this->kernel->response();
+                    $response->status(
+                        $moduleResponse->status()
+                    );
+                    //$response->errors($moduleResponse->errors());
+
                     // Call 'content' explicitly so Exceptions are not trapped in __toString
                     $moduleResponse = $moduleResponse->content();
                 }

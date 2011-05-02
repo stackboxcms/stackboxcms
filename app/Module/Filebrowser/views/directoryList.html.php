@@ -97,4 +97,21 @@ if($request->get('CKEditor')):
   });
   </script>
 <?php endif; ?>
+
+<?php
+if($fieldId = $request->get('field_fill_id')):
+?>
+  <!-- Field value fill callback -->
+  <script type="text/javascript">
+  // Bind click events to use CKEditor callback
+  $('a').bind('click',function (e) {
+      var field = window.opener.document.getElementById('<?php echo $fieldId; ?>');
+      if(field) {
+        field.value = $(this).attr('href');
+      }
+      window.close();
+      return false;
+  });
+  </script>
+<?php endif; ?>
 </div>

@@ -72,15 +72,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         $mapper = $this->kernel->mapper();
         
-        if(!$module) {
-            $module = $mapper->get('Module\Slideshow\Item');
-            $form->method('POST');
+        $item = $mapper->get('Module\Slideshow\Item', $request->module_item);
+        if(!$item) {
+            return false;
         }
         
-        $item = $mapper->currentEntity($module);
-        
         // Set item data on form
-        $form->data($mapper->data($item));
+        $form->data($item->data());
         
         // Return view template
         return $this->template(__FUNCTION__)
@@ -122,7 +120,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function putMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper();
-        $item = $mapper->get('Module\Slideshow\Item', (int) $request->item);
+        $item = $mapper->get('Module\Slideshow\Item', (int) $request->id);
         if(!$item) {
             return false;
         }
@@ -193,7 +191,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $fields = $view->fields();
         
         // Set text 'content' as type 'editor' to get WYSIWYG
-        $fields['url']['after'] = $this->kernel->filebrowserSelectImageLink();
+        $fields['url']['after'] = $this->kernel->filebrowserSelectImageLink('url');
         
         $view->fields($fields)
             ->removeFields(array('module_id', 'site_id', 'ordering'));
