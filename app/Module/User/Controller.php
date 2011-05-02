@@ -8,6 +8,8 @@ use Alloy;
  */
 class Controller extends Stackbox\Module\ControllerAbstract
 {
+    protected $_path = __DIR__;
+
     /**
      * Access control
      */
@@ -43,13 +45,26 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         return false;
     }
+
+
+    /**
+     * List users for editing or adding
+     * @method GET
+     */
+    public function editlistAction($request, $page, $module)
+    {
+        $users = $this->kernel->mapper()->all('Module\User\Entity');
+
+        return $this->template(__FUNCTION__)
+            ->set(compact('users', 'request', 'page', 'module'))->content();
+    }
     
     
     /**
      * Create new user
      * @method GET
      */
-    public function newAction($request)
+    public function newAction($request, $page, $module)
     {
         return $this->formView()
             ->method('post')
@@ -60,19 +75,18 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editAction($request)
+    public function editAction($request, $page, $module)
     {
+        $user = $this->kernel->mapper()->get('Module\User\Entity', (int) $request->module_item);
+        if(!$user) {
+            return false;
+        }
+
         $form = $this->formView()
             ->action($this->kernel->url(array('action' => 'post'), 'user'))
-            ->method('put');
-        
-        if(!$module) {
-            $module = $this->kernel->mapper()->get('Module\User\Entity');
-            $form->method('post');
-        }
-        
-        // @todo: Fill-in user data for editing
-        return $form->data(array());
+            ->method('put')
+            ->data($user->dataExcept(array('password')));
+        return $form;
     }
     
     
@@ -80,7 +94,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Create a new resource with the given parameters
      * @method POST
      */
-    public function postMethod($request)
+    public function postMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper();
         $item = $mapper->data($mapper->get('Module\User\Entity'), $request->post());
@@ -103,7 +117,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Edit existing entry
      * @method PUT
      */
-    public function putMethod($request)
+    public function putMethod($request, $page, $module)
     {
         $mapper = $this->kernel->mapper();
         $item = $mapper->get('Module\User\Entity', $request->id);
@@ -171,6 +185,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     protected function formView()
     {
-        return parent::formView()->removeFields(array('salt'));
+        return $this->kernel->spotForm('Module\User\Entity')
+            ->removeFields(array('site_id', 'salt'));
     }
 }

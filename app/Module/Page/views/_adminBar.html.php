@@ -6,6 +6,7 @@
     </ul>
   </div>
   <div id="cms_admin_bar_inside">
+    <!-- page menu -->
     <ul>
       <li><a href="<?php echo $kernel->url(array('action' => 'new'), 'index_action'); ?>" rel="modal">New Page</a></li>
       <?php if('/' == $page->url): // ugly hack until routes are fixed for good ?>
@@ -14,6 +15,10 @@
         <li><a href="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'edit'), 'page_action'); ?>" rel="modal">Edit Page</a></li>
         <li><a href="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'delete'), 'page_action'); ?>" rel="modal">Delete Page</a></li>
       <?php endif; ?>
+    </ul>
+    <!-- user menu -->
+    <ul id="cms_admin_nav_user">
+      <li><a href="<?php echo $kernel->url(array('page' => $page->url, 'module_name' => 'user', 'module_id' => 0, 'module_action' => 'editlist'), 'module'); ?>" rel="modal">Users</a></li>
       <li><a href="<?php echo $kernel->url('logout'); ?>">Logout</a></li>
     </ul>
     <div class="clear"></div>

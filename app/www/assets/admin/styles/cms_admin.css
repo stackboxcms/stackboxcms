@@ -125,6 +125,10 @@ ADMIN BAR
         -moz-border-radius-bottomleft: 0;
         -webkit-border-bottom-left-radius: 0;
     }
+    /* user menu */
+    #cms_admin_nav_user {
+        float: right;
+    }
 
 /*
 MODAL / DIALOG

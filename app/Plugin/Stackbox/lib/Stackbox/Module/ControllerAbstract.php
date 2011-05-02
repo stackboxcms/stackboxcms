@@ -18,8 +18,8 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
     {
         return array(
             'view' => array('index', 'view', 'get', 'indexAction', 'viewAction', 'getMethod'),
-            'edit' => array('new', 'edit', 'delete', 'post', 'put', 'newAction', 'editAction', 'deleteAction', 'postMethod', 'putMethod', 'deleteMethod')
-            );
+            'edit' => array('new', 'edit', 'editlist', 'delete', 'post', 'put', 'newAction', 'editAction', 'editlistAction', 'deleteAction', 'postMethod', 'putMethod', 'deleteMethod')
+        );
     }
     
     
