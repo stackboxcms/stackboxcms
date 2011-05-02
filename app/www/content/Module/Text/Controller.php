@@ -44,7 +44,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editAction($request, $page, $module)
+    public function editlistAction($request, $page, $module)
     {
         $form = $this->formView()
             ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'), 'module')
@@ -63,7 +63,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $form->data($mapper->data($item));
         
         // Return view template
-        return $this->template(__FUNCTION__)->set(compact('form'));
+        return $this->template('editAction')->set(compact('form'));
     }
     
     
@@ -103,7 +103,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $mapper = $this->kernel->mapper('Module\Text\Mapper');
         $item = $mapper->currentEntity($module);
         if(!$item) {
-            throw new Exception_FileNotFound($this->name() . " module item not found");
+            return false;
         }
         $item->data($request->post());
         $item->module_id = $module->id;

@@ -22,7 +22,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editAction($request, $page, $module)
+    public function editlistAction($request, $page, $module)
     {
         return "There are currently no editable options for navigation display.";
     }

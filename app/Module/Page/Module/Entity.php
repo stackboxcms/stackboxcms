@@ -22,4 +22,22 @@ class Entity extends Stackbox\EntityAbstract
             'date_created' => array('type' => 'datetime')
         ) + parent::fields();
     }
+
+    /**
+     * Relations
+     */
+    /*
+    public static function relations() {
+        return array(
+            // Settings as key => value
+            'settings' => array(
+                'type' => 'HasManyKV', // HasMany Key/Values
+                'entity' => 'Module\Page\Module\Settings\Entity',
+                'keyField' => 'setting_key',
+                'valueField' => 'setting_value',
+                'where' => array('site_id' => ':entity.site_id', 'module_id' => ':entity.id')
+            )
+        ) + parent::relations();
+    }
+    */
 }

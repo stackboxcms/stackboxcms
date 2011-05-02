@@ -1,8 +1,8 @@
 <?php
-namespace Module\Slideshow\Item;
+namespace Module\Slideshow;
 use Stackbox;
 
-class Entity extends Stackbox\Module\EntityAbstract
+class Item extends Stackbox\Module\EntityAbstract
 {
     // Table
     protected static $_datasource = "module_slideshow_items";

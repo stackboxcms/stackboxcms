@@ -42,7 +42,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editAction($request, $page, $module)
+    public function editlistAction($request, $page, $module)
     {
         $form = $this->formView()
             ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'))
@@ -61,7 +61,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $form->data($mapper->data($item));
         
         // Return view template
-        return $this->template(__FUNCTION__)->set(compact('form'));
+        return $this->template('editAction')->set(compact('form'));
     }
     
     

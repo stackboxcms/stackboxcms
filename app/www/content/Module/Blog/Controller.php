@@ -1,6 +1,6 @@
 <?php
 namespace Module\Blog;
-use Stackbox;
+use Alloy, Module, Stackbox;
 
 /**
  * Blog Module

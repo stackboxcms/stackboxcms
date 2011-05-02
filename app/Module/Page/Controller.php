@@ -77,7 +77,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
             // Ensure user can execute requested action
             if(!$moduleObject->userCanExecute($user, $moduleAction)) {
-                throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+                throw new Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
             }
             
             // Emulate REST for browsers
@@ -411,7 +411,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                   <div class="cms_ui cms_ui_controls">
                     <div class="cms_ui_title"><span>' . $module->name . '</span></div>
                     <ul>
-                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'edit'), 'module') . '">Edit</a></li>
+                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'editlist'), 'module') . '">Edit</a></li>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'settings'), 'module') . '">Settings</a></li>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>
                     </ul>

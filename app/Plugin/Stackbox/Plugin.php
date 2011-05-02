@@ -72,8 +72,9 @@ class Plugin
         // Layout / API output
         $kernel->events()->addFilter('dispatch_content', 'cms_layout_api_output', array($this, 'layoutOrApiOutput'));
 
-        // Add sub-plugins
+        // Add sub-plugins and other plugins Stackbox depends on
         $kernel->plugin('Stackbox_User');
+        $kernel->plugin('Module\Filebrowser');
     }
 
 
