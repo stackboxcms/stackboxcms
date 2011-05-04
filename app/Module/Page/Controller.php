@@ -133,7 +133,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         // Also include modules in global template regions if global regions are present
         if($template->regionsType('global')) {
-            $modules->orWhere(array('site_id' => $kernel->config('site.id'), 'region' => $template->regionsType('global')));
+            $modules->orWhere(array('site_id' => $kernel->config('app.site.id'), 'region' => $template->regionsType('global')));
         }
         foreach($modules as $module) {
             // Loop over modules, building content for each region
@@ -262,7 +262,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         $mapper = $this->kernel->mapper('Module\Page\Mapper');
         $entity = $mapper->get('Module\Page\Entity')->data($request->post());
-        $entity->site_id = $this->kernel->config('site.id');
+        $entity->site_id = $this->kernel->config('app.site.id');
         $entity->parent_id = (int) $request->parent_id;
         $entity->date_created = $mapper->connection('Module\Page\Entity')->dateTime();
         $entity->date_modified = $entity->date_created;
@@ -355,7 +355,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $fields['parent_id']['type'] = 'select';
         // Get all pages for site
         $fields['parent_id']['options'] = array(0 => '[None]') + $this->kernel->mapper('Module\Page\Mapper')->all('Module\Page\Entity', array(
-                'site_id' => $this->kernel->config('site.id')
+                'site_id' => $this->kernel->config('app.site.id')
             ))->order(array(
                 'ordering' => 'ASC'
             ))->toArray('id', 'title'); // Return records in 'id' => 'title' key/value array

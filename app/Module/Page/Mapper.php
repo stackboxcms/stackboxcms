@@ -19,7 +19,7 @@ class Mapper extends Stackbox\Module\MapperAbstract
     public function getPageByUrl($url)
     {
         return $this->first('Module\Page\Entity', array(
-            'site_id' => \Kernel()->config('site.id'),
+            'site_id' => \Kernel()->config('app.site.id'),
             'url' => Entity::formatPageUrl($url))
         );
     }
@@ -34,7 +34,7 @@ class Mapper extends Stackbox\Module\MapperAbstract
     {
         if(null === $startPage) {
             $rootPages = $this->all('Module\Page\Entity', array(
-                'site_id' => \Kernel()->config('site.id'),
+                'site_id' => \Kernel()->config('app.site.id'),
                 'parent_id' => 0))->order(array('ordering' => 'ASC')
             );
         } else {
