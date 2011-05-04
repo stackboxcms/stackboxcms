@@ -34,7 +34,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if($pageUrl == '/') {
                 // Create new page for the homepage automatically if it does not exist
                 $page = $pageMapper->get('Module\Page\Entity');
-                $page->site_id = $kernel->config('site.id');
+                $page->site_id = $kernel->config('app.site.id');
                 $page->parent_id = 0;
                 $page->title = "Home";
                 $page->url = $pageUrl;

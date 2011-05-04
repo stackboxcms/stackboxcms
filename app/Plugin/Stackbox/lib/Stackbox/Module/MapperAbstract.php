@@ -22,7 +22,7 @@ abstract class MapperAbstract extends Spot\Mapper
         
         // Auto-add site_id to queries?
         if(true === $this->_auto_site_id_query) {
-            $siteId = \Kernel()->config('site.id');
+            $siteId = \Kernel()->config('app.site.id');
             $query->where(array('site_id' => (int) $siteId));
         }
         
