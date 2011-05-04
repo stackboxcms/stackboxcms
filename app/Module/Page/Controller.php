@@ -102,7 +102,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         }
         
         // Load page template
-        $activeTheme = ($page->theme) ? $page->theme : $kernel->config('cms.default.theme');
+        $activeTheme = ($page->theme) ? $page->theme : $kernel->config('app.site.theme', $kernel->config('cms.default.theme'));
         // Default template or page template
         if(!$page->template) {
             $activeTemplate = $activeTheme . '/' . $kernel->config('cms.default.theme_template');
