@@ -43,9 +43,16 @@ class Template extends Alloy\View\Template
         // Get template content
         $content = $this->content();
         
+        // Ensure errors due to malformed HTML document will not throw PHP errors
+        libxml_use_internal_errors(true);
+
+        // Parse template with DOMDocument
         $dom = new \DOMDocument();
         $dom->registerNodeClass('DOMElement', 'Module\Page\Template\DOMElement');
         $dom->loadHTML($content);
+
+        // Clear internal error buffer (free memory)
+        libxml_clear_errors();
 
         // REGIONS
         $xpath = new \DOMXPath($dom);
