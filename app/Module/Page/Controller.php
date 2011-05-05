@@ -420,8 +420,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     <div class="cms_ui_title"><span>' . $module->name . '</span></div>
                     <ul>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'editlist'), 'module') . '">Edit</a></li>
-                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'settings'), 'module') . '">Settings</a></li>
-                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>
+                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'settings'), 'module') . '">Settings</a></li>';
+                      if($module->id > 0) {
+                          $content .= '
+                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>';
+                      }
+                      $content .= '
                     </ul>
                   </div>
                   ';

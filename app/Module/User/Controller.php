@@ -64,8 +64,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Create new user
      * @method GET
      */
-    public function newAction($request, $page, $module)
+    public function newAction($request, $page = null, $module = null)
     {
+        if(!$page || !$module) {
+            return $this->kernel->redirect($this->kernel->url(array('page' => '/', 'module_name' => 'user', 'module_id' => 0, 'module_action' => 'new'), 'module'));
+        }
+
         // Item URL
         $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $module->name, 'module_id' => (int) $module->id), 'module');
 
