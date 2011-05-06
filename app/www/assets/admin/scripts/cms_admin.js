@@ -249,9 +249,9 @@ $(function() {
      * Module drag-n-drop, adding to page regions
      */
     cms_regions.sortable({
-        items: '.cms_region div.cms_module, .cms_region_global div.cms_module, div.cms_module_tile',
+        items: '.cms_module, .cms_module_tile',
         connectWith: cms_regions,
-        handle: 'div.cms_ui_controls .cms_ui_title',
+        handle: '.cms_ui_controls .cms_ui_title',
         placeholder: 'cms_module_placeholder',
         forcePlaceholderSize: true,
         start: function(e, ui) {
