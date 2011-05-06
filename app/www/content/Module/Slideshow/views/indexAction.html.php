@@ -3,12 +3,14 @@ $slideshowId = 'slideshow_' . $module->id;
 $assetsUrl = $kernel->config('url.root') . $kernel->config('cms.dir.modules') . 'Module/' . $module->name . '/assets/';
 ?>
 
-<div id="<?php echo $slideshowId; ?>">
-  <div class="slides_container">
+<div id="<?php echo $slideshowId; ?>" class="slideshow_wrapper">
+  <div class="slideshow_container">
 <?php foreach($items as $item): ?>
     <div class="slideshow_item">
-        <img src="<?php echo $item->url; ?>" alt="<?php echo $item->caption; ?>" />
+        <?php if($item->link): ?><a href="<?php echo $item->link; ?>"><?php endif; ?><img src="<?php echo $item->url; ?>" alt="<?php echo $item->caption; ?>" /><?php if($item->link): ?></a><?php endif; ?>
+        <?php if($item->caption): ?>
         <div class="slideshow_item_caption"><p><?php echo $item->caption; ?></p></div>
+        <?php endif; ?>
     </div>
 <?php endforeach; ?>
   </div>
@@ -16,6 +18,7 @@ $assetsUrl = $kernel->config('url.root') . $kernel->config('cms.dir.modules') . 
 
 <script type="text/javascript">
 $('#<?php echo $slideshowId; ?>').slides({
+    container: 'slideshow_container',
     preload: true,
     preloadImage: '<?php echo $assetsUrl; ?>images/loading.gif',
     play: 5000,
@@ -53,7 +56,7 @@ $asset = $view->helper('Asset');
 $view->head()->script($assetsUrl . '/scripts/jquery.slides.min.js');
 $view->head()->append('
 <style type="text/css">
-    #' . $slideshowId . ' .slides_container { width: 470px; display: none; }
-    #' . $slideshowId . ' .slideshow_item { width: 470px; height: 400px; display: block; }
+    #' . $slideshowId . ' .slides_container { position: relative; width: 470px; display: none; }
+    #' . $slideshowId . ' .slideshow_item { width: 470px; height: 260px; display: block; }
 </style>');
 ?>
