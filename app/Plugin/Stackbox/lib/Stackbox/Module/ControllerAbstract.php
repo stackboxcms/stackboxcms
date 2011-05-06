@@ -133,6 +133,14 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
                 NULL or default value if no setting exists yet in datastore
 
          */
-        return $this->response("No settings are available for this module.");
+        
+        $settings = array();
+        if(method_exists($this, 'settings')) {
+            $settings = $this->settings($page, $module);
+        }
+
+        // Dispatch to settings module to handle this and pass in retrieved settings to template
+        return $this->kernel->dispatch('Page_Module_Settings', 'editlistAction', array($request, $page, $module))
+            ->set(array('settingsInit' => $settings));
     }
 }

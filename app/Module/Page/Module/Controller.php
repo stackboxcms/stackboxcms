@@ -55,21 +55,22 @@ class Controller extends Stackbox\Module\ControllerAbstract
             ->data($request->post() + array(
                 'site_id' => $page->site_id,
                 'page_id' => $page->id,
-                'date_created' => $mapper->connection('Module\Page\Module\Entity')->dateTime()
+                'date_created' => new \DateTime()
             ));
         if($mapper->save($entity)) {
             $pageUrl = $this->kernel->url(array('page' => $page->url), 'page');
             if($request->format == 'html') {
                 // Set module data for return content
-                $mapper->data($module, $mapper->data($entity));
+                $module->data($entity->data());
                 // Dispatch to return module content
                 return $kernel->dispatch($entity->name, 'indexAction', array($request, $page, $entity));
             } else {
-                return $this->kernel->resource($entity)->status(201)->location($pageUrl);
+                return $this->kernel->resource($entity)
+                    ->created($pageUrl);
             }
         } else {
             $this->kernel->response(400);
-            return "<h1>ERROR!</h1>" . (string) $this->formView()
+            return $this->formView()
                 ->data($request->post())
                 ->errors($mapper->errors());
         }
@@ -137,9 +138,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     protected function formView()
     {
-        $view = new \Alloy\View\Generic\Form('form');
-        $view->action("")
-            ->fields($this->kernel->mapper()->fields('Module\Page\Module\Entity'))
+        $view = $this->kernel->spotForm('Module\Page\Module\Entity')
             ->removeFields(array('id', 'date_created', 'date_modified'));
         return $view;
     }
@@ -148,7 +147,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Install Module
      *
-     * @see Cx_Module_Controller_Abstract
+     * @see \Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
@@ -160,7 +159,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Uninstall Module
      *
-     * @see Cx_Module_Controller_Abstract
+     * @see \Stackbox\Module\ControllerAbstract
      */
     public function uninstall()
     {

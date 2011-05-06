@@ -64,12 +64,16 @@
 }
 .module_slideshow .pagination {
     position: absolute;
+    z-index: 11;
     right: 0;
     bottom: 0;
+    margin: 0;
+    padding: 5px;
 }
 .module_slideshow .pagination li {
     float: left;
     margin: 0 1px;
+    padding: 0;
     list-style: none;
 }
 .module_slideshow .pagination li a {
@@ -89,6 +93,7 @@
 }
 .module_slideshow .slideshow_item_caption {
     position: absolute;
+    z-index: 10;
     bottom: -35px;
     left: 0;
     width: 100%;

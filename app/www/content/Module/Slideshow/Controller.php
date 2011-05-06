@@ -178,6 +178,32 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         return $this->kernel->mapper()->dropDatasource('Module\Slideshow\Item');
     }
+
+
+    /**
+     * Settings init
+     * 
+     * Define all settings fields and values that will be needed
+     */
+    public function settings($page, $module)
+    {
+        return array(
+            // Group
+            'display' => array(
+                // Fields
+                'width' => array(
+                    'type' => 'int',
+                    'default' => 600,
+                    'after' => 'Pixel width of the slideshow'
+                ),
+                'height' => array(
+                    'type' => 'int',
+                    'default' => 350,
+                    'after' => 'Pixel height of the slideshow'
+                )
+            )
+        );
+    }
     
     
     /**
