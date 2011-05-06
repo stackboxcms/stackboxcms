@@ -23,9 +23,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // HTML template
         if($request->format == 'html') {
             return $this->template(__FUNCTION__)
-                ->set(array(
-                    'items' => $items
-                ));
+                ->set(compact('items', 'page', 'module'));
         }
         return $this->kernel->resource($items);
     }

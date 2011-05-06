@@ -121,6 +121,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
         }
 
         $template->parse();
+
+        // Add jQuery as the first item
+        $templateHead = $template->head();
+        $templateHead->script($kernel->config('cms.url.assets') . 'jquery-1.5.1.min.js');
         
         // Template Region Defaults
         $regionModules = array();
@@ -166,7 +170,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         // Template string content
         $template->clean(); // Remove all unmatched tokens
-        $templateHead = $template->head();
         
         // Admin stuff for HTML format
         if($template->format() == 'html') {
@@ -174,7 +177,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // Add user and admin stuff to the page
             if($user && $user->isAdmin()) {
                 // Admin toolbar, javascript, styles, etc.
-                $templateHead->script($kernel->config('cms.url.assets') . 'jquery-1.5.1.min.js');
                 $templateHead->script($kernel->config('cms.url.assets') . 'jquery-ui-1.8.11.min.js');
                 
                 // Setup javascript variables for use
@@ -419,8 +421,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
                   <div class="cms_ui cms_ui_controls">
                     <div class="cms_ui_title"><span>' . $module->name . '</span></div>
                     <ul>
-                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'editlist'), 'module') . '">Edit</a></li>
+                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'editlist'), 'module') . '">Edit</a></li>';
+                      /*
+                      $content .= '
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'settings'), 'module') . '">Settings</a></li>';
+                      */
                       if($module->id > 0) {
                           $content .= '
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>';
