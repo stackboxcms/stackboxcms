@@ -6,7 +6,9 @@ $formMethod = strtoupper(($method == 'GET' || $method == 'POST') ? $method : 'PO
 $formMethodRest = ($formMethod == 'POST' && $method != 'POST') ? $method : false;
 ?>
 
+<?php if($_form_tags): ?>
 <form action="<?php echo $action; ?>" method="<?php echo $formMethod; ?>" enctype="<?php echo $enctype; ?>">
+<?php endif;?>
   <div class="app_form">
   <?php if($fields && count($fields) >0): ?>
   <?php
@@ -83,9 +85,14 @@ $formMethodRest = ($formMethod == 'POST' && $method != 'POST') ? $method : false
       <input type="hidden" name="_method" value="<?php echo $formMethodRest; ?>" />
       <?php endif; ?>
     </div>
+    <?php if($_submit = $view->submit()): ?>
     <div class="app_form_actions">
-      <button type="submit" class="app_action_primary"><?php echo $view->submit(); ?></button>
+      <button type="submit" class="app_action_primary"><?php echo $_submit; ?></button>
       <!--<a href="#" class="app_action_cancel">Cancel</a>-->
     </div>
+    <?php endif; ?>
   </div>
+
+<?php if($_form_tags): ?>
 </form>
+<?php endif; ?>
