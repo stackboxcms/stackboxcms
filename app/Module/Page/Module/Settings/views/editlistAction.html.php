@@ -1,8 +1,8 @@
 <?php
 // Form URL to update settings with
 $formUrl = $view->url(array(
-	'module_name' => 'page_module_settings',
-	'module_id' => (int) $module->id),
+  'module_name' => 'page_module_settings',
+  'module_id' => (int) $module->id),
 'module');
 ?>
 <h2>Settings</h2>
@@ -13,11 +13,15 @@ $formUrl = $view->url(array(
   <h3><?php echo $kernel->formatUnderscoreWord($group); ?></h3>
 
   <?php
+  // Determine which settings belong to this form
+  $fieldData = array_intersect_key($settings, $fields);
+
   // Render form fields without <form> tags or submit buttons
   $form = $view->generic('Form')
-  	->fields($fields)
-  	->formTags(false)
-  	->submit(false);
+    ->fields($fields)
+    ->data($fieldData)
+    ->formTags(false)
+    ->submit(false);
   echo $form->content();
   ?>
 <?php endforeach; ?>

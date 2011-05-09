@@ -6,13 +6,18 @@ class Collection extends Stackbox\EntityAbstract implements \Countable, \Iterato
 {
     // Array of key => value settings
     protected $_settings = array();
+    protected $_settingsEntities;
 
     /**
      *
      */
-    public function __construct(array $settings = array())
+    public function __construct($settings = array())
     {
-        $this->_settings = $settings;
+        // Store resulting collection of entities
+        $this->_settingsEntities = $settings;
+
+        // Store as array key => value
+        $this->_settings = $settings->toArray('setting_key', 'setting_value');
     }
 
 
@@ -46,10 +51,10 @@ class Collection extends Stackbox\EntityAbstract implements \Countable, \Iterato
      */
     public function count()
     {
-        return count($this->_settings);
+        return count($this->_settingsEntities);
     }
     public function getIterator()
     {
-        return $this->_settings;
+        return $this->_settingsEntities;
     }
 }

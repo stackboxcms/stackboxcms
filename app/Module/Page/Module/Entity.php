@@ -53,6 +53,6 @@ class Entity extends Stackbox\EntityAbstract
             ->where(array('site_id' => $this->site_id, 'module_id' => $this->id))
             ->order(array('ordering' => 'ASC'));
 
-        return new Settings\Collection($settings->toArray('setting_key', 'setting_value'));
+        return new Settings\Collection($settings);
     }
 }

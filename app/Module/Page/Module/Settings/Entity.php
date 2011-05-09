@@ -16,7 +16,7 @@ class Entity extends Stackbox\EntityAbstract
             'site_id' => array('type' => 'int', 'index' => 'site_module', 'default' => 0),
             'module_id' => array('type' => 'int', 'index' => 'site_module', 'required' => true),
             'setting_key' => array('type' => 'string', 'required' => true),
-            'setting_value' => array('type' => 'string', 'required' => true),
+            'setting_value' => array('type' => 'string'), // Not "required" because values can be NULL
             'ordering' => array('type' => 'int', 'default' => 0)
         ) + parent::fields();
     }

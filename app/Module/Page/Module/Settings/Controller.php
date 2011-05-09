@@ -29,7 +29,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function editlistAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
     {
         // Get all settings for current module
-        $settings = $module->settings();
+        $settings = $module->settings()->toArray();
         
         // Return view template
         return $this->template(__FUNCTION__)
@@ -44,6 +44,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function postMethod(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
     {
+        $postSettings = $request->post(); // POST payload
         $mapper = $this->kernel->mapper();
 
         // Steps:
@@ -51,11 +52,36 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // - Add settings that don't exist
 
         $settings = $module->settings();
+        $currentSettings = $settings->toArray();
 
+        $updateSettings = array_intersect_key($postSettings, $currentSettings);
+        $insertSettings = array_diff_key($postSettings, $currentSettings);
 
-        var_dump($settings->toArray(), $request->post());
+        // UPDATE settings that already exist
+        foreach($settings as $setting) {
+            // Update with value from POST data
+            $setting->setting_value = $updateSettings[$setting->setting_key];
+            $mapper->save($setting);
+        }
 
-        echo __METHOD__;
+        // INSERT settings that don't already exist
+        foreach($insertSettings as $key => $value) {
+            $setting = new Entity();
+            $setting->data(array(
+                'site_id' => $module->site_id,
+                'module_id' => $module->id,
+                'setting_key' => $key,
+                'setting_value' => $value
+            ));
+            $mapper->save($setting);
+        }
+
+        //return $this->response("Settings have been updated");
+
+        return $this->kernel->redirect($this->kernel->url(array(
+                'module_name' => $module->name,
+                'module_id' => (int) $module->id),
+            'module'));
     }
     
     

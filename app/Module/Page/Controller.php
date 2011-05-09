@@ -78,7 +78,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
             // Ensure user can execute requested action
             if(!$moduleObject->userCanExecute($user, $moduleAction)) {
-                throw new Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+                throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
             }
             
             // Emulate REST for browsers
