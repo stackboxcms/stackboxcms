@@ -1,5 +1,5 @@
 <?php
-namespace Module\Page\Module;
+namespace Module\Page\Module\Settings;
 use Stackbox;
 
 class Entity extends Stackbox\EntityAbstract

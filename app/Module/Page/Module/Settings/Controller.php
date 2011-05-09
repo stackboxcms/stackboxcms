@@ -23,13 +23,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
     /**
      * Edit list for admin view
+     * 
      * @method GET
      */
     public function editlistAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
     {
         // Get all settings for current module
-        //$mapper = $this->kernel->mapper();
-        //$items = $mapper->all('Module\Slideshow\Item');
+        $settings = $module->settings();
         
         // Return view template
         return $this->template(__FUNCTION__)
@@ -38,27 +38,24 @@ class Controller extends Stackbox\Module\ControllerAbstract
     
     
     /**
-     * Create a new resource with the given parameters
+     * Update settings
+     * 
      * @method POST
      */
-    public function postMethod($request, $page, $module)
+    public function postMethod(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
     {
         $mapper = $this->kernel->mapper();
-        // @todo Loop over ALL settings for current module and save them with passed values
-    }
-    
-    
-    /**
-     * @method DELETE
-     */
-    public function deleteMethod($request, $page, $module)
-    {
-        $mapper = $this->kernel->mapper();
-        $item = $mapper->get('Module\Slideshow\Item', $request->module_item);
-        if(!$item) {
-            return false;
-        }
-        return $mapper->delete($item);
+
+        // Steps:
+        // - Loop over all settings to see which ones already exist and update them
+        // - Add settings that don't exist
+
+        $settings = $module->settings();
+
+
+        var_dump($settings->toArray(), $request->post());
+
+        echo __METHOD__;
     }
     
     

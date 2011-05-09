@@ -40,4 +40,19 @@ class Entity extends Stackbox\EntityAbstract
         ) + parent::relations();
     }
     */
+
+
+    /**
+     * Get and return settings in special collction with direct access to settings by 'setting_key' name
+     */
+    public function settings()
+    {
+        $kernel = \Kernel();
+        $mapper = $kernel->mapper();
+        $settings = $mapper->all('Module\Page\Module\Settings\Entity')
+            ->where(array('site_id' => $this->site_id, 'module_id' => $this->id))
+            ->order(array('ordering' => 'ASC'));
+
+        return new Settings\Collection($settings->toArray('setting_key', 'setting_value'));
+    }
 }
