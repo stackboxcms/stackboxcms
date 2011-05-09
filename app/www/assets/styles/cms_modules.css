@@ -59,6 +59,7 @@
 /**
  * Slideshow Module
  */
+.module_slideshow,
 .module_slideshow .slideshow_container {
     position: relative;
 }
@@ -85,11 +86,9 @@
     background-color: #eee;
     color: #000;
 }
-.module_slideshow .pagination li a:hover {
-    background-color: #ccc;
-}
+.module_slideshow .pagination li a:hover,
 .module_slideshow .pagination li.current a {
-    
+    background-color: #ccc;
 }
 .module_slideshow .slideshow_item_caption {
     position: absolute;
