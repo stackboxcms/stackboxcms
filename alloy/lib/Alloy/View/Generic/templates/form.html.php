@@ -15,6 +15,11 @@ $formMethodRest = ($formMethod == 'POST' && $method != 'POST') ? $method : false
   foreach($fields as $fieldName => $fieldOpts):
     $fieldLabel = isset($fieldOpts['title']) ? $fieldOpts['title'] : ucwords(str_replace('_', ' ', $fieldName));
     $fieldType = isset($fieldOpts['type']) ? $fieldOpts['type'] : 'string';
+    $fieldData = $view->data($fieldName);
+    // Empty and non-zero value
+    if(empty($fieldData) && !is_numeric($fieldData) && is_scalar($fieldOpts['default'])) {
+      $fieldData = isset($fieldOpts['default']) ? $fieldOpts['default'] : null;
+    }
     ?>
     <div class="app_form_field app_form_field_<?php echo strtolower($fieldOpts['type']); ?>">
       <label><?php echo $fieldLabel; ?></label>
@@ -34,29 +39,29 @@ $formMethodRest = ($formMethod == 'POST' && $method != 'POST') ? $method : false
         
         case 'bool':
         case 'boolean':
-          echo $form->checkbox($fieldName, (int) $view->data($fieldName));
+          echo $form->checkbox($fieldName, (int) $fieldData);
         break;
         
         case 'int':
         case 'integer':
-          echo $form->text($fieldName, $view->data($fieldName), array('size' => 10));
+          echo $form->text($fieldName, $fieldData, array('size' => 10));
         break;
         
         case 'string':
-          echo $form->text($fieldName, $view->data($fieldName), array('size' => 40));
+          echo $form->text($fieldName, $fieldData, array('size' => 40));
         break;
         
         case 'select':
           $options = isset($fieldOpts['options']) ? $fieldOpts['options'] : array();
-          echo $form->select($fieldName, $options, $view->data($fieldName));
+          echo $form->select($fieldName, $options, $fieldData);
         break;
         
         case 'password':
-          echo $form->input('password', $fieldName, $view->data($fieldName), array('size' => 25));
+          echo $form->input('password', $fieldName, $fieldData, array('size' => 25));
         break;
         
         default:
-          echo $form->input($fieldType, $fieldName, $view->data($fieldName));
+          echo $form->input($fieldType, $fieldName, $fieldData);
       }
       ?>
       </span>
