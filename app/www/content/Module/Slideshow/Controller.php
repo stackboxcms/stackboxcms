@@ -200,6 +200,16 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     'type' => 'int',
                     'default' => 350,
                     'after' => 'Pixel height of the slideshow'
+                ),
+                'slide_delay' => array(
+                    'type' => 'int',
+                    'default' => 5000,
+                    'after' => 'Time delay between slides (milliseconds)'
+                ),
+                'slide_speed' => array(
+                    'type' => 'int',
+                    'default' => 350,
+                    'after' => 'Animation time for slide effect (milliseconds)'
                 )
             )
         );

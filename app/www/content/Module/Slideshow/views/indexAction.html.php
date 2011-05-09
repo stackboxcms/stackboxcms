@@ -21,9 +21,11 @@ $('#<?php echo $slideshowId; ?>').slides({
     container: 'slideshow_container',
     preload: true,
     preloadImage: '<?php echo $assetsUrl; ?>images/loading.gif',
-    play: <?php echo (int) $module->setting('play_speed', 5000); ?>,
-    pause: <?php echo (int) $module->setting('pause_speed', 2500); ?>,
+    play: <?php echo (int) $module->setting('slide_delay', 5000); ?>,
+    pause: <?php echo (int) $module->setting('slide_delay', 5000); ?>,
+    slideSpeed: <?php echo (int) $module->setting('slide_speed', 5000); ?>,
     hoverPause: true,
+    crossfade: true,
     animationStart: function(current) {
         $('.slideshow_item_caption').stop().animate({
             bottom: -35
