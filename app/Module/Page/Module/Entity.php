@@ -6,6 +6,7 @@ class Entity extends Stackbox\EntityAbstract
 {
     // Setup table and fields
     protected static $_datasource = "page_modules";
+    protected $_settings;
     
     /**
      * Fields
@@ -47,12 +48,30 @@ class Entity extends Stackbox\EntityAbstract
      */
     public function settings()
     {
+        if($this->_settings) {
+            return $this->_settings;
+        }
+
         $kernel = \Kernel();
         $mapper = $kernel->mapper();
         $settings = $mapper->all('Module\Page\Module\Settings\Entity')
             ->where(array('site_id' => $this->site_id, 'module_id' => $this->id))
             ->order(array('ordering' => 'ASC'));
 
-        return new Settings\Collection($settings);
+        $this->_settings = new Settings\Collection($settings);
+        return $this->_settings;
+    }
+
+
+    /**
+     * Get setting value by key name
+     */
+    public function setting($key, $default = null)
+    {
+        $settings = $this->settings();
+        if($v = $settings->$key) {
+            return $v;
+        }
+        return $default;
     }
 }

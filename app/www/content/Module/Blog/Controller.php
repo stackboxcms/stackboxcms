@@ -19,7 +19,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
+    public function editlistAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
     {
         // Get all blog posts (remember - query is not actually executed yet and can be futher modified by the gridview)
         $mapper = $this->kernel->mapper();
