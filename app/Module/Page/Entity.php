@@ -11,6 +11,9 @@ class Entity extends Stackbox\EntityAbstract
 
     // Table
     protected static $_datasource = "pages";
+
+    // Hierarchy
+    public $children = array();
     
     /**
      * Fields
@@ -37,6 +40,7 @@ class Entity extends Stackbox\EntityAbstract
      */
     public static function relations() {
         return array(
+            /*
             // Subpages / hierarchy
             'children' => array(
                 'type' => 'HasMany',
@@ -44,6 +48,7 @@ class Entity extends Stackbox\EntityAbstract
                 'where' => array('site_id' => ':entity.site_id', 'parent_id' => ':entity.id'),
                 'order' => array('ordering' => 'ASC')
                 ),
+            */
             // Modules in regions on page
             'modules' => array(
                 'type' => 'HasMany',

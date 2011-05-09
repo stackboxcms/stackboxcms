@@ -7,6 +7,8 @@ use Stackbox, Alloy;
  */
 class Controller extends Stackbox\Module\ControllerAbstract
 {
+    protected $_path = __DIR__;
+    
     /**
      * @method GET
      */
@@ -339,7 +341,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $pages = $mapper->pageTree();
         
         // View template
-        return $this->view(__FUNCTION__)
+        return $this->template(__FUNCTION__)
             ->format($request->format)
             ->set(array('pages' => $pages));
     }
