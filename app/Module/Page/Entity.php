@@ -12,7 +12,7 @@ class Entity extends Stackbox\EntityAbstract
     // Table
     protected static $_datasource = "pages";
 
-    // Hierarchy
+    // Public property that will contain child paged when Mapper::pageTree() is called
     public $children = array();
     
     /**
