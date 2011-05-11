@@ -283,9 +283,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 return $this->kernel->resource($entity)->status(201)->location($pageUrl);
             }
         } else {
-            $this->kernel->response(400);
             return $this->newAction($request)
                 ->data($request->post())
+                ->status(400)
                 ->errors($mapper->errors());
         }
     }
@@ -395,6 +395,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $content = false;
         } else {
             if('html' == $request->format) {
+                $content = '';
+
                 // Module placeholder if empty response
                 if(true === $moduleResponse || empty($moduleResponse)) {
                     $moduleResponse = "<p>&lt;" . $module->name . " Placeholder&gt;</p>";
@@ -402,19 +404,27 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
                 // Alloy Module Response type
                 if($moduleResponse instanceof \Alloy\Module\Response) {
-                    // Pass status and errors
-                    $response = $this->kernel->response();
-                    $response->status(
-                        $moduleResponse->status()
-                    );
-                    //$response->errors($moduleResponse->errors());
+                    // Pass HTTP status code
+                    $response = $this->kernel->response($moduleResponse->status());
+
+                    // Display errors
+                    if($errors = $moduleResponse->errors()):
+                      $content .= '<p><b>ERRORS:</b></p>';
+                      $content .= '<ul>';
+                      foreach($errors as $field => $fieldErrors):
+                        foreach($fieldErrors as $error):
+                            $content .= '<li>' . $error . '</li>';
+                        endforeach;
+                      endforeach;
+                      $content .= '</ul>';
+                    endif;
 
                     // Call 'content' explicitly so Exceptions are not trapped in __toString
                     $moduleResponse = $moduleResponse->content();
                 }
 
                 // Build module HTML
-                $content = '
+                $content .= '
                 <div id="cms_module_' . $module->id . '" class="cms_module module_' . strtolower($module->name) . '">
                   ' . $moduleResponse;
                 // Show controls only for authorized users and requests that are not AJAX

@@ -103,6 +103,9 @@ try {
     if($content instanceof Alloy\Module\Response) {
         $responseStatus = $content->status();
         $content = $content->content();
+    } else {
+        // Use explicitly set status code
+        $responseStatus = $kernel->response()->status();
     }
 
 // Authentication Error
