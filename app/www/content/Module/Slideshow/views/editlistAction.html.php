@@ -1,6 +1,6 @@
 
 <div class="module_slideshow">
-    <p><a href="<?php echo $kernel->url(array('page' => $page->url, 'module_name' => 'slideshow', 'module_id' => $module->id, 'module_action' => 'new'), 'module'); ?>">New Image</a></p>
+    <p><a href="<?php echo $kernel->url(array('page' => $page->url, 'module_name' => 'slideshow', 'module_id' => $module->id, 'module_action' => 'new'), 'module'); ?>" class="cms_button">New Image</a></p>
 <?php
 $table = $view->generic('datagrid');
 $table->data($items)

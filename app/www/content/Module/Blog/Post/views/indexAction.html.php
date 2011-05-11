@@ -10,13 +10,5 @@
   <?php endforeach; ?>
 <?php else: ?>
   <p>No blog posts to show</p>
-  
-  <?php $view->cache(function($view) { ?>
-    <?php
-    // Expensive external HTTP request
-    echo "Cached content";
-    ?>
-  <?php }, 3600, 'github_zf2_commits'); ?>
-  
 <?php endif; ?>
 </div>

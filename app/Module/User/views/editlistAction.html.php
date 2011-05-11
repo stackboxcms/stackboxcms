@@ -1,6 +1,6 @@
 
 <div class="module_user">
-    <p><a href="<?php echo $kernel->url(array('page' => $page->url, 'module_name' => 'user', 'module_id' => (int) $module->id, 'module_action' => 'new'), 'module'); ?>">New User</a></p>
+    <p><a href="<?php echo $kernel->url(array('page' => $page->url, 'module_name' => 'user', 'module_id' => (int) $module->id, 'module_action' => 'new'), 'module'); ?>" class="cms_button">New User</a></p>
 <?php
 $table = $view->generic('datagrid');
 $table->data($users)

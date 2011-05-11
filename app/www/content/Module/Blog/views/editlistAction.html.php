@@ -1,6 +1,6 @@
 
 <div class="module_blog">
-    <p><a href="<?php echo $kernel->url(array('page' => $page->url, 'module_name' => 'blog_post', 'module_id' => $module->id, 'module_action' => 'new'), 'module'); ?>">New Post</a></p>
+    <p><a href="<?php echo $kernel->url(array('page' => $page->url, 'module_name' => 'blog_post', 'module_id' => $module->id, 'module_action' => 'new'), 'module'); ?>" class="cms_button">New Post</a></p>
 <?php
 $table = $view->generic('datagrid');
 $table->data($posts)

@@ -121,7 +121,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     ->location($itemUrl);
             }
         } else {
-            return $this->formView()
+            return $this->newAction($request, $page, $module)
                 ->status(400)
                 ->errors($mapper->errors())
                 ->data($request->post());
@@ -156,7 +156,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     ->location($itemUrl);
             }
         } else {
-            return $this->formView()
+            return $this->editAction($request, $page, $module)
                 ->status(400)
                 ->errors($mapper->errors())
                 ->data($request->post());
