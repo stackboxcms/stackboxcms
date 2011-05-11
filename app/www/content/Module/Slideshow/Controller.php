@@ -15,6 +15,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         $kernel = \Kernel();
         $items = $kernel->mapper()->all('Module\Slideshow\Item')
+            ->where(array('module_id' => $module->id))
             ->order(array('ordering' => 'ASC'));
         if(!$items) {
             return false;
@@ -37,7 +38,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         // Get all blog posts (remember - query is not actually executed yet and can be futher modified by the gridview)
         $mapper = $this->kernel->mapper();
-        $items = $mapper->all('Module\Slideshow\Item');
+        $items = $mapper->all('Module\Slideshow\Item')
+            ->where(array('module_id' => $module->id))
+            ->order(array('ordering' => 'ASC'));
         
         // Return view template
         return $this->template(__FUNCTION__)
@@ -53,8 +56,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $form = $this->formView()
             ->method('post')
             ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'), 'module');
-        return $this->template('editAction')
-            ->set(compact('form'));
+        return $form;
     }
     
     
@@ -75,12 +77,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
             return false;
         }
         
-        // Set item data on form
-        $form->data($item->data());
-        
-        // Return view template
-        return $this->template(__FUNCTION__)
-            ->set(compact('form'));
+        // Set item data on form and return it
+        return $form->data($item->data());
     }
     
     
@@ -105,8 +103,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     ->location($itemUrl);
             }
         } else {
-            $this->kernel->response(400);
-            return $this->formView()->errors($mapper->errors());
+            return $this->newAction($request, $page, $module)
+                ->data($request->post())
+                ->status(400)
+                ->errors($mapper->errors());
         }
     }
     
@@ -137,8 +137,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     ->location($itemUrl);
             }
         } else {
-            $this->kernel->response(400);
-            return $this->formView()->errors($mapper->errors());
+            return $this->editAction($request, $page, $module)
+                ->data($request->post())
+                ->status(400)
+                ->errors($mapper->errors());
         }
     }
     
@@ -221,7 +223,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     protected function formView()
     {
-        $view = $this->kernel->spotForm($this->kernel->mapper()->get('Module\Slideshow\Item'));
+        $view = $this->kernel->spotForm('Module\Slideshow\Item');
         $fields = $view->fields();
         
         // Set text 'content' as type 'editor' to get WYSIWYG
