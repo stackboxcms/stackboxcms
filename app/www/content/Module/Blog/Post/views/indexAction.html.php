@@ -16,7 +16,7 @@
     // Expensive external HTTP request
     echo "Cached content";
     ?>
-  <?php }, 'github_zf2_commits', 3600); ?>
+  <?php }, 3600, 'github_zf2_commits'); ?>
   
 <?php endif; ?>
 </div>

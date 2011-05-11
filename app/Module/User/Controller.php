@@ -10,30 +10,28 @@ class Controller extends Stackbox\Module\ControllerAbstract
 {
     protected $_path = __DIR__;
 
+
     /**
-     * Access control
+     * Access control list for controller methods
      */
-    public function init($action = null)
+    public function acl()
     {
+        $acl = parent::acl();
+
         // Ensure user has rights to create new user account
         $access = false;
         $user = $this->kernel->user();
-        if($user && $user->isAdmin()) {
-            // If user has admin access
-            $access = true;
-        } else {
-            // If there are not currently any users that exist, allow access to create a new one
+        if(!$user || !$user->isLoggedIn() || !$user->isAdmin()) {
+            // If there are not currently any users that exist, allow access to create the first user, even if not logged in
             $userCount = $this->kernel->mapper()->all('Module\User\Entity')->count();
             if($userCount == 0) {
-                $access = true;
+                $acl = array_merge_recursive($acl, array(
+                    'view' => array('new', 'newAction', 'post', 'postMethod')
+                ));
             }
         }
-        
-        if(!$access) {
-            throw new Alloy\Exception\Auth("User is not logged in or does not have proper permissions to perform requested action");
-        }
-        
-        return parent::init();
+
+        return $acl;
     }
     
     
