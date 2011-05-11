@@ -42,22 +42,19 @@ class Mapper extends Stackbox\Module\MapperAbstract
             ->order(array('parent_id' => 'ASC', 'ordering' => 'ASC'));
         
         $index = array();
-        $tree  = array();
 
-        // step 1: build index (note that I use &$row references!) 
+        // Step 1: Build index-based array of page IDs to their respective page objects
         foreach($pages as $page) {
-          $index[$page->id] = $page;
-          if(!$page->parent_id) {
-            $tree[] = $page;
-          }
+            $index[$page->id] = $page;
         }
 
-        // step 2: link tree (references here as well!)
-        foreach ($pages as $page) {
-          $index[$page->parent_id]->children[] = $page;
+        // Step 2: Link tree children using built index with parent_id
+        foreach($pages as $page) {
+            if(isset($index[$page->parent_id])) {
+                $ip = $index[$page->parent_id];
+                $ip->children[] = $page;
+            }
         }
-
-        //var_dump($tree);
         
         // Return only a portion of the tree
         /*
@@ -68,6 +65,37 @@ class Mapper extends Stackbox\Module\MapperAbstract
         }
         */
 
-        return $tree;
+        return $this->buildPageTree($index);
+    }
+
+
+    /**
+     * 
+     */
+    private function buildPageTree($index, $parentId = 0, $level = 0) {
+        static $usedPages = array();
+        $pages = isset($index[$parentId]) ? $index[$parentId]->children : $index;
+
+        $items = array();
+        //$itemCount = 0;
+        foreach($pages as $p) {
+            // Ensure we don't use a page more than once
+            if(in_array($p->id, $usedPages)) {
+                continue;
+            }
+            $usedPages[] = $p->id;
+
+            //echo '<h2>' . str_repeat('-', $level) . ' ' . $p->title . ' (' . count($p->children) . ' children)</h2>';
+
+            $hasChildren = isset($index[$p->id]);
+            if($hasChildren) {
+                $p->children = call_user_func(array($this, __FUNCTION__), $index, $p->id, $level+1);
+            }
+
+            // Add page to item array
+            $items[] = $p;
+            //$itemCount++;
+        }
+        return $items;
     }
 }
