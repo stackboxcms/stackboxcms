@@ -409,14 +409,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
                     // Display errors
                     if($errors = $moduleResponse->errors()):
-                      $content .= '<p><b>ERRORS:</b></p>';
-                      $content .= '<ul>';
+                      $content .= '<div class="app_errors"><ul>';
                       foreach($errors as $field => $fieldErrors):
-                        foreach($fieldErrors as $error):
+                        foreach((array) $fieldErrors as $error):
                             $content .= '<li>' . $error . '</li>';
                         endforeach;
                       endforeach;
-                      $content .= '</ul>';
+                      $content .= '</ul></div>';
                     endif;
 
                     // Call 'content' explicitly so Exceptions are not trapped in __toString

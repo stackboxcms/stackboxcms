@@ -13,7 +13,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function indexAction($request, $page, $module)
     {
-        $posts = $this->kernel->mapper()->all('Module\Blog\Post\Entity', array(
+        $posts = $this->kernel->mapper()->all('Module\Blog\Post\Entity')
+            ->where(array(
+                'module_id' => $module->id,
                 'status' => Entity::STATUS_PUBLISHED
             ))
             ->order('date_created');
@@ -104,11 +106,15 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if($request->format == 'html') {
                 return $this->indexAction($request, $page, $module);
             } else {
-                return $this->kernel->resource($item->data())->status(201)->location($itemUrl);
+                return $this->kernel->resource($item->data())
+                    ->status(201)
+                    ->location($itemUrl);
             }
         } else {
-            $this->kernel->response(400);
-            return $this->formView()->errors($mapper->errors());
+            return $this->formView()
+                ->status(400)
+                ->data($request->post())
+                ->errors($mapper->errors());
         }
     }
     
@@ -133,11 +139,15 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if($request->format == 'html') {
                 return $this->indexAction($request, $page, $module);
             } else {
-                return $this->kernel->resource($item->data($item))->status(201)->location($itemUrl);
+                return $this->kernel->resource($item->data($item))
+                    ->status(201)
+                    ->location($itemUrl);
             }
         } else {
-            $this->kernel->response(400);
-            return $this->formView()->errors($mapper->errors());
+            return $this->formView()
+                ->status(400)
+                ->data($request->post())
+                ->errors($mapper->errors());
         }
     }
     

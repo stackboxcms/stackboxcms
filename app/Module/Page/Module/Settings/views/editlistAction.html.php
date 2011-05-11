@@ -25,6 +25,9 @@ $formUrl = $view->url(array(
   echo $form->content();
   ?>
 <?php endforeach; ?>
-  <button type="submit" class="app_action_primary">Save</button>
+    <div class="app_form_actions"> 
+      <button type="submit" class="app_action_primary">Save</button> 
+      <a href="#" class="app_action_cancel">Cancel</a>
+    </div> 
 </form>
 <?php endif; ?>

@@ -158,6 +158,9 @@ cms.modal = (function (cms, $) {
     m.content = function(content) {
         p.elContent.html(content);
         
+        // Convert form submit buttons to jQuery UI style
+        $(".cms_ui form input[type=button], .cms_ui form input[type=submit], .cms_ui form button, a.cms_button").button();
+
         // Load CKEditor in editor fields
         $("form .app_form_field_editor textarea", p.elContent).ckeditor(function(e) {
             //alert(CKEDITOR.instances[$(e).attr('name')]);

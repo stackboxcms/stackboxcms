@@ -18,7 +18,7 @@ ADMIN UI
         margin: 0;
         padding: 0;
     }
-    .cms_ui form .app_form input, .cms_ui form .app_form textarea, .cms_ui form .app_form button, .cms_ui form .app_form input {
+    .cms_ui form .app_form input, .cms_ui form .app_form textarea, .cms_ui form {
         font-size: 14px;
         padding: 4px;
         font-family: Arial, Helvetica, sans-serif;
@@ -26,33 +26,34 @@ ADMIN UI
     .cms_ui form .app_form textarea {
         width: 80%;
     }
-    .cms_ui form .app_form {
-        margin: 0;
-        padding: 0;
-        border: 0;
-        list-style: none;
-    }
     .cms_ui form .app_form_field {
         display: block;
         margin: 5px 0;
         padding: 3px;
         clear: both;
     }
-    .cms_ui form .app_form_field label.app_form_field_label {
+    .cms_ui form .app_form_field label {
         display: block;
         margin: 0;
-        padding: 5px 10px 0 10px;
-        width: 100px;
+        padding: 6px 10px 7px 10px;
+        width: 140px;
         float: left;
         text-align: right;
         cursor: pointer;
         font-size: 14px;
+        background: #f5f7f8;
     }
-    .cms_ui form .app_form_field span.app_form_field_element {
+    .cms_ui form .app_form_field span.app_form_field_input {
         display: block;
         margin: 0;
         padding: 0;
         float: left;
+        background: #fff;
+    }
+    .cms_ui form .app_form_field span.app_form_field_after {
+        display: block;
+        float: left;
+        padding: 5px 10px;
     }
     .cms_ui form .app_form_hidden {
         display: none;
@@ -60,7 +61,41 @@ ADMIN UI
     .cms_ui form .app_form_actions {
         clear: both;
         padding-top: 20px;
-        padding-left: 120px;
+        padding-left: 160px;
+    }
+
+    /* TABLE styles */
+    .cms_ui table.app_datagrid {
+        width: 100%;
+        background: #fff;
+    }
+    .cms_ui table.app_datagrid thead tr th,
+    .cms_ui table.app_datagrid tbody td {
+        padding: 10px;
+        vertical-align: middle;
+    }
+    /* thead/th is used for blue column labels */
+
+    .cms_ui table.app_datagrid thead tr th {
+        background: #d1e4f2;
+        color: #627789;
+        border-top: 1px solid #cfccc2;
+        font-weight: bold;
+        text-shadow: 0em 1px #fff;
+        text-align: left;
+        white-space: nowrap;
+    }
+    .cms_ui table.app_datagrid tbody tr {
+        border-top: 1px solid #cfccc2;
+    }
+    .cms_ui table.app_datagrid tbody td {
+        border-top: 1px solid #cfccc2;
+    }
+    .cms_ui table.app_datagrid tr.even {
+        background: #f5f7f8;
+    }
+    .cms_ui table.app_datagrid tr.odd {
+        background: #fff;
     }
 
 /*

@@ -23,7 +23,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         // Get all blog posts (remember - query is not actually executed yet and can be futher modified by the gridview)
         $mapper = $this->kernel->mapper();
-        $posts = $mapper->all('Module\Blog\Post\Entity');
+        $posts = $mapper->all('Module\Blog\Post\Entity')
+            ->where(array('module_id' => $module->id))
+            ->order(array('date_published' => 'DESC'));
         
         // Return view template
         return $this->template(__FUNCTION__)
