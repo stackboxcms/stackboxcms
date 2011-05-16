@@ -8,6 +8,22 @@ use Stackbox;
 class Controller extends Stackbox\Module\ControllerAbstract
 {
     /**
+     * Access control list for controller methods
+     */
+    public function acl()
+    {
+        $acl = parent::acl();
+
+        // Ensure users always have access to login
+        $acl = array_merge_recursive($acl, array(
+            'view' => array('new', 'newAction', 'post', 'postMethod', 'authenticate')
+        ));
+
+        return $acl;
+    }
+
+
+    /**
      * @method GET
      */
     public function indexAction($request)
@@ -36,8 +52,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // Get user by username first so we can get salt for hashing encrypted password
         $userTest = $mapper->first('Module\User\Entity', array('username' => $request->username));
         if(!$userTest || !$request->password) {
-            $this->kernel->response(401);
-            return $this->formView()->errors(array('username' => array('Incorrect username/password combination provided')));
+            return $this->formView()
+                ->status(401)
+                ->errors(array('username' => array('Incorrect username/password combination provided')));
         }
         
         // Test user login credentials
@@ -46,8 +63,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
             'password' => $userTest->encryptedPassword($request->password)
             ));
         if(!$user) {
-            $this->kernel->response(401);
-            return $this->formView()->errors(array('username' => array('Incorrect username/password combination provided')));
+            return $this->formView()
+                ->status(401)
+                ->errors(array('username' => array('Incorrect username/password combination provided')));
         }
         
         // Create new session
@@ -64,8 +82,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // Redirect to index
             return $this->kernel->redirect($this->kernel->url(array('page' => '/'), 'page'));
         } else {
-            $this->kernel->response(401);
-            return $this->formView()->errors($mapper->errors());
+            return $this->formView()
+                ->status(401)
+                ->errors($mapper->errors());
         }
     }
     
@@ -97,6 +116,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         // Delete all sessions matched for current user
         $this->kernel->mapper()->delete('Module\User\Entity', array('user_id' => $user->id));
+        $this->kernel->mapper()->delete('Module\User\Session\Entity', array('user_id' => $user->id));
         return $this->kernel->redirect($this->kernel->url(array('page' => '/'), 'page'));
     }
     
