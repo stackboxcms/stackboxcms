@@ -77,7 +77,7 @@ cms.modal = (function (cms, $) {
                     nData = $(data);
                     if(tData._method == 'DELETE') {
                         if(tData.item_id) {
-                            nModule = $('#' + nData.attr('id') + tData.item_id).remove();
+                            nModule = $('#cms_module_' + tData.item_id).remove();
                         }
                     } else {
                         nModule = $('#' + nData.attr('id')).replaceWith(data);
