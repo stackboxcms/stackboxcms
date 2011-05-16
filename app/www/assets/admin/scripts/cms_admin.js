@@ -83,7 +83,7 @@ cms.modal = (function (cms, $) {
                         nModule = $('#' + nData.attr('id')).replaceWith(data);
                         // Show edit controls if in edit mode
                         if(cms.config.editMode) {
-                            nModule.addClass('cms_ui_edit');
+                            $('div.cms_module').addClass('cms_ui_edit');
                         }
                     }
                     m.hide();
@@ -114,7 +114,7 @@ cms.modal = (function (cms, $) {
             autoOpen: false,
             closeOnEscape: true,
             modal: true,
-            'title' : '',
+            title : '',
             width: $(window).width() * 0.9,
             height: $(window).height() * 0.85,
             open: function(event,ui) {},
@@ -124,8 +124,7 @@ cms.modal = (function (cms, $) {
                     $("form .app_form_field_editor textarea", p.elContent).ckeditorGet().destroy();
                 } catch(e) {}
             }
-
-            });
+        });
         
         // Initialize...
         m.hide();
@@ -158,8 +157,39 @@ cms.modal = (function (cms, $) {
     m.content = function(content) {
         p.elContent.html(content);
         
+        // Set dialog buttons based on content
+        if($('form', p.elContent).length > 0) {
+            // Hide form buttons
+            $('.app_form_actions', p.elContent).hide();
+
+            // Show dialog buttons
+            p.el.dialog("option", "buttons", [
+                {
+                    text: "Save",
+                    click: function() {
+                        $("form", this).submit();
+                    }
+                },
+                {
+                    text: "Cancel",
+                    click: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            ]);
+        } else {
+            p.el.dialog("option", "buttons", [
+                {
+                    text: "Cancel",
+                    click: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            ]);
+        }
+
         // Convert form submit buttons to jQuery UI style
-        $(".cms_ui form input[type=button], .cms_ui form input[type=submit], .cms_ui form button, a.cms_button").button();
+        $(".cms_ui form input[type=button], .cms_ui form input[type=submit], .cms_ui form button, a.cms_button", p.elContent).button();
 
         // Load CKEditor in editor fields
         $("form .app_form_field_editor textarea", p.elContent).ckeditor(function(e) {
@@ -196,6 +226,9 @@ cms.modal = (function (cms, $) {
     m.error = function(msg) {
         alert(msg);
     };
+    m.selector = function() {
+        return p.el;
+    }
     
     // Expose public methods
     return m;
@@ -275,9 +308,9 @@ $(function() {
                     url: cms.config.url + cms.page.url + 'm,Page_Module,0.html',
                     data: {'region': nRegionName, 'name': nModuleName},
                     success: function(data, textStatus, req) {
-                        nModule.replaceWith(data).effect("highlight", {color: '#FFFFCF'}, 2000).css({border: '1px solid red'});
+                        nModule.replaceWith(data);
                         if(cms.config.editMode) {
-                            nModule.addClass('cms_ui_edit');
+                            $('div.cms_module').addClass('cms_ui_edit');
                         }
                     },
                     error: function(req) { // req = XMLHttpRequest object
@@ -292,6 +325,9 @@ $(function() {
                 data: 'ajax=1' + cms_serializeRegionModules(),
                 success: function(data, textStatus, req) {
                     // Do nothing for now, eventually might show some sort of activity notice in UI, etc.
+                    if(cms.config.editMode) {
+                        $('div.cms_module').addClass('cms_ui_edit');
+                    }
                 },
                 error: function(req) { // req = XMLHttpRequest object
                     alert("[ERROR] Unable to load URL: \n" + req.responseText);
@@ -313,7 +349,7 @@ $(function() {
     });
     
     /**
-     * Module editing - display controls on hover
+     * Module editing - display controls on click
      */
     $('#cms_admin_bar_editPage').toggle(function(e) {
         $('div.cms_module').addClass('cms_ui_edit');

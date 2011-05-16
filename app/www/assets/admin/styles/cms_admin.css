@@ -391,3 +391,6 @@ REGION / MODULE UI
         background-color: #AFAFAF;
         color: #000;
     }
+
+/* jQuery UI overrides */
+.ui-dialog-buttonpane .ui-dialog-buttonset { float: left!important; margin-left: 172px; }
