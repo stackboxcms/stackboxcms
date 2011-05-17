@@ -434,16 +434,22 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     <ul>
                       <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'editlist'), 'module') . '">Edit</a></li>';
                       
-
+                      // Options submenu
+                      $content .= '
+                      <li class="cms_ui_controls_menu">
+                      <a href="#" class="cms_ui_controls_menu_link"><i></i></a>
+                       <ul>';
                       // Only if module is really on page...
                       if($module->id > 0) {
                         // Settings link
                         $content .= '
-                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'settings'), 'module') . '">Settings</a></li>';
+                        <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'settings'), 'module') . '">Settings</a></li>';
                         $content .= '
-                      <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>';
+                        <li><a href="' . $this->kernel->url(array('page' => $page->url, 'module_name' => 'page_module', 'module_id' => 0, 'module_item' => (int) $module->id, 'module_action' => 'delete'), 'module_item') . '">Delete</a></li>';
                       }
                       $content .= '
+                       </ul>
+                      </li>
                     </ul>
                   </div>
                   ';

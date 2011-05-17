@@ -356,6 +356,7 @@ REGION / MODULE UI
     -webkit-border-bottom-left-radius: 0;
     -webkit-border-bottom-right-radius: 0;
     cursor: move;
+    z-index: 1001;
 }
     .cms_module .cms_ui_controls {
         font-size: 11px;
@@ -363,6 +364,7 @@ REGION / MODULE UI
     .cms_module .cms_ui_controls .cms_ui_title {
         display: block;
         padding: 5px 8px;
+        z-index: 1001;
     }
 .cms_module.cms_ui_edit {
     border: 2px dashed #bbb;
@@ -376,7 +378,7 @@ REGION / MODULE UI
 .cms_module .cms_ui_controls ul {
     position: absolute;
     top: 0;
-    right: 5px;
+    right: 0px;
     list-style: none;
     margin: 0px 0 0 0;
     padding: 0;
@@ -397,6 +399,48 @@ REGION / MODULE UI
         background-color: #AFAFAF;
         color: #000;
     }
+
+    a.cms_ui_controls_menu_link {
+        width: 18px;
+        height: 21px;
+        padding: 0 10px;
+        text-indent: -999px;
+        overflow: hidden;
+    }
+    /** CSS triangle **/
+    a.cms_ui_controls_menu_link i {
+        display: block;
+        width: 0;
+        height: 0;
+        margin: 3px 0 0 4px;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #eee;
+    }
+    .cms_module .cms_ui_controls li ul {
+        position: absolute;
+        top: 21px;
+        left: -999em;
+        width: 100px;
+        overflow: visible;
+        color: #eee;
+        background: #222;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius-topleft: 0;
+        -moz-border-radius-topright: 0;
+        -webkit-border-top-left-radius: 0;
+        -webkit-border-top-right-radius: 0;
+        padding-bottom: 5px;
+        z-index: 1002;
+    }
+    .cms_module .cms_ui_controls li:hover ul {
+        left: -40px;
+    }
+        .cms_module .cms_ui_controls li ul li {
+            float: none;
+        }
 
 /* jQuery UI overrides */
 .ui-dialog-buttonpane .ui-dialog-buttonset { float: left!important; margin-left: 172px; }
