@@ -35,7 +35,7 @@
       ->depth(1)
       ->sortByName();
     foreach($moduleDirs as $mDir): ?>
-      <div id="cms_module_tile_<?php echo $mDir->getFilename(); ?>" class="cms_module_tile">
+      <div rel="cms_module_tile_<?php echo $mDir->getFilename(); ?>" class="cms_module_tile">
         <h3><?php echo $mDir->getFilename(); ?></h3>
       </div>
     <?php endforeach; ?>

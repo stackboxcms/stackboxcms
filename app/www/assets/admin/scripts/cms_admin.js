@@ -158,35 +158,47 @@ cms.modal = (function (cms, $) {
         p.elContent.html(content);
         
         // Set dialog buttons based on content
-        if($('form', p.elContent).length > 0) {
+        var dialogButtons = [];
+        var dialogForm = $('form', p.elContent);
+        if(dialogForm && dialogForm.length > 0) {
             // Hide form buttons
-            $('.app_form_actions', p.elContent).hide();
+            dialogForm.find('.app_form_actions').hide();
 
-            // Show dialog buttons
-            p.el.dialog("option", "buttons", [
-                {
-                    text: "Save",
+            if(dialogForm.find('input[name=_method]').val() == "DELETE" || dialogForm.attr('method') == 'DELETE') {
+                dialogButtons[0] = {
+                    text: "Delete",
+                    id: "cms_modal_btn_delete",
                     click: function() {
                         $("form", this).submit();
                     }
-                },
-                {
-                    text: "Cancel",
+                };
+            } else {
+                dialogButtons[0] = {
+                    text: "Save",
+                    id: "cms_modal_btn_save",
                     click: function() {
-                        $(this).dialog("close");
+                        $("form", this).submit();
                     }
-                }
-            ]);
-        } else {
-            p.el.dialog("option", "buttons", [
-                {
-                    text: "Cancel",
-                    click: function() {
-                        $(this).dialog("close");
-                    }
-                }
-            ]);
+                };
+            }
         }
+
+        // Cancel button is always displayed
+        dialogButtons[dialogButtons.length] = {
+            text: "Cancel",
+            id: "cms_modal_btn_cancel",
+            click: function() {
+                $(this).dialog("close");
+            }
+        };
+
+        // Set dialog buttons
+        p.el.dialog("option", "buttons", dialogButtons);
+
+        // Hack to set button icons because dialog button support does not set icons with button definitions above
+        $('#cms_modal_btn_save').button({ icons: { primary: 'ui-icon-check' } });
+        $('#cms_modal_btn_cancel').button({ icons: { primary: 'ui-icon-cancel' } });
+        $('#cms_modal_btn_delete').button({ icons: { primary: 'ui-icon-trash' } });
 
         // Convert form submit buttons to jQuery UI style
         $(".cms_ui form input[type=button], .cms_ui form input[type=submit], .cms_ui form button, a.cms_button", p.elContent).button();
@@ -301,8 +313,8 @@ $(function() {
             var nRegionName = nRegion.attr('id').replace('cms_region_', '');
             // Admin module, dragged from floating pane
             if(ui.item.is('div.cms_module_tile')) {
-                var nModule = $('#' + ui.item.context.id);
-                var nModuleName = nModule.attr('id').replace('cms_module_tile_', '');
+                var nModule = ui.item;
+                var nModuleName = nModule.attr('rel').replace('cms_module_tile_', '');
                 $.ajax({
                     type: "POST",
                     url: cms.config.url + cms.page.url + 'm,Page_Module,0.html',
