@@ -34,9 +34,12 @@
       ->in($moduleDirsPath)
       ->depth(1)
       ->sortByName();
-    foreach($moduleDirs as $mDir): ?>
+    foreach($moduleDirs as $mDir):
+      $moduleAssetsUrl = $kernel->config('url.root') . $kernel->config('cms.dir.modules') . 'Module/' . $mDir->getFilename() . '/assets/';
+    ?>
       <div rel="cms_module_tile_<?php echo $mDir->getFilename(); ?>" class="cms_module_tile">
         <h3><?php echo $mDir->getFilename(); ?></h3>
+        <div class="cms_module_tile_icon"><img src="<?php echo $moduleAssetsUrl; ?>/images/icon.png" alt="<?php echo $mDir->getFilename(); ?> Module" width="32" height="32" /></div>
       </div>
     <?php endforeach; ?>
     <div class="clear"></div>
