@@ -355,15 +355,16 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function pagesAction($request)
     {
         $kernel = $this->kernel;
+        $mapper = $kernel->mapper('Module\Page\Mapper');
 
+        // Save page order (change parents)
         if($request->isPost()) {
             // Save page order
-            var_dump($request->pages);
-            return "POST REQUEST!";
+            $mapper->savePageOrder($request->pages);
+            return "Saved";
         }
         
         // Ensure page exists
-        $mapper = $kernel->mapper('Module\Page\Mapper');
         $page = $mapper->getPageByUrl($request->url);
         if(!$page) {
             return false;

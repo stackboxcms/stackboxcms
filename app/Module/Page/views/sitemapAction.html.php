@@ -3,7 +3,7 @@
 $tree = $view->generic('treeview')
     ->data($pages)
     ->item(function($page) use($view) {
-        return "<li>" . $page->title . "</li>";
+        return $page->title;
     })
     ->itemChildren(function($page) {
         return $page->children;

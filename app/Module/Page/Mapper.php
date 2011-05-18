@@ -114,4 +114,29 @@ class Mapper extends Stackbox\Module\MapperAbstract
 
         return $items;
     }
+
+
+    /**
+     * Update page order and parent hierarchy structure
+     */
+    public function savePageOrder(array $pages)
+    {
+        $datasource = $this->datasource('Module\Page\Entity');
+        $adapter = $this->connection('Module\Page\Entity');
+
+        // Update each page
+        $i = 0;
+        foreach($pages as $id => $parentId) {
+            $adapter->update($datasource, array(
+                // SET
+                'parent_id' => (int) $parentId,
+                'ordering' => $i
+                ),
+                // WHERE
+                array(
+                    'id' => (int) $id
+            ));
+            $i++;
+        }
+    }
 }

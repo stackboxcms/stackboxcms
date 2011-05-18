@@ -1,5 +1,8 @@
 <div id="cms_pages">
+
 <h2>Pages</h2>
+<p>Drag &amp; drop pages to re-arrange them. Changes will not be permanent until you click 'Save'.</p>
+
 <form action="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'pages'), 'page_action'); ?>" method="POST">
 <?php
 // Use generic TreeView to recursively display links
@@ -13,8 +16,8 @@ $tree = $view->generic('treeview')
     ->item(function($page) use($view) {
     ?>
       <div class="cms_pages_item">
-        <?php echo $view->link($page->title, array('page' => ltrim($page->url, '/')), 'page'); ?>
-        <input type="hidden" name="" value="" />
+        <?php echo $view->link($page->title, array('page' => ltrim($page->url, '/')), 'page'); ?> 
+        <input type="hidden" name="pages[<?php echo $page->id; ?>]" value="<?php echo (int) $page->parent_id; ?>" class="page_parent" />
       </div>
     <?php
     })
@@ -45,28 +48,24 @@ $('#cms_pages ul').nestedSortable({
     revert: 250,
     tabSize: 25,
     tolerance: 'pointer',
-    toleranceElement: '> div'
-});
+    toleranceElement: '> div',
+    stop: function(event, ui) {
+        // Update form elements with correct parent_id's
+        var pageData = $('#cms_pages ul').nestedSortable('toArray');
+        $.each(pageData, function(i, item) {
+            // Skip returned items that are not valid pages
+            if(isNaN(parseInt(item.item_id))) {
+                return;
+            }
 
-// Custom function to build sorted list
-function serializeNestedSet(items, parentId) {
-    var outStr = "";
-    if(items.is("ul")) {
-        items = items.children("li").not(".ui-sortable-helper");
-    }
-    if(items.length > 0) {
-        items.each(function() {
-            var itemId = this.id;
-            outStr += "&item["+parentId+"][]="+itemId+"";
-            outStr += serializeNestedSet($(this).children('ul'), itemId);
+            // Correct odd naming convention...
+            if("root" == item.parent_id) {
+                item.parent_id = 0;
+            }
+
+            // Set value back in page tree input element
+            $('#pages_' + item.item_id + ' .page_parent').val(item.parent_id);
         });
     }
-    return outStr;
-}
-
-$('#cms_pages form').submit(function() {
-   var pageData = $('#cms_pages ul').nestedSortable('serialize');
-   console.log(pageData);
-   console.log(serializeNestedSet($('#cms_pages ul'), 0));
 });
 </script>
