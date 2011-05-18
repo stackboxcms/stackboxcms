@@ -19,7 +19,6 @@ cms.modal = (function (cms, $) {
 
             // Not in CKEditor window
             if(link.closest('#cke_content').length) {
-                //alert("... BUT it's in a CKEditor, so I won't touch it...");
                 return;
             }
 
@@ -27,8 +26,6 @@ cms.modal = (function (cms, $) {
             if(!link.attr('href') || link.attr('href').indexOf('#') === 0) {
                 return;
             }
-
-            //alert("Wait...");
 
             // Re-open in window
             m.openLink(link);
@@ -140,6 +137,12 @@ cms.modal = (function (cms, $) {
         m.content('Loading...');
     };
     m.openLink = function(a) {
+
+        // Not anchor link
+        if(!a.attr('href') || a.attr('href').indexOf('#') === 0) {
+            return false;
+        }
+
         cms.modal.loading();
         $.ajax({
             type: "GET",

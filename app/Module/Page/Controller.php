@@ -345,6 +345,38 @@ class Controller extends Stackbox\Module\ControllerAbstract
             ->format($request->format)
             ->set(array('pages' => $pages));
     }
+
+
+    /**
+     * Pages display for admins to sort pages with
+     * 
+     * @method GET
+     */
+    public function pagesAction($request)
+    {
+        $kernel = $this->kernel;
+
+        if($request->isPost()) {
+            // Save page order
+            var_dump($request->pages);
+            return "POST REQUEST!";
+        }
+        
+        // Ensure page exists
+        $mapper = $kernel->mapper('Module\Page\Mapper');
+        $page = $mapper->getPageByUrl($request->url);
+        if(!$page) {
+            return false;
+        }
+
+        // All pages in tree form
+        $pages = $mapper->pageTree();
+        
+        // View template
+        return $this->template(__FUNCTION__)
+            ->format($request->format)
+            ->set(compact('page', 'pages'));
+    }
     
     
     /**

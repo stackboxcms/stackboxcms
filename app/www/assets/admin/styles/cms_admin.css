@@ -316,6 +316,27 @@ div.cms_ui_pane {
     }
 
 /*
+ADMIN SITEMAP
+============================= */
+#cms_pages ul {
+    list-style: none;
+    margin: 0 0 0 20px;
+    padding: 0;
+}
+#cms_pages ul li {
+    display: block;
+    margin: 2px 0;
+}
+#cms_pages ul li div.cms_pages_item {
+    background-color: #ddd;
+    padding: 10px;
+}
+.cms_pages_placeholder {
+    background: #ddd;
+    border: 1px solid #222;
+}
+
+/*
 REGION / MODULE UI
 ============================= */
 .cms_region {

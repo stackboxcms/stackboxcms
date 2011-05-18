@@ -8,6 +8,7 @@
   <div id="cms_admin_bar_inside">
     <!-- page menu -->
     <ul>
+      <li><a href="<?php echo $kernel->url(array('action' => 'pages'), 'index_action'); ?>" rel="modal">Pages</a></li>
       <li><a href="<?php echo $kernel->url(array('action' => 'new'), 'index_action'); ?>" rel="modal">New Page</a></li>
       <?php if('/' == $page->url): // ugly hack until routes are fixed for good ?>
         <li><a href="<?php echo $kernel->url(array('action' => 'edit'), 'index_action'); ?>" rel="modal">Edit Page</a></li>
