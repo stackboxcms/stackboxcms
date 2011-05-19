@@ -111,6 +111,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         } else {
             $activeTemplate = $page->template;   
         }
+        $activeTheme = current(explode('/', $activeTemplate));
         $themeUrl = $kernel->config('cms.url.themes') . $activeTheme . '/';
         $template = new Template($activeTemplate);
         $template->format($request->format);
@@ -136,6 +137,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         // Modules
         $modules = $page->modules;
+        $unusedModules = array();
         
         // Also include modules in global template regions if global regions are present
         if($template->regionsType('global')) {
@@ -144,10 +146,14 @@ class Controller extends Stackbox\Module\ControllerAbstract
         foreach($modules as $module) {
             // Loop over modules, building content for each region
             $moduleResponse = $kernel->dispatch($module->name, 'indexAction', array($request, $page, $module));
-            if(!is_array($regionModules[$module->region])) {
-                $regionModules[$module->region] = array();
+            if(isset($regionModules[$module->region])) {
+                if(!is_array($regionModules[$module->region])) {
+                    $regionModules[$module->region] = array();
+                }
+                $regionModules[$module->region][] = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
+            } else {
+                $unusedModules[] = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
             }
-            $regionModules[$module->region][] = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
         }
         
         // Replace region content
@@ -361,6 +367,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         if($request->isPost()) {
             // Save page order
             $mapper->savePageOrder($request->pages);
+            // @todo Need to force a page reload somehow so nav will reflect changes
             return "Saved";
         }
         

@@ -377,7 +377,7 @@ REGION / MODULE UI
     -webkit-border-bottom-left-radius: 0;
     -webkit-border-bottom-right-radius: 0;
     cursor: move;
-    z-index: 1001;
+    z-index: 970;
 }
     .cms_module .cms_ui_controls {
         font-size: 11px;
@@ -385,7 +385,7 @@ REGION / MODULE UI
     .cms_module .cms_ui_controls .cms_ui_title {
         display: block;
         padding: 5px 8px;
-        z-index: 1001;
+        z-index: 971;
     }
 .cms_module.cms_ui_edit {
     border: 2px dashed #bbb;
@@ -454,7 +454,7 @@ REGION / MODULE UI
         -webkit-border-top-left-radius: 0;
         -webkit-border-top-right-radius: 0;
         padding-bottom: 5px;
-        z-index: 1002;
+        z-index: 972;
     }
     .cms_module .cms_ui_controls li:hover ul {
         left: -40px;
