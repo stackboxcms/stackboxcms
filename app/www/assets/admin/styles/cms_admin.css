@@ -339,7 +339,7 @@ ADMIN SITEMAP
 /*
 REGION / MODULE UI
 ============================= */
-.cms_region {
+.cms_region, .cms_region_global {
     min-height: 10px;
 }
 .cms_region_highlight {

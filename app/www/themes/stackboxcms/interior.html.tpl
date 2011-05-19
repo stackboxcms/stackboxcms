@@ -35,10 +35,12 @@
 
 		<nav>
 			<div class="container_12">
-				<div class="grid_12 cms_region_global" id="header_nav">
-				  <ul>
-					<li><a href="!">Home</a></li>
-				  </ul>
+				<div class="grid_12">
+				  <div class="cms_region_global" id="header_nav">
+				    <ul>
+					  <li><a href="!">Home</a></li>
+				    </ul>
+				  </div>
 				</div>
 			</div>
 		</nav>
@@ -49,20 +51,23 @@
 				<div class="cms_region" id="main"></div>
 			</article>
 			<aside class="grid_4">
-				<section class="cms_region_global" id="inside_sidebar">
-				</section>
+				<section class="cms_region_global" id="inside_sidebar"></section>
 			</aside>
 		</div>
 	</div>
 
 	<footer>
 		<div class="container_12">
-			<div class="grid_9 cms_region_global" id="foooter_main">
-				&copy; 2011 <a href="http://brightb.it">Brightbit</a><br/>
-				Stackbox CMS is an open-source project released under the MIT License
+			<div class="grid_9">
+				<div class="cms_region_global" id="foooter_main">
+					<p>&copy; 2011 <a href="http://brightb.it">Brightbit</a><br/>
+					Stackbox CMS is an open-source project released under the MIT License</p>
+				</div>
 			</div>
-			<div class="grid_3 cms_region_global" id="footer_side">
-				Powered by Stackbox CMS
+			<div class="grid_3">
+				<div class="cms_region_global" id="foooter_side">
+					<p>Powered by Stackbox CMS</p>
+				</div>
 			</div>
 		</div>
 	</footer>

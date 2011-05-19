@@ -35,10 +35,12 @@
 
 		<nav>
 			<div class="container_12">
-				<div class="grid_12 cms_region_global" id="header_nav">
-				  <ul>
-					<li><a href="!">Home</a></li>
-				  </ul>
+				<div class="grid_12">
+				  <div class="cms_region" id="header_nav">
+				    <ul>
+					  <li><a href="!">Home</a></li>
+				    </ul>
+				  </div>
 				</div>
 			</div>
 		</nav>
@@ -92,20 +94,21 @@
 
 	<footer>
 		<div class="container_12">
-			<div class="grid_9 cms_region" id="foooter_main">
-				&copy; 2011 <a href="http://brightb.it">Brightbit</a><br/>
-				Stackbox CMS is an open-source project released under the MIT License
+			<div class="grid_9">
+				<div class="cms_region_global" id="foooter_main">
+					<p>&copy; 2011 <a href="http://brightb.it">Brightbit</a><br/>
+					Stackbox CMS is an open-source project released under the MIT License</p>
+				</div>
 			</div>
-			<div class="grid_3 cms_region" id="footer_side">
-				Powered by Stackbox CMS
+			<div class="grid_3">
+				<div class="cms_region_global" id="foooter_side">
+					<p>Powered by Stackbox CMS</p>
+				</div>
 			</div>
 		</div>
 	</footer>
 
-
 	<a href="http://github.com/stackboxcms/stackboxcms" class="github-ribbon"><img src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
-
-
 	
 	<script src="@js/libs/jquery.uniform.min.js"></script>
 	<script src="@js/plugins.js"></script>

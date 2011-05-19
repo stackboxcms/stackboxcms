@@ -55,12 +55,14 @@ class Template extends Alloy\View\Template
         libxml_clear_errors();
 
         // REGIONS
+        $tokens = array();
         $xpath = new \DOMXPath($dom);
         $regions = $xpath->query("//*[@class='cms_region' or @class='cms_region_global']");
         foreach($regions as $region) {
 
             $regionName = $region->getAttribute('id');
             $regionClass = $region->getAttribute('class');
+            $regionType = (false !== strpos($regionClass, 'cms_region_global')) ? 'global' : 'page';
             if(!$regionName) {
                 throw new Template\Exception("Template region does not have an id attribute.\n<br /> Parsing (" . \htmlentities($region->saveHTML()) . ")");
             }
@@ -74,7 +76,6 @@ class Template extends Alloy\View\Template
                 'content' => $region->innerHTML
             );
             
-            $regionType = (false !== strpos($regionClass, 'cms_region_global')) ? 'global' : 'page';
             $this->_regions[$regionName] = $token;
             $this->_regionsType[$regionType][] = $regionName;
             

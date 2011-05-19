@@ -146,14 +146,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
         foreach($modules as $module) {
             // Loop over modules, building content for each region
             $moduleResponse = $kernel->dispatch($module->name, 'indexAction', array($request, $page, $module));
-            if(isset($regionModules[$module->region])) {
-                if(!is_array($regionModules[$module->region])) {
-                    $regionModules[$module->region] = array();
-                }
-                $regionModules[$module->region][] = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
-            } else {
-                $unusedModules[] = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
+            if(!isset($regionModules[$module->region]) || !is_array($regionModules[$module->region])) {
+                $regionModules[$module->region] = array();
             }
+            $regionModules[$module->region][] = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
         }
         
         // Replace region content

@@ -13,6 +13,18 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
 
     /**
+     * Ensure user is logged-in to see ANY of this module
+     */
+    public function init($action = null)
+    {
+        $user = \Kernel()->user();
+        if(!$user || !$user->isLoggedIn()) {
+            throw new Alloy\Exception\Auth("User must be logged in to view files");
+        }
+    }
+
+
+    /**
      * @method GET
      */
     public function indexAction(Alloy\Request $request)
