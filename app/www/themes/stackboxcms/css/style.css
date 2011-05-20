@@ -215,7 +215,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="sea
 /* Sticky Footer */
 html, body { height: 100%; }
 .container { min-height: 100%; }
-footer { height: 30px; margin-top: -53px; }
+footer { margin-top: -53px; }
 
 
 .hidden { display: none; visibility: hidden; }
