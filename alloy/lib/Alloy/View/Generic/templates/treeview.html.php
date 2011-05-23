@@ -1,28 +1,50 @@
-<?php echo $beforeItemSetCallback(); ?>
-  <?php
+<?php
+$currentLevel = $view::$_level;
+
+echo $beforeItemSetCallback();
+
+if($currentLevel <= $levelMax):
   if(isset($itemData)):
     foreach($itemData as $item):
-    ?>
-      <?php echo $beforeItemCallback($item); ?>
-        <?php echo $itemCallback($item); ?>
-        <?php
+
+      if($currentLevel >= $levelMin):
+        // Item before
+        echo $beforeItemCallback($item);
+
+        // Item content
+        echo $itemCallback($item);
+      endif;
+
         // Item children (hierarchy)
         if(isset($itemChildrenCallback)):
           $children = $itemChildrenCallback($item);
           if($children):
+            // Increment current level
+            $view::$_level++;
+
             // Display treeview recursively
             $sub = clone $view;
             $sub->data($children);
             echo $sub->content();
+
+            // Reset level for remaining items
+            $view::$_level = $currentLevel;
           endif;
         endif;
-        ?>
-      <?php echo $afterItemCallback($item); ?>
-    <?php
+
+
+      if($currentLevel >= $levelMin):
+        // Item after
+        echo $afterItemCallback($item);
+      endif;
     endforeach;
   
   // noData display
   elseif(isset($noDataCallback)):
     $noDataCallback();
   endif; ?>
-<?php echo $afterItemSetCallback(); ?>
+<?php
+endif;
+
+echo $afterItemSetCallback();
+?>
