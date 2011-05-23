@@ -7,6 +7,8 @@ $tree = $view->generic('treeview')
     })
     ->itemChildren(function($page) {
         return $page->children;
-    });
+    })
+    ->levelMin($module->setting('level_min', 0)-1)
+    ->levelMax($module->setting('level_max', 99)-1);
 echo $tree->content();
 ?>

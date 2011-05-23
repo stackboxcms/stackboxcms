@@ -15,7 +15,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree();
         
         return $this->template(__FUNCTION__)
-            ->set(array('pages' => $pages));
+            ->set(compact('pages', 'module'));
     }
     
     
@@ -48,16 +48,24 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     'default' => 'full',
                     'after' => 'Page navigation will start from'
                 ),
+                /*
+                // @todo Have to fill-in with page tree in dropdown
                 'start_page' => array(
                     'type' => 'select',
                     'options' => array(0 => '[None]'),
                     'default' => 0,
                     'after' => 'Page navigation will start from'
                 ),
-                'display_level' => array(
+                */
+                'level_min' => array(
                     'type' => 'int',
-                    'default' => 0,
-                    'after' => 'Minimum navigation level to begin displaying pages (0 for all levels)'
+                    'default' => null,
+                    'after' => 'Minimum navigation level to begin displaying pages (0 for root level)'
+                ),
+                'level_max' => array(
+                    'type' => 'int',
+                    'default' => null,
+                    'after' => 'Maximum navigation level to display pages for (0 for no limit)'
                 )
             )
         );
