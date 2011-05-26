@@ -10,8 +10,8 @@ if($title = $templateHead->title()) {
 }
 
 // Admin toolbar, javascript, styles, etc.
-$templateHead->script($kernel->config('cms.url.assets') . 'jquery-1.5.1.min.js');
-$templateHead->script($kernel->config('cms.url.assets') . 'jquery-ui-1.8.11.min.js');
+$templateHead->script($kernel->config('cms.url.assets') . 'jquery-1.6.1.min.js');
+$templateHead->script($kernel->config('cms.url.assets') . 'jquery-ui-1.8.13.min.js');
 
 // Setup javascript variables for use
 $templateHead->prepend('<script type="text/javascript">
