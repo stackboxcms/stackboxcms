@@ -97,6 +97,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
             }
 
             // Dispatch to single module
+            if(!is_callable(array($moduleObject, $moduleAction))) {
+                throw new \BadMethodCallException("Module '" . $moduleName ."' does not have a callable method '" . $moduleAction . "'");
+            }
             $moduleResponse = $kernel->dispatch($moduleObject, $moduleAction, array($request, $page, $module));
             
             // Return content immediately, currently not wrapped in template
