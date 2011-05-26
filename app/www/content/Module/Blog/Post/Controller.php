@@ -1,6 +1,11 @@
 <?php
 namespace Module\Blog\Post;
+
 use Stackbox;
+use Alloy\Request;
+use Module\Page\Entity as Page;
+use Module\Page\Module\Entity as Module;
+
 
 /**
  * Blog Module
@@ -11,7 +16,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function indexAction($request, $page, $module)
+    public function indexAction(Request $request, Page $page, Module $module)
     {
         $posts = $this->kernel->mapper()->all('Module\Blog\Post\Entity')
             ->where(array(
@@ -34,7 +39,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * View single post
      * @method GET
      */
-    public function viewAction($request, $page, $module)
+    public function viewAction(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper();
         $post = $mapper->get('Module\Blog\Post\Entity', $request->module_item);
@@ -56,19 +61,21 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function newAction($request, $page, $module)
+    public function newAction(Request $request, Page $page, Module $module)
     {
         $form = $this->formView()
             ->method('POST')
             ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->urlName(), 'module_id' => $module->id), 'module'));
-        return $form;
+        
+        return $this->template('_form')
+            ->set(compact('form', 'request', 'page', 'module'));
     }
     
     
     /**
      * @method GET
      */
-    public function editAction($request, $page, $module)
+    public function editAction(Request $request, Page $page, Module $module)
     {
         $form = $this->formView()
             ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->urlName(), 'module_id' => $module->id), 'module'))
@@ -93,13 +100,21 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Create a new resource with the given parameters
      * @method POST
      */
-    public function postMethod($request, $page, $module)
+    public function postMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper();
         $item = $mapper->get('Module\Blog\Post\Entity')->data($request->post());
         $item->module_id = $module->id;
-        $item->date_created = $mapper->connection('Module\Blog\Post\Entity')->dateTime();
-        $item->date_modified = $mapper->connection('Module\Blog\Post\Entity')->dateTime();
+        $item->date_created = new \DateTime();
+        $item->date_modified = new \DateTime();
+
+        // Check published date
+        if($request->date_published) {
+            $item->date_published = date('Y-m-d H:i:s', strtotime($request->date_published));
+        }
+        if(!$item->date_published) {
+            $item->date_published = new \DateTime();
+        }
         
         if($mapper->save($item)) {
             $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->urlName(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
@@ -123,10 +138,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Save over existing entry (from edit)
      * @method PUT
      */
-    public function putMethod($request, $page, $module)
+    public function putMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper();
-        $item = $mapper->get('Module\Blog\Post\Entity', $request->module_item);
+        $item = $mapper->get('Module\Blog\Post\Entity', $request->id);
         if(!$item) {
             return false;
         }
@@ -134,6 +149,14 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $item->module_id = $module->id;
         $item->date_modified = $mapper->connection('Module\Blog\Post\Entity')->dateTime();
         
+        // Check published date
+        if($request->date_published) {
+            $item->date_published = date('Y-m-d H:i:s', strtotime($request->date_published));
+        }
+        if(!$item->date_published) {
+            $item->date_published = new \DateTime();
+        }
+
         if($mapper->save($item)) {
             $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->urlName(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
             if($request->format == 'html') {
@@ -155,7 +178,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method DELETE
      */
-    public function deleteMethod($request, $page, $module)
+    public function deleteMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper();
         $item = $mapper->get('Module\Blog\Post\Entity', $request->module_item);
@@ -169,7 +192,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Install Module
      *
-     * @see Cx_Module_Controller_Abstract
+     * @see \Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
@@ -181,7 +204,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Uninstall Module
      *
-     * @see Cx_Module_Controller_Abstract
+     * @see \Stackbox\Module\ControllerAbstract
      */
     public function uninstall()
     {
@@ -197,6 +220,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $view = parent::formView();
         $fields = $view->fields();
         
+        // Setup editor
+        $fields['description']['type'] = 'editor';
+
         // Set type and options for 'type' select
         $fields['status']['type'] = 'select';
         $fields['status']['options'] = array(

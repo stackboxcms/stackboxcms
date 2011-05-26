@@ -1,6 +1,10 @@
 <?php
 namespace Module\Blog;
-use Alloy, Module, Stackbox;
+
+use Stackbox;
+use Alloy\Request;
+use Module\Page\Entity as Page;
+use Module\Page\Module\Entity as Module;
 
 /**
  * Blog Module
@@ -10,7 +14,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function indexAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
+    public function indexAction(Request $request, Page $page, Module $module)
     {
         return $this->kernel->dispatch('Blog_Post', __FUNCTION__, compact('request', 'page', 'module'));
     }
@@ -19,7 +23,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editlistAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
+    public function editlistAction(Request $request, Page $page, Module $module)
     {
         // Get all blog posts (remember - query is not actually executed yet and can be futher modified by the gridview)
         $mapper = $this->kernel->mapper();
