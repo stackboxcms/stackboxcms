@@ -507,8 +507,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
-        $this->kernel->mapper('Module\Page\Mapper')->migrate('Module\Page\Entity');
-        $this->kernel->mapper('Module\Page\Mapper')->migrate('Module\Page\Module\Entity');
+        $this->kernel->mapper()->migrate('Module\Page\Entity');
+        $this->kernel->mapper()->migrate('Module\Page\Module\Entity');
+        $this->kernel->mapper()->migrate('Module\Page\Module\Settings\Entity');
         return parent::install($action, $params);
     }
     
@@ -520,6 +521,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function uninstall()
     {
-        return $this->kernel->mapper('Module\Page\Mapper')->dropDatasource('Module\Page\Entity');
+        return $this->kernel->mapper()->dropDatasource('Module\Page\Entity');
     }
 }

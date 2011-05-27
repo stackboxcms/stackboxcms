@@ -329,6 +329,11 @@ $(function() {
                         }
                     },
                     error: function(req) { // req = XMLHttpRequest object
+                        // Newly installed modules will return '1'
+                        if(req.responseText == 1) {
+                            window.location.reload();
+                            return;
+                        }
                         alert("[ERROR "+req.status+"] Unable to save data:\n\n" + req.responseText);
                     }
                 });
@@ -345,7 +350,7 @@ $(function() {
                     }
                 },
                 error: function(req) { // req = XMLHttpRequest object
-                    alert("[ERROR] Unable to load URL: \n" + req.responseText);
+                    //alert("[ERROR] Unable to load URL: \n" + req.responseText);
                 }
             });
         }
