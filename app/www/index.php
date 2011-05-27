@@ -161,7 +161,7 @@ if($content instanceof \Exception) {
 
             // Request Data
             $content .= "<h2>Request Data</h2>";
-            $content .= $kernel->dump($request->params());
+            $content .= $kernel->dump($kernel->request()->params());
         }
     }
 }
