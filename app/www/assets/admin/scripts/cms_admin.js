@@ -5,6 +5,28 @@ cms.config = cms.config || {};
 cms.config.editMode = false;
 
 /**
+ * UI/UX
+ */
+cms.ui = (function (cms, $) {
+    // Expose public methods
+    return {
+        // Return and enforce edit mode or set it to new passed boolean value
+        editMode: function(flag) {
+            var _flag = ("undefined" != flag ? flag : cms.config.editMode);
+            if(true === _flag) {
+                cms.config.editMode = true;
+                $('div.cms_module').addClass('cms_ui_edit');
+            } else if(false === _flag) {
+                cms.config.editMode = false;
+                $('div.cms_module').removeClass('cms_ui_edit');
+            }
+            return cms.config.editMode;
+        }
+    };
+}(cms, jQuery));
+
+
+/**
  * MODAL / Content Area
  */
 cms.modal = (function (cms, $) {
@@ -78,10 +100,9 @@ cms.modal = (function (cms, $) {
                         }
                     } else {
                         nModule = $('#' + nData.attr('id')).replaceWith(data);
+
                         // Show edit controls if in edit mode
-                        if(cms.config.editMode) {
-                            $('div.cms_module').addClass('cms_ui_edit');
-                        }
+                        cms.config.editMode();
                     }
                     m.hide();
                 },
@@ -323,10 +344,11 @@ $(function() {
                     url: cms.config.url + cms.page.url + 'm,Page_Module,0.html',
                     data: {'region': nRegionName, 'name': nModuleName},
                     success: function(data, textStatus, req) {
+                        // Replace content on page with new content from AJAX response
                         nModule.replaceWith(data);
-                        if(cms.config.editMode) {
-                            $('div.cms_module').addClass('cms_ui_edit');
-                        }
+
+                        // Put CMS in edit mode
+                        cms.ui.editMode(true);
                     },
                     error: function(req) { // req = XMLHttpRequest object
                         // Newly installed modules will return '1'
@@ -341,13 +363,11 @@ $(function() {
             // Serialize modules to save module/region positions
             $.ajax({
                 type: "GET",
-                url: cms.config.url + cms.page.url + 'm,Page_Module,0/saveSort.html',
+                url: cms.config.url + cms.page.url + 'm,page_module,0/saveSort.html',
                 data: 'ajax=1' + cms_serializeRegionModules(),
                 success: function(data, textStatus, req) {
-                    // Do nothing for now, eventually might show some sort of activity notice in UI, etc.
-                    if(cms.config.editMode) {
-                        $('div.cms_module').addClass('cms_ui_edit');
-                    }
+                    // Show edit controls if CMS in edit mode
+                    cms.config.editMode();
                 },
                 error: function(req) { // req = XMLHttpRequest object
                     //alert("[ERROR] Unable to load URL: \n" + req.responseText);
@@ -372,11 +392,9 @@ $(function() {
      * Module editing - display controls on click
      */
     $('#cms_admin_bar_editPage').toggle(function(e) {
-        $('div.cms_module').addClass('cms_ui_edit');
-        cms.config.editMode = true;
+        cms.ui.editMode(true);
     }, function(e) {
-        $('div.cms_module').removeClass('cms_ui_edit');
-        cms.config.editMode = false;
+        cms.ui.editMode(false);
     });
     
     
@@ -385,6 +403,14 @@ $(function() {
      */
     $('form .app_form_field_datetime input').live('click', function(e) {
         $(this).datepicker({showOn:'focus'}).focus();
+    });
+
+    /**
+     * Ensure module zIndex is in reverse normal order so option menus don't get hidden behind modules below
+     */
+    var moduleZindex = 990;
+    $('.cms_module').each(function() {
+        $(this).css('zIndex', moduleZindex--);
     });
     
     
