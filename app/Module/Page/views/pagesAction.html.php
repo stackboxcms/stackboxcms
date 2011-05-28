@@ -5,8 +5,6 @@
 
 <form action="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'pages'), 'page_action'); ?>" method="POST">
 <?php
-var_dump($pages);
-
 // Use generic TreeView to recursively display links
 $tree = $view->generic('treeview')
     ->data($pages)
@@ -26,9 +24,7 @@ $tree = $view->generic('treeview')
     // Returns empty array if no children
     ->itemChildren(function($page) {
         return $page->children;
-    })
-    ->levelMin(0)
-    ->levelMax(0);
+    });
 echo $tree->content();
 ?>
 </form>

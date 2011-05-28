@@ -130,7 +130,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
         // Add jQuery as the first item
         $templateHead = $template->head();
-        $templateHead->script($kernel->config('cms.url.assets') . 'jquery-1.6.1.min.js');
+        $templateHead->script($kernel->config('cms.url.assets') . 'jquery.min.js');
         
         // Template Region Defaults
         $regionModules = array();
@@ -184,7 +184,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // Add user and admin stuff to the page
             if($user && $user->isAdmin()) {
                 // Admin toolbar, javascript, styles, etc.
-                $templateHead->script($kernel->config('cms.url.assets') . 'jquery-ui-1.8.13.min.js');
+                $templateHead->script($kernel->config('cms.url.assets') . 'jquery-ui.min.js');
                 
                 // Setup javascript variables for use
                 $templateHead->prepend('<script type="text/javascript">
