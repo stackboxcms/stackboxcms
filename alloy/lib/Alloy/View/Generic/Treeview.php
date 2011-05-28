@@ -24,8 +24,8 @@ class Treeview extends Template
         $this->path(__DIR__ . '/templates/');
 
         // Default settings
-        $this->set('levelMin', null);
-        $this->set('levelMax', null);
+        $this->set('levelMin', 0);
+        $this->set('levelMax', 0);
 
         // Default item template callbacks
         $this->set('beforeItemSetCallback', function() { return "<ul class=\"app_treeview\">\n"; });

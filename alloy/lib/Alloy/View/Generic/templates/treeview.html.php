@@ -3,11 +3,11 @@ $currentLevel = $view::$_level;
 
 echo $beforeItemSetCallback();
 
-if($currentLevel <= $levelMax):
+if(!$levelMax || $currentLevel <= $levelMax):
   if(isset($itemData)):
     foreach($itemData as $item):
 
-      if($currentLevel >= $levelMin):
+      if(!$levelMin || $currentLevel >= $levelMin):
         // Item before
         echo $beforeItemCallback($item);
 
@@ -33,7 +33,7 @@ if($currentLevel <= $levelMax):
         endif;
 
 
-      if($currentLevel >= $levelMin):
+      if(!$levelMin || $currentLevel >= $levelMin):
         // Item after
         echo $afterItemCallback($item);
       endif;
@@ -42,9 +42,7 @@ if($currentLevel <= $levelMax):
   // noData display
   elseif(isset($noDataCallback)):
     $noDataCallback();
-  endif; ?>
-<?php
+  endif;
 endif;
 
 echo $afterItemSetCallback();
-?>
