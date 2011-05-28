@@ -1,20 +1,34 @@
 <?php
 $currentLevel = $view::$_level;
 
-echo $beforeItemSetCallback();
+// Check if we're okay to display against min level set
+$levelMinCheck = (!$levelMin || $currentLevel >= $levelMin);
 
-if(!$levelMax || $currentLevel <= $levelMax):
+// Check if we're okay to display against max level set
+$levelMaxCheck = (!$levelMax || $currentLevel <= $levelMax);
+
+
+if($levelMaxCheck):
+
+  $setDisplay = false;
+  if(!$levelMin || ($levelMin && $currentLevel != $levelMin)):
+    $setDisplay = true;
+    echo "\n" . str_repeat("\t", $currentLevel) . $beforeItemSetCallback();
+  endif;
+
   if(isset($itemData)):
     foreach($itemData as $item):
 
-      if(!$levelMin || $currentLevel >= $levelMin):
+      if($levelMinCheck):
         // Item before
-        echo $beforeItemCallback($item);
+        echo str_repeat("\t", $currentLevel) . $beforeItemCallback($item);
 
         // Item content
-        echo $itemCallback($item);
+        echo str_repeat("\t", $currentLevel+1) . $itemCallback($item) . "\n";
       endif;
 
+      // Ensure we can go to next level
+      if($levelMaxCheck):
         // Item children (hierarchy)
         if(isset($itemChildrenCallback)):
           $children = $itemChildrenCallback($item);
@@ -31,18 +45,20 @@ if(!$levelMax || $currentLevel <= $levelMax):
             $view::$_level = $currentLevel;
           endif;
         endif;
+      endif;
 
-
-      if(!$levelMin || $currentLevel >= $levelMin):
+      if($levelMinCheck):
         // Item after
-        echo $afterItemCallback($item);
+        echo str_repeat("\t", $currentLevel) . $afterItemCallback($item);
       endif;
     endforeach;
   
   // noData display
   elseif(isset($noDataCallback)):
-    $noDataCallback();
+    str_repeat("\t", $currentLevel) . $noDataCallback() . "\n";
+  endif;
+
+  if($setDisplay):
+    echo str_repeat("\t", $currentLevel) . $afterItemSetCallback() . "\n";
   endif;
 endif;
-
-echo $afterItemSetCallback();
