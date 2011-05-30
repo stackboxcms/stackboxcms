@@ -409,7 +409,7 @@ $(function() {
      * Ensure module zIndex is in reverse normal order so option menus don't get hidden behind modules below
      */
     var moduleZindex = 990;
-    $('.cms_module').each(function() {
+    $('.cms_module .cms_ui_controls').each(function() {
         $(this).css('zIndex', moduleZindex--);
     });
     
