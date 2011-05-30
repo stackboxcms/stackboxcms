@@ -102,7 +102,7 @@ cms.modal = (function (cms, $) {
                         nModule = $('#' + nData.attr('id')).replaceWith(data);
 
                         // Show edit controls if in edit mode
-                        cms.config.editMode();
+                        cms.ui.editMode();
                     }
                     m.hide();
                 },
@@ -367,7 +367,7 @@ $(function() {
                 data: 'ajax=1' + cms_serializeRegionModules(),
                 success: function(data, textStatus, req) {
                     // Show edit controls if CMS in edit mode
-                    cms.config.editMode();
+                    cms.ui.editMode();
                 },
                 error: function(req) { // req = XMLHttpRequest object
                     //alert("[ERROR] Unable to load URL: \n" + req.responseText);
