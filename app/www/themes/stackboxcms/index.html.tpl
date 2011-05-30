@@ -36,7 +36,7 @@
 		<nav>
 			<div class="container_12">
 				<div class="grid_12">
-				  <div class="cms_region" id="header_nav">
+				  <div class="cms_region_global" id="header_nav">
 				    <ul>
 					  <li><a href="!">Home</a></li>
 				    </ul>
