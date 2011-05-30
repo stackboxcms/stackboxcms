@@ -60,7 +60,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // UPDATE settings that already exist
         foreach($settings as $setting) {
             // Update with value from POST data
-            $setting->setting_value = $updateSettings[$setting->setting_key];
+            $setting->setting_value = isset($updateSettings[$setting->setting_key]) ? $updateSettings[$setting->setting_key] : null;
             $mapper->save($setting);
         }
 
@@ -75,8 +75,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
             ));
             $mapper->save($setting);
         }
-
-        //return $this->response("Settings have been updated");
 
         return $this->kernel->redirect($this->kernel->url(array(
                 'module_name' => $module->name,
