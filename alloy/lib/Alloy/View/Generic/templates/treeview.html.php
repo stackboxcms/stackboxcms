@@ -28,7 +28,8 @@ if($levelMaxCheck):
       endif;
 
       // Ensure we can go to next level
-      if($levelMaxCheck):
+      // Don't show children if current level is equal to max
+      if($levelMaxCheck && $currentLevel != $levelMax):
         // Item children (hierarchy)
         if(isset($itemChildrenCallback)):
           $children = $itemChildrenCallback($item);
