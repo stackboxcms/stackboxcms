@@ -388,6 +388,7 @@ $(function() {
         }
     });
     
+
     /**
      * Module editing - display controls on click
      */
@@ -405,6 +406,7 @@ $(function() {
         $(this).datepicker({showOn:'focus'}).focus();
     });
 
+    
     /**
      * Ensure module zIndex is in reverse normal order so option menus don't get hidden behind modules below
      */

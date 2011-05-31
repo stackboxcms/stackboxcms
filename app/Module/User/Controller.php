@@ -20,15 +20,27 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
         // Ensure user has rights to create new user account
         $access = false;
-        $user = $this->kernel->user();
-        if(!$user || !$user->isLoggedIn() || !$user->isAdmin()) {
-            // If there are not currently any users that exist, allow access to create the first user, even if not logged in
-            $userCount = $this->kernel->mapper()->all('Module\User\Entity')->count();
-            if($userCount == 0) {
-                $acl = array_merge_recursive($acl, array(
-                    'view' => array('new', 'newAction', 'post', 'postMethod')
-                ));
+
+        // Catch PDOException to auto-migrate
+        try {
+            $user = $this->kernel->user();
+            if(!$user || !$user->isLoggedIn() || !$user->isAdmin()) {
+                // If there are not currently any users that exist, allow access to create the first user, even if not logged in
+                $userCount = $this->kernel->mapper()->all('Module\User\Entity')->count();
+                if($userCount == 0) {
+                    $access = true;
+                }
             }
+        } catch(\PDOException $e) {
+            $this->install();
+            $access = true;
+        }
+
+        // Allow access
+        if(true === $access) {
+            $acl = array_merge_recursive($acl, array(
+                'view' => array('new', 'newAction', 'post', 'postMethod')
+            ));
         }
 
         return $acl;
