@@ -1,6 +1,10 @@
 <?php
 namespace Module\Slideshow;
-use Alloy, Module, Stackbox;
+
+use Stackbox;
+use Alloy\Request;
+use Module\Page\Entity as Page;
+use Module\Page\Module\Entity as Module;
 
 /**
  * Slideshow Module
@@ -11,7 +15,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Public listing of slideshow items
      * @method GET
      */
-    public function indexAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
+    public function indexAction(Request $request, Page $page, Module $module)
     {
         $kernel = \Kernel();
         $items = $kernel->mapper()->all('Module\Slideshow\Item')
@@ -34,7 +38,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Edit list for admin view
      * @method GET
      */
-    public function editlistAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
+    public function editlistAction(Request $request, Page $page, Module $module)
     {
         // Get all blog posts (remember - query is not actually executed yet and can be futher modified by the gridview)
         $mapper = $this->kernel->mapper();
@@ -51,7 +55,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function newAction($request, $page, $module)
+    public function newAction(Request $request, Page $page, Module $module)
     {
         $form = $this->formView()
             ->method('post')
@@ -64,7 +68,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Edit single item
      * @method GET
      */
-    public function editAction($request, $page, $module)
+    public function editAction(Request $request, Page $page, Module $module)
     {
         $form = $this->formView()
             ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'), 'module')
@@ -86,7 +90,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Create a new resource with the given parameters
      * @method POST
      */
-    public function postMethod($request, $page, $module)
+    public function postMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper();
         $item = $mapper->get('Module\Slideshow\Item')->data($request->post());
@@ -115,7 +119,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Save over existing entry (from edit)
      * @method PUT
      */
-    public function putMethod($request, $page, $module)
+    public function putMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper();
         $item = $mapper->get('Module\Slideshow\Item', (int) $request->id);
@@ -148,7 +152,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method DELETE
      */
-    public function deleteMethod($request, $page, $module)
+    public function deleteMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper();
         $item = $mapper->get('Module\Slideshow\Item', $request->module_item);
@@ -197,21 +201,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     'type' => 'int',
                     'default' => 600,
                     'after' => 'Pixel width of the slideshow'
-                ),
-                'height' => array(
-                    'type' => 'int',
-                    'default' => 350,
-                    'after' => 'Pixel height of the slideshow'
-                ),
-                'slide_delay' => array(
-                    'type' => 'int',
-                    'default' => 5000,
-                    'after' => 'Time delay between slides (milliseconds)'
-                ),
-                'slide_speed' => array(
-                    'type' => 'int',
-                    'default' => 350,
-                    'after' => 'Animation time for slide effect (milliseconds)'
                 )
             )
         );
@@ -226,7 +215,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $view = $this->kernel->spotForm('Module\Slideshow\Item');
         $fields = $view->fields();
         
-        // Set text 'content' as type 'editor' to get WYSIWYG
+        // Add link to select image
         $fields['url']['after'] = $this->kernel->filebrowserSelectImageLink('url');
         
         $view->fields($fields)
