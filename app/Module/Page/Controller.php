@@ -43,7 +43,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $page->date_created = $pageMapper->connection('Module\Page\Entity')->dateTime();
                 $page->date_modified = $page->date_created;
                 if(!$pageMapper->save($page)) {
-                    throw new Alloy\Exception\FileNotFound("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
+                    throw new Alloy\Exception("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
                 }
             } else {
                 throw new Alloy\Exception\FileNotFound("Page not found: '" . $pageUrl . "'");
