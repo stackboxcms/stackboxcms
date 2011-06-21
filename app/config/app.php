@@ -22,7 +22,7 @@ $app['path']['layouts'] = $app['path']['root'] . $app['dir']['layouts'];
 // Request URL from .htaccess or query string
 // ------------------------------------------
 $requestUrl = isset($_GET['u']) ? $_GET['u'] : '';
-$requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$requestPath = parse_url(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/', PHP_URL_PATH);
 $urlBase = str_replace($requestUrl, '', $requestPath);
 
 // URL info
