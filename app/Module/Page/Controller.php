@@ -1,6 +1,7 @@
 <?php
 namespace Module\Page;
 use Stackbox, Alloy;
+use Alloy\Request;
 
 /**
  * Page controller - sets up whole page for display
@@ -12,8 +13,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function indexAction($request)
+    public function indexAction(Request $request)
     {
+        // Get current site and set config id
+        $kernel = $this->kernel;
+        $siteMapper = $kernel->mapper('Module\Site\Mapper');
+        $siteMapper->getSiteByDomain($request->server('HTTP_HOST'));
+
         return $this->viewUrl($request->page);
     }
     
@@ -507,6 +513,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
+        // Site
+        $this->kernel->mapper()->migrate('Module\Site\Entity');
+        $this->kernel->mapper()->migrate('Module\Site\Domain');
+
+        // Page
         $this->kernel->mapper()->migrate('Module\Page\Entity');
         $this->kernel->mapper()->migrate('Module\Page\Module\Entity');
         $this->kernel->mapper()->migrate('Module\Page\Module\Settings\Entity');
