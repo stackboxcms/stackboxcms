@@ -113,7 +113,6 @@ class Entity extends Stackbox\EntityAbstract
         
         $tpls = array();
         foreach($templates as $tpl) {
-            var_dump($tpl);
             // Remove path info
             $tplRelPath = str_replace($tplDir, '', $tpl->getPathname());
             // Remove extensions
