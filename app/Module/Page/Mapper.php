@@ -22,7 +22,7 @@ class Mapper extends Stackbox\Module\MapperAbstract
     public function getPageByUrl($url)
     {
         return $this->first('Module\Page\Entity', array(
-            'site_id' => \Kernel()->config('app.site.id'),
+            'site_id' => \Kernel()->site()->id,
             'url' => Entity::formatPageUrl($url))
         );
     }
@@ -40,7 +40,7 @@ class Mapper extends Stackbox\Module\MapperAbstract
             // Get _ALL_ pages for current site - they will get sorted with PHP instead of the database
             // Only real way to make Adjacency model efficient and avoid all the SQL horror of storing hierarchy in relational databases
             $pages = $this->all('Module\Page\Entity')
-                ->where(array('site_id' => \Kernel()->config('app.site.id')))
+                ->where(array('site_id' => \Kernel()->site()->id))
                 ->order(array('parent_id' => 'ASC', 'ordering' => 'ASC'));
             
             self::$_pageIndex = array();

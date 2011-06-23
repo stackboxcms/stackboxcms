@@ -65,7 +65,7 @@ class Entity extends Stackbox\EntityAbstract
      */
     public function beforeSave(Spot\Mapper $mapper)
     {
-        $this->__set('site_id', \Kernel()->config('app.site.id'));
+        $this->__set('site_id', \Kernel()->config('cms.site.id'));
         $this->__set('url', self::formatPageUrl($this->__get('url')));
         return parent::beforeSave($mapper);
     }

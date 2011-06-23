@@ -82,12 +82,6 @@ $app['database']['master'] = array(
     )
 );
 
-// Site information
-$app['site'] = array(
-    'id' => 1,
-    'title' => 'StackboxCMS'
-);
-
 // Session Settings
 $app['session']['lifetime'] = 28000;
 

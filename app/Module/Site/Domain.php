@@ -23,6 +23,7 @@ class Domain extends Stackbox\EntityAbstract
             'site_id' => array('type' => 'int', 'index' => true, 'default' => 0),
             'domain' => array('type' => 'string', 'required' => true),
             'type' => array('type' => 'int', 'length' => 1, 'default' => self::TYPE_NORMAL),
+            'redirect_url' => array('type' => 'string'),
             'date_created' => array('type' => 'datetime')
         );
     }
