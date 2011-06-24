@@ -14,13 +14,13 @@ class Entity extends Stackbox\Module\EntityAbstract
      */
     public static function fields()
     {
-        return array(
+        return array_merge(parent::fields(), array(
             'title' => array('type' => 'string', 'required' => true),
             'description' => array('type' => 'text'),
             'status' => array('type' => 'int', 'default' => self::STATUS_DRAFT),
             'date_created' => array('type' => 'datetime'),
             'date_modified' => array('type' => 'datetime'),
             'date_published' => array('type' => 'datetime')
-        ) + parent::fields();
+        ));
     }
 }

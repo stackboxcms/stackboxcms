@@ -11,9 +11,9 @@ class Entity extends Stackbox\Module\EntityAbstract
      */
     public static function fields()
     {
-        return array(
+        return array_merge(parent::fields(), array(
             'title' => array('type' => 'string', 'required' => true),
             'description' => array('type' => 'text')
-        ) + parent::fields();
+        ));
     }
 }
