@@ -219,7 +219,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $fields['url']['after'] = $this->kernel->filebrowserSelectImageLink('url');
         
         $view->fields($fields)
-            ->removeFields(array('module_id', 'site_id', 'ordering'));
+            ->removeFields(array('module_id', 'site_id', 'page_id', 'ordering'));
         return $view;
     }
 }
