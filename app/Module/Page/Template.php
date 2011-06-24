@@ -57,7 +57,7 @@ class Template extends Alloy\View\Template
         // REGIONS
         $tokens = array();
         $xpath = new \DOMXPath($dom);
-        $regions = $xpath->query("//*[@class='cms_region' or @class='cms_region_global']");
+        $regions = $xpath->query("//*[contains(@class, 'cms_region') or contains(@class, 'cms_region_main') or contains(@class, 'cms_region_global')]");
         foreach($regions as $region) {
 
             $regionName = $region->getAttribute('id');
