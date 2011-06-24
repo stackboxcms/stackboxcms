@@ -19,9 +19,20 @@ class Mapper extends Stackbox\Module\MapperAbstract
     public function getSiteByDomain($hostname)
     {
         $site = false;
-        $domain = $this->first('Module\Site\Domain', array(
-            'domain' => $hostname
-        ));
+        $domainQuery = $this->select('Module\Site\Domain', array('site_id'))
+            ->where(array(
+                'domain' => $hostname
+            ));
+        
+        // If 'www.' is on the front of the domain, make fallback domain check without it
+        if(0 === strpos($hostname, 'www.')) {
+            $domainQuery->orWhere(array(
+                'domain' => substr($hostname, 4)
+            ));
+        }
+
+        // Get domain
+        $domain = $domainQuery->first();
 
         // If domain was found, get the site record
         if($domain) {

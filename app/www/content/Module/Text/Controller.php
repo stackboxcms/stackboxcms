@@ -76,8 +76,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $mapper = $this->kernel->mapper('Module\Text\Mapper');
         $item = $mapper->get('Module\Text\Entity')->data($request->post());
         $item->module_id = $module->id;
-        $item->date_created = $mapper->connection('Module\Text\Entity')->dateTime();
-        $item->date_modified = $mapper->connection('Module\Text\Entity')->dateTime();
+        $item->date_created = new \DateTime();
+        $item->date_modified = new \DateTime();
         if($mapper->save($item)) {
             $itemUrl = $this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id, 'module_item' => $item->id), 'module_item');
             if($request->format == 'html') {

@@ -75,7 +75,7 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
         $view = new \Alloy\View\Generic\Form('form');
         $view->action("")
             ->fields($fields)
-            ->removeFields(array('id', 'site_id', 'module_id', 'date_created', 'date_modified'));
+            ->removeFields(array('id', 'site_id', 'page_id', 'module_id', 'date_created', 'date_modified'));
         return $view;
     }
     

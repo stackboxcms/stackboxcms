@@ -65,7 +65,7 @@ class Entity extends Stackbox\EntityAbstract
      */
     public function beforeSave(Spot\Mapper $mapper)
     {
-        $this->__set('site_id', \Kernel()->config('app.site.id'));
+        $this->__set('site_id', \Kernel()->config('cms.site.id'));
         $this->__set('url', self::formatPageUrl($this->__get('url')));
         return parent::beforeSave($mapper);
     }
@@ -94,14 +94,21 @@ class Entity extends Stackbox\EntityAbstract
     public static function getPageTemplates()
     {
         $kernel = \Kernel();
+        $site = $kernel->site();
+
+        // Build array of theme directories to look in
+        $tplDir = $kernel->config('cms.path.themes');
+        $tplDirs = array();
+        foreach($site->themes() as $theme) {
+            $tplDirs[] = rtrim($tplDir, '/') . '/' . $theme . '/';
+        }
 
         // Find template files
-        $tplDir = $kernel->config('cms.path.themes');
         $templates = $kernel->finder()
-            ->in($tplDir)
+            ->in($tplDirs)
             ->files()
             ->name('*.html.tpl')
-            ->depth(1)
+            ->depth(0)
             ->sortByName();
         
         $tpls = array();

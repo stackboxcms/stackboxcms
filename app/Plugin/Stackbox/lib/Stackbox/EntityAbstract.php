@@ -25,6 +25,6 @@ abstract class EntityAbstract extends Spot\Entity
      */
     public function beforeSave(Spot\Mapper $mapper)
     {
-        $this->site_id = \Kernel()->config('app.site.id', 0);
+        $this->site_id = \Kernel()->site()->id;
     }
 }

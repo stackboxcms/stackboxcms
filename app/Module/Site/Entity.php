@@ -21,7 +21,7 @@ class Entity extends Stackbox\EntityAbstract
             'id' => array('type' => 'int', 'primary' => true, 'serial' => true),
             'reseller_id' => array('type' => 'int', 'index' => true, 'default' => 0),
             'title' => array('type' => 'string', 'required' => true),
-            'template' => array('type' => 'string'),
+            'theme' => array('type' => 'string'),
             'status' => array('type' => 'int', 'length' => 1, 'default' => self::STATUS_ACTIVE),
             'date_created' => array('type' => 'datetime'),
             'date_modified' => array('type' => 'datetime')
@@ -41,5 +41,14 @@ class Entity extends Stackbox\EntityAbstract
                 'order' => array('ordering' => 'ASC')
                 )
         ) + parent::relations();
+    }
+
+
+    /**
+     * Get array of themes available to site for use
+     */
+    public function themes()
+    {
+        return array_map('trim', explode(',', $this->theme));
     }
 }

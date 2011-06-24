@@ -18,17 +18,42 @@ class Plugin
     {
         $this->kernel = $kernel;
 
+        // Add Stackbox and Nijikodo classes to the load path
+        $kernel->loader()->registerNamespace('Stackbox', __DIR__ . '/lib');
+        $kernel->loader()->registerNamespace('Nijikodo', __DIR__ . '/lib');
+
         // Get current config settings
         $cfg = $kernel->config();
         $app = $cfg['app'];
 
         // @todo Determine which site HOST is and set site_id
         // @todo Set file paths with current site_id
-        $siteFilesDir = 'site/' . $cfg['app']['site']['id'] . '/';
+        $hostname = $kernel->request()->server('HTTP_HOST');
+
+        // Get site by hostname
+        $siteMapper = $kernel->mapper('Module\Site\Mapper');
+        $site = $siteMapper->getSiteByDomain($hostname);
+
+        // Site not found - no hostname match
+        if(!$site) {
+            throw new \Stackbox\Exception\SiteNotFound("Site <b>" . $hostname . "</b> not found.");
+        }
+
+        // Make site object available on Kernel
+        $kernel->addMethod('site', function() use($site) {
+            return $site; 
+        });
+
+        // Set site files directory based on id
+        $siteFilesDir = 'site/' . $site->id . '/';
 
         // Add config settings
         $kernel->config(array(
             'cms' => array(
+                'site' => array(
+                    'id' => $site->id,
+                    'title' => $site->title
+                ),
                 'dir' => array(
                     'modules' => 'content/',
                     'themes' => 'themes/',
@@ -61,10 +86,6 @@ class Plugin
                 )
             )
         ));
-
-        // Add Stackbox and Nijikodo classes to the load path
-        $kernel->loader()->registerNamespace('Stackbox', __DIR__ . '/lib');
-        $kernel->loader()->registerNamespace('Nijikodo', __DIR__ . '/lib');
 
         // This adds to the load path because it already exists (does not replace it)
         $kernel->loader()->registerNamespace('Module', $kernel->config('cms.path.modules'));

@@ -12,11 +12,11 @@ class Entity extends Stackbox\Module\EntityAbstract
      */
     public static function fields()
     {
-        return array(
+        return array_merge(parent::fields(), array(
             'content' => array('type' => 'text', 'required' => true),
             'type' => array('type' => 'string'),
             'date_created' => array('type' => 'datetime'),
             'date_modified' => array('type' => 'datetime')
-        ) + parent::fields();
+        ));
     }
 }
