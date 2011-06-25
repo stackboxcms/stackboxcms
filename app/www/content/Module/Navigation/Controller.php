@@ -12,7 +12,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function indexAction($request, $page, $module)
     {
-        $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree();
+        if('section' == $module->setting('type')) {
+            $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree($page);
+        } else {
+            $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree();
+        }
         
         return $this->template(__FUNCTION__)
             ->set(compact('pages', 'module'));
