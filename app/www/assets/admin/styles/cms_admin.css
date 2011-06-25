@@ -12,6 +12,7 @@ ADMIN UI
     font-size: 12px;
     font-family: Arial, Tahoma, sans-serif;
     line-height: 1;
+    text-transform: none;
 }
     /* FORM styles */
     .cms_ui form {
@@ -415,6 +416,7 @@ REGION / MODULE UI
         padding: 5px;
         color: #fff;
         text-decoration: none;
+        text-transform: none;
     }
     .cms_module .cms_ui_controls ul li a:hover, #imNav li.active a {
         background-color: #AFAFAF;
@@ -461,6 +463,7 @@ REGION / MODULE UI
     }
         .cms_module .cms_ui_controls li ul li {
             float: none;
+            text-transform: none;
         }
 
 /* jQuery UI overrides */
