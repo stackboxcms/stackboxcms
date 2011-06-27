@@ -26,6 +26,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $user = $this->kernel->user();
             if(!$user || !$user->isLoggedIn() || !$user->isAdmin()) {
                 // If there are not currently any users that exist, allow access to create the first user, even if not logged in
+                // @TODO: Limit this to check users per-site
                 $userCount = $this->kernel->mapper()->all('Module\User\Entity')->count();
                 if($userCount == 0) {
                     $access = true;
@@ -63,7 +64,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function editlistAction($request, $page, $module)
     {
-        $users = $this->kernel->mapper()->all('Module\User\Entity');
+        $users = $this->kernel->mapper()->all('Module\User\Entity')
+            ->where(array('site_id' => $page->site_id));
 
         return $this->template(__FUNCTION__)
             ->set(compact('users', 'request', 'page', 'module'))->content();
@@ -95,7 +97,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function editAction($request, $page, $module)
     {
         $user = $this->kernel->mapper()->get('Module\User\Entity', (int) $request->module_item);
-        if(!$user) {
+        // if item does not exist or does not belong to current site
+        if(!$user || $user->site_id != $page->site_id) {
             return false;
         }
 
@@ -149,7 +152,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         $mapper = $this->kernel->mapper();
         $item = $mapper->get('Module\User\Entity', (int) $request->module_item);
-        if(!$item) {
+        // if item does not exist or does not belong to current site
+        if(!$item || $item->site_id != $page->site_id) {
             return false;
         }
         $item->data($request->post());
@@ -182,7 +186,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
     public function deleteMethod($request, $page, $module)
     {
         $item = $this->kernel->mapper->get('Module\User\Entity', $request->module_item);
-        if(!$item) {
+        // if item does not exist or does not belong to current site
+        if(!$item || $item->site_id != $page->site_id) {
             return false;
         }
         return $this->kernel->mapper()->delete($item);
