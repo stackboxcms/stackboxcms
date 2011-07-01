@@ -46,6 +46,11 @@ class Plugin
             }
             // ==================================
 
+            // Ensure there is always a User object available if false
+            if(!$user) {
+                $user = $kernel->mapper()->create('Module\User\Entity', array('id' => 0));
+            }
+
             $this->user = $user;
             return $user;
         }
