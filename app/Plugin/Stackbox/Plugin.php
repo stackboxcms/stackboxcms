@@ -31,8 +31,14 @@ class Plugin
         $hostname = $kernel->request()->server('HTTP_HOST');
 
         // Get site by hostname
-        $siteMapper = $kernel->mapper('Module\Site\Mapper');
-        $site = $siteMapper->getSiteByDomain($hostname);
+        try {
+            $siteMapper = $kernel->mapper('Module\Site\Mapper');
+            $site = $siteMapper->getSiteByDomain($hostname);
+        } catch(\Exception $e) {
+            $content = $kernel->dispatch('page', 'install');
+            echo $content;
+            exit();
+        }
 
         // Site not found - no hostname match
         if(!$site) {
