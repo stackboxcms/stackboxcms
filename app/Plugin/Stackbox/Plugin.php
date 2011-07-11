@@ -99,6 +99,17 @@ class Plugin
         // Layout / API output
         $kernel->events()->addFilter('dispatch_content', 'cms_layout_api_output', array($this, 'layoutOrApiOutput'));
 
+        // If debugging, track execution time and memory usage
+        if($kernel->config('app.mode.development') || $kernel->config('app.debug')) {
+            $timeStart = microtime(true);
+            $kernel->events()->bind('boot_stop', 'cms_bench_time', function() use($timeStart) {
+                $timeEnd = microtime(true);
+                $timeDiff = $timeEnd - $timeStart;
+                echo "\n<!-- Stackbox Execution Time: " . number_format($timeDiff, 6) . "s -->";
+                echo "\n<!-- Stackbox Memory Usage:   " . number_format(memory_get_peak_usage(true) / (1024*1024), 2) . " MB -->\n\n";
+            });
+        }
+
         // Add sub-plugins and other plugins Stackbox depends on
         $kernel->plugin('Stackbox_User');
         $kernel->plugin('Module\Filebrowser');
