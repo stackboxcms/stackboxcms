@@ -61,6 +61,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     'after' => 'Page navigation will start from'
                 ),
                 */
+                'show_homepage' => array(
+                    'type' => 'boolean',
+                    'default' => true,
+                    'after' => 'Show Homepage in menu?'
+                ),
                 'level_min' => array(
                     'type' => 'int',
                     'default' => null,
@@ -70,7 +75,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     'type' => 'int',
                     'default' => null,
                     'after' => 'Maximum navigation level to display pages for (0 for no limit)'
-                )
+                ),
+                'css_ul_root' => array(
+                    'type' => 'string',
+                    'default' => null,
+                    'title' => 'Root CSS Class',
+                    'after' => 'CSS Class to apply to the root &lt;ul&gt; node'
+                ),
             )
         );
     }
