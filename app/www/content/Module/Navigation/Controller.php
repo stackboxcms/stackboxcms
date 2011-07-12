@@ -28,7 +28,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function editlistAction($request, $page, $module)
     {
-        return "There are currently no editable options for navigation display.";
+        return $this->settingsAction($request, $page, $module);
     }
 
 

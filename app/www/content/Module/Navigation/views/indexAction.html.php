@@ -15,6 +15,11 @@ $tree->data($pages)
         if('/' == $page->url && !$module->setting('show_homepage', true)) {
             return false;
         }
+
+        // Page option: Hidden from navigation?
+        if(!$page->isVisible()) {
+            return false;
+        }
     })
     // Custom root CSS class via module setting
     ->beforeItemSet(function() use($module, $tree) {
