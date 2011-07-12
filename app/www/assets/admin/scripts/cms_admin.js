@@ -5,6 +5,18 @@ cms.config = cms.config || {};
 cms.config.editMode = false;
 
 /**
+ * Custom log() wrapper
+ * @see http://paulirish.com/2009/log-a-lightweight-wrapper-for-consolelog/
+ */
+window.log = function() {
+  log.history = log.history || [];   // store logs to an array for reference
+  log.history.push(arguments);
+  if(this.console){
+    console.log( Array.prototype.slice.call(arguments) );
+  }
+};
+
+/**
  * UI/UX
  */
 cms.ui = (function (cms, $) {
@@ -45,11 +57,18 @@ cms.modal = (function (cms, $) {
             }
 
             // Not anchor link
-            if(!link.attr('href') || link.attr('href').indexOf('#') === 0) {
+            var href = link.attr('href');
+            if(!href || href.indexOf('#') === 0) {
                 return;
             }
 
-            // Re-open in window
+            // Not javascript link
+            if(!href || href.indexOf('javascript:') === 0) {
+                return;
+            }
+
+            // Re-open in modal window
+            log('cms.modal.bindEvents > Intercepting link href to load with AJAX in modal window');
             m.openLink(link);
             e.preventDefault();
             return false;
