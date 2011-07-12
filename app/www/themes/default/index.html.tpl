@@ -9,7 +9,7 @@
   <div class="container_12">
     <div class="grid_8 alpha">
       <h1><span class="cms_tag_title">Page Title</span></h1>
-      <div class="cms_region" id="main"><p>Main Content Here!</p></div>
+      <div class="cms_region_main" id="main"><p>Main Content Here!</p></div>
     </div>
     <div class="grid_4 omega">
       <p>&nbsp;</p>

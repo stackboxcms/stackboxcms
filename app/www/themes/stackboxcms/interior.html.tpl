@@ -48,7 +48,7 @@
         <div class="content container_12">
 
             <article class="grid_8">
-                <div class="cms_region" id="main"></div>
+                <div class="cms_region_main" id="main"></div>
             </article>
             <aside class="grid_4">
                 <section class="cms_region_global" id="inside_sidebar"></section>

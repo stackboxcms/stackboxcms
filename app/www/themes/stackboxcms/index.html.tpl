@@ -53,7 +53,7 @@
                     <div class="cms_region" id="home_welcome_video">Video</div>
                 </div>
                 <div class="welcome-message grid_6">
-                    <div class="cms_region" id="home_welcome_message">
+                    <div class="cms_region_main" id="home_welcome_message">
                         <h2>Content management should be <span>easy</span></h2>
                         <p>Stackbox CMS is an ambitious new open source content management system aimed to end the "backend" editing paradigm for good. All content editing is done directly in-place and on-page through drag-and-drop, JavaScript and AJAX methods.</p>
                         <p>
