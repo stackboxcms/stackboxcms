@@ -51,7 +51,7 @@ class Plugin
         });
 
         // Set site files directory based on id
-        $siteFilesDir = 'site/' . $site->id . '/';
+        $siteFilesDir = 'site/' . $site->shortname . '/';
 
         // Add config settings
         $kernel->config(array(

@@ -1,6 +1,6 @@
 <?php
 namespace Module\Site;
-use Stackbox;
+use Stackbox, Spot;
 
 /**
  * Site entity - what properties define a site
@@ -20,6 +20,7 @@ class Entity extends Stackbox\EntityAbstract
         return array(
             'id' => array('type' => 'int', 'primary' => true, 'serial' => true),
             'reseller_id' => array('type' => 'int', 'index' => true, 'default' => 0),
+            'shortname' => array('type' => 'string', 'required' => true, 'unique' => true),
             'title' => array('type' => 'string', 'required' => true),
             'theme' => array('type' => 'string'),
             'status' => array('type' => 'int', 'length' => 1, 'default' => self::STATUS_ACTIVE),
@@ -41,6 +42,17 @@ class Entity extends Stackbox\EntityAbstract
                 'order' => array('ordering' => 'ASC')
                 )
         ) + parent::relations();
+    }
+
+
+    /**
+     * Formats shortname on save
+     * All lowercase, alphanumeric characters only
+     */
+    public function beforeSave(Spot\Mapper $mapper)
+    {
+        $this->__set('shortname', strtolower(preg_replace("/[^a-zA-Z0-9]/g", "", $this->__get('shortname'))));
+        return parent::beforeSave($mapper);
     }
 
 
