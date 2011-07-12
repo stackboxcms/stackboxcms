@@ -121,7 +121,7 @@ cms.modal = (function (cms, $) {
                         nModule = $('#' + nData.attr('id')).replaceWith(data);
 
                         // Show edit controls if in edit mode
-                        cms.ui.editMode();
+                        cms.ui.editMode(true);
                     }
                     m.hide();
                 },
