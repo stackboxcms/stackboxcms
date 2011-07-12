@@ -16,7 +16,7 @@ $tree = $view->generic('treeview')
     ->item(function($page) use($view) {
     ?>
       <div class="cms_pages_item">
-        <?php echo $view->link($page->title, array('page' => ltrim($page->url, '/')), 'page'); ?> 
+        <?php echo $view->link($page->title, array('page' => ltrim($page->url, '/')), 'page', array('rel' => 'nomodal')); ?> 
         <input type="hidden" name="pages[<?php echo $page->id; ?>]" value="<?php echo (int) $page->parent_id; ?>" class="page_parent" />
       </div>
     <?php

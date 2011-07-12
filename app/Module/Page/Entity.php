@@ -123,4 +123,15 @@ class Entity extends Stackbox\EntityAbstract
 
         return $tpls;
     }
+
+
+    /**
+     * Is page visible?
+     * 
+     * @return boolean
+     */
+    public function isVisible()
+    {
+        return ($this->visibility == self::VISIBILITY_VISIBLE);
+    }
 }

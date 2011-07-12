@@ -36,7 +36,7 @@ cms.modal = (function (cms, $) {
     // Bind submit button and link events
     p.bindEvents = function() {
         // Links inside modal window
-        p.elContent.delegate('a:not(.app_action_cancel):not([rel=popup])', 'click', function(e) {
+        p.elContent.delegate('a:not(.app_action_cancel):not([rel=popup]):not([rel=nomodal])', 'click', function(e) {
             var link = $(this);
 
             // Not in CKEditor window
