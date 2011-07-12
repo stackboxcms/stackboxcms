@@ -55,6 +55,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
         // Single module call?
         // @todo Check against matched route name instead of general request params (? - may restict query string params from being used)
+        $mainContent = false;
         if($request->module_name && $request->module_action) {
             $moduleId = (int) $request->module_id;
             $moduleName = $request->module_name;
@@ -105,8 +106,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
             }
             $moduleResponse = $kernel->dispatch($moduleObject, $moduleAction, array($request, $page, $module));
             
-            // Return content immediately, currently not wrapped in template
-            return $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
+            // Set content as main content (detail view)
+            $mainContent = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
+
+            // Return content immediately if ajax request
+            if($request->isAjax()) {
+                return $mainContent;
+            }
         }
         
         // Load page template
@@ -137,6 +143,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
         
         // Template Region Defaults
         $regionModules = array();
+        $mainRegion = $template->regionMain();
+        $mainRegionName = $mainRegion['name'];
         foreach($template->regions() as $regionName => $regionData) {
             $regionModules[$regionName] = $regionData['content'];
         }
@@ -155,7 +163,22 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if(!isset($regionModules[$module->region]) || !is_array($regionModules[$module->region])) {
                 $regionModules[$module->region] = array();
             }
+            
+            // If we have a 'main' module render, don't dispatch/render other content in main region
+            if(false !== $mainContent) {
+                // If module goes in 'main' region, skip it
+                if($mainRegionName == $module->region) {
+                    continue;
+                }
+            }
+
+            // Dispatch to content modules inside regions to render their contents
             $regionModules[$module->region][] = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
+        }
+
+        // Replace main region content if set
+        if(false !== $mainContent) {
+            $regionModules[$mainRegionName] = array($mainContent);
         }
         
         // Replace region content

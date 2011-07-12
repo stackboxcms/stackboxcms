@@ -27,6 +27,7 @@ class Template extends Alloy\View\Template
     protected $_tokenRegionType = 'region';
     protected $_regions = array();
     protected $_regionsType = array();
+    protected $_regionMain;
     
     
     /**
@@ -62,13 +63,32 @@ class Template extends Alloy\View\Template
 
             $regionName = $region->getAttribute('id');
             $regionClass = $region->getAttribute('class');
-            $regionType = (false !== strpos($regionClass, 'cms_region_global')) ? 'global' : 'page';
+            $regionType = 'page';
+
+            // Global and main region types
+            if(false !== strpos($regionClass, 'cms_region_global')) {
+                $regionType = 'global';
+                // Add the standard 'cms_region' class in addition
+                $regionClass = $region->setAttribute('class', $region->getAttribute('class') . ' cms_region');
+            } elseif(false !== strpos($regionClass, 'cms_region_main')) {
+                $regionType = 'main';
+                // Add the standard 'cms_region' class in addition
+                $regionClass = $region->setAttribute('class', $region->getAttribute('class') . ' cms_region');
+
+                // Ensure there is only ONE main region
+                if(null !== $this->_regionMain) {
+                    throw new Template\Exception("Template can only have one main region. Second one encountered at:<br />(" . \htmlentities($region->saveHTML()) . ")");
+                }
+            }
+
+            // Ensure region has a name (id attribute)
             if(!$regionName) {
                 throw new Template\Exception("Template region does not have an id attribute.\n<br /> Parsing (" . \htmlentities($region->saveHTML()) . ")");
             }
 
             // Ouput array
             $token = array(
+                'name' => $regionName,
                 'element' => $region,
                 'type' => $this->_tokenRegionType,
                 'namespace' => 'cms',
@@ -78,10 +98,19 @@ class Template extends Alloy\View\Template
             
             $this->_regions[$regionName] = $token;
             $this->_regionsType[$regionType][] = $regionName;
+
+            // Store main region
+            if('main' == $regionType) {
+                $this->_regionMain = $token;
+            }
             
             $tokens[] = $token;
         }
 
+        // Ensure a main region exists
+        if(null === $this->_regionMain) {
+            throw new Template\Exception("Template must have a main region maked with the CSS class 'cms_region_main'.");
+        }
 
         // TAGS
         $xpath = new \DOMXPath($dom);
@@ -168,6 +197,22 @@ class Template extends Alloy\View\Template
         }
         
         return isset($this->_regionsType[$type]) ? $this->_regionsType[$type] : array();
+    }
+
+
+    /**
+     * Get all found global regions
+     * 
+     * @return array
+     */
+    public function regionMain()
+    {
+        // Parse template if is has not been parsed already
+        if(!$this->_regionMain) {
+            $this->parse();
+        }
+        
+        return $this->_regionMain;
     }
     
     
