@@ -82,6 +82,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // Load requested module
             $moduleObject = $kernel->module($moduleName);
 
+            // Ensure module is a placeable module on the page
+            if(!($moduleObject instanceof Stackbox\Module\ControllerAbstract)) {
+                throw new Alloy\Exception("Module '' must extend 'Stackbox\Module\ControllerAbstract' to be a placeable Stackbox module");
+            }
+
             // Ensure user can execute requested action
             if(!$moduleObject->userCanExecute($user, $moduleAction)) {
                 throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
