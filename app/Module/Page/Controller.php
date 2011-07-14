@@ -84,7 +84,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
             // Ensure module is a placeable module on the page
             if(!($moduleObject instanceof Stackbox\Module\ControllerAbstract)) {
-                throw new Alloy\Exception("Module '' must extend 'Stackbox\Module\ControllerAbstract' to be a placeable Stackbox module");
+                throw new Alloy\Exception("Module '" . $moduleName . "' must extend 'Stackbox\Module\ControllerAbstract' to be a placeable Stackbox module");
             }
 
             // Ensure user can execute requested action
