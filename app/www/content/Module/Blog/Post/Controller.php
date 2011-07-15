@@ -228,7 +228,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $fields['status']['options'] = array(
             Entity::STATUS_DRAFT => 'Draft',
             Entity::STATUS_PUBLISHED => 'Published',
-            );
+        );
+        $fields['status']['default'] = Entity::STATUS_PUBLISHED;
+
+        // Set date to today by default
+        $fields['date_published']['default'] = date('m/d/Y');
         
         $view->action("")
             ->fields($fields);
