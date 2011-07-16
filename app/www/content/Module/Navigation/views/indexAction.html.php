@@ -8,8 +8,8 @@ $tree->data($pages)
     ->itemChildren(function($page) {
         return $page->children;
     })
-    ->levelMin($module->setting('level_min', 0)-1)
-    ->levelMax($module->setting('level_max', 99)-1)
+    ->levelMin($module->setting('level_min', 0))
+    ->levelMax($module->setting('level_max', 0))
     ->filter(function($page) use($module) {
         // Setting: Show Homepage?
         if('/' == $page->url && !$module->setting('show_homepage', true)) {
