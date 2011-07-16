@@ -12,7 +12,7 @@ $tree->data($pages)
     ->levelMax($module->setting('level_max', 0))
     ->filter(function($page) use($module) {
         // Setting: Show Homepage?
-        if('/' == $page->url && !$module->setting('show_homepage', true)) {
+        if($page->isHomepage() && !$module->setting('show_homepage')) {
             return false;
         }
 

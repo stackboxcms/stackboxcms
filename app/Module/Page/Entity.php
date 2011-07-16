@@ -130,6 +130,17 @@ class Entity extends Stackbox\EntityAbstract
      * 
      * @return boolean
      */
+    public function isHomepage()
+    {
+        return ('/' == $this->url);
+    }
+
+
+    /**
+     * Is page visible?
+     * 
+     * @return boolean
+     */
     public function isVisible()
     {
         return ($this->visibility == self::VISIBILITY_VISIBLE);
