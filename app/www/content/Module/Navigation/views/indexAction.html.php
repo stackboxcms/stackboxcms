@@ -29,7 +29,7 @@ $tree->data($pages)
             return "<ul>\n";
         }
     })
-    ->beforeItem(function() use($module) {
-        return "<li>\n";
+    ->beforeItem(function($page) use($module) {
+        return "<li class=\"page_" . $page->id . "\">\n";
     });
 echo $tree->content();

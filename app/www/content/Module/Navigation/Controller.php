@@ -52,6 +52,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     'default' => 'full',
                     'after' => 'Page navigation will start from'
                 ),
+                'show_only_active' => array(
+                    'type' => 'boolean',
+                    'default' => true,
+                    'after' => 'Show only "active" pages'
+                ),
                 /*
                 // @todo Have to fill-in with page tree in dropdown
                 'start_page' => array(
