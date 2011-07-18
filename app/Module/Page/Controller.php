@@ -374,7 +374,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             return false;
         }
         
-        $pages = $mapper->pageTree();
+        $pages = $mapper->pageTree($page);
         
         // View template
         return $this->template(__FUNCTION__)
@@ -408,7 +408,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         }
 
         // All pages in tree form
-        $pages = $mapper->pageTree();
+        $pages = $mapper->pageTree($page);
         
         // View template
         return $this->template(__FUNCTION__)

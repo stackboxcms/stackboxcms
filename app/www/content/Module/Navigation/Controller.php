@@ -1,6 +1,10 @@
 <?php
 namespace Module\Navigation;
+
 use Stackbox;
+use Alloy\Request;
+use Module\Page\Entity as Page;
+use Module\Page\Module\Entity as Module;
 
 /**
  * Navigation Module
@@ -10,12 +14,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function indexAction($request, $page, $module)
+    public function indexAction(Request $request, Page $page, Module $module)
     {
         if('section' == $module->setting('type')) {
-            $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree($page);
+            $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree($page, $page);
         } else {
-            $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree();
+            $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree($page);
         }
         
         return $this->template(__FUNCTION__)
@@ -26,7 +30,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editlistAction($request, $page, $module)
+    public function editlistAction(Request $request, Page $page, Module $module)
     {
         return $this->settingsAction($request, $page, $module);
     }

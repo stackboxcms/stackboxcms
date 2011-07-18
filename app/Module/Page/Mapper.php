@@ -33,8 +33,20 @@ class Mapper extends Stackbox\Module\MapperAbstract
      *
      * @param string $url
      */
-    public function pageTree($startPage = null)
+    public function pageTree(Entity $currentPage, $startPage = null)
     {
+        // Return only a portion of the tree
+        $startPageId = 0;
+        if(null !== $startPage) {
+            if($startPage instanceof \Module\Page\Entity) {
+                $startPageId = $startPage->id;
+            } elseif(is_numeric($startPage)) {
+                $startPageId = $startPage;
+            } else {
+                throw new \InvalidArgumentException("Provided start page must be an instance of Module\Page\Entity");
+            }
+        }
+
         // Return cached page index
         if(null === self::$_pageIndex) {
             // Get _ALL_ pages for current site - they will get sorted with PHP instead of the database
@@ -47,26 +59,32 @@ class Mapper extends Stackbox\Module\MapperAbstract
 
             // Step 1: Build index-based array of page IDs to their respective page objects
             foreach($pages as $page) {
+                // Mark page as 'current page'
+                if($page->id == $currentPage->id) {
+                    $page->is_in_path = true;
+                }
+
+                // Add to index by ID
                 self::$_pageIndex[$page->id] = $page;
             }
 
             // Step 2: Link tree children using built index with parent_id's
             foreach($pages as $page) {
                 if(isset(self::$_pageIndex[$page->parent_id])) {
+                    // Set page children
                     self::$_pageIndex[$page->parent_id]->children[] = $page;
+
+                    // Add to path to current page
+                    self::$_pageIndex[$page->id]->id_path = trim(self::$_pageIndex[$page->parent_id]->id_path . '.' . $page->parent_id, '.');
                 }
             }
-        }
-        
-        // Return only a portion of the tree
-        $startPageId = 0;
-        if(null !== $startPage) {
-            if($startPage instanceof \Module\Page\Entity) {
-                $startPageId = $startPage->id;
-            } elseif(is_numeric($startPage)) {
-                $startPageId = $startPage;
-            } else {
-                throw new \InvalidArgumentException("Provided start page must be an instance of Module\Page\Entity");
+
+            // Mark all pages in path of current page
+            $currentPage = self::$_pageIndex[$currentPage->id];
+            if($currentPage->id_path) {
+                foreach(explode('.', $currentPage->id_path) as $pId) {
+                    self::$_pageIndex[$pId]->is_in_path = true;
+                }
             }
         }
 

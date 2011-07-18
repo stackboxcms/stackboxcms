@@ -30,6 +30,7 @@ $tree->data($pages)
         }
     })
     ->beforeItem(function($page) use($module) {
-        return "<li class=\"page_" . $page->id . "\">\n";
+        $cssActive = $page->is_in_path ? ' page_active' : '';
+        return "<li class=\"page_" . $page->id . $cssActive . "\">\n";
     });
 echo $tree->content();
