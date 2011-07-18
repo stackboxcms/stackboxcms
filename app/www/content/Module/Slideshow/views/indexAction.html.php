@@ -22,7 +22,7 @@ $('#<?php echo $slideshowId; ?>').cycle({
     pause:  true,
     height: <?php echo (int) $module->setting('height', 300); ?>,
     before: function() {
-        console.log(this);
+        //console.log(this);
     }
 });
 </script>
