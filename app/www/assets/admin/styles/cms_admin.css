@@ -13,6 +13,7 @@ ADMIN UI
     font-family: Arial, Tahoma, sans-serif;
     line-height: 1;
     text-transform: none;
+    text-shadow: none;
 }
     /* FORM styles */
     .cms_ui form {
@@ -117,7 +118,7 @@ ADMIN BAR
     #cms_admin_bar_inside { height: 24px; overflow: hidden; }
     /* Navigation */
     #cms_admin_bar ul { list-style: none; margin: 0; padding: 0; }
-    #cms_admin_bar ul li { float: left; margin: 0; }
+    #cms_admin_bar ul li { float: left; margin: 0; padding: 0; }
     #cms_admin_bar ul li a {
         display: block;
         padding: 7px 10px 8px 10px;
@@ -287,6 +288,7 @@ div.cms_ui_pane {
     visibility: hidden;
     z-index: 980;
     background: #666;
+    font-family: Arial, Tahoma, sans-serif;
 }
     #cms_admin_modules h3 {
         margin: 0;
@@ -294,6 +296,7 @@ div.cms_ui_pane {
         background: #333;
         color: #fff;
         font-size: 12px;
+        font-family: Arial, Tahoma, sans-serif;
     }
     #cms_admin_modules .cms_module_tile {
         float: left;
@@ -313,6 +316,7 @@ div.cms_ui_pane {
     #cms_admin_modules .cms_module_tile_icon {
         width: 100%;
         padding: 10px 0;
+        margin: 0 auto;
         text-align: center;
     }
 
@@ -366,6 +370,8 @@ REGION / MODULE UI
     width: 200px;
     height: 21px;
     overflow: visible;
+    font-family: Arial, Tahoma, sans-serif;
+    font-size: 12px;
     color: #eee;
     background: #333;
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#444), to(#222));
@@ -413,10 +419,14 @@ REGION / MODULE UI
     }
     .cms_module .cms_ui_controls ul li a {
         display: block;
+        margin: 0;
         padding: 5px;
         color: #fff;
         text-decoration: none;
         text-transform: none;
+        text-shadow: none;
+        font-family: Arial, Tahoma, sans-serif;
+        font-size: 11px;
     }
     .cms_module .cms_ui_controls ul li a:hover, #imNav li.active a {
         background-color: #AFAFAF;
