@@ -14,7 +14,7 @@ $table->data($posts)
     })
     ->column('Delete', function($item) use($view, $page, $module) {
         return $view->link('delete', array('page' => $page->url, 'module_name' => 'blog_post', 'module_id' => $module->id, 'module_action' => 'delete', 'module_item' => $item->id), 'module_item');
-    });;
+    });
 echo $table->content();
 ?>
 </div>

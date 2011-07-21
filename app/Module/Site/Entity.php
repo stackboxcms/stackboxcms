@@ -63,4 +63,26 @@ class Entity extends Stackbox\EntityAbstract
     {
         return array_map('trim', explode(',', $this->theme));
     }
+
+
+    /**
+     * Site directory
+     */
+    public function dir()
+    {
+        return \Kernel()->config('cms.path.files');
+    }
+
+
+    /**
+     * Site directory
+     */
+    public function moduleDirs()
+    {
+        $kernel = \Kernel();
+        return array(
+            $kernel->config('cms.path.modules'),
+            $kernel->config('cms.path.files') . 'content/'
+        );
+    }
 }

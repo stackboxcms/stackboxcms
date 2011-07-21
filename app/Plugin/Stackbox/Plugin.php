@@ -19,8 +19,9 @@ class Plugin
         $this->kernel = $kernel;
 
         // Add Stackbox and Nijikodo classes to the load path
-        $kernel->loader()->registerNamespace('Stackbox', __DIR__ . '/lib');
-        $kernel->loader()->registerNamespace('Nijikodo', __DIR__ . '/lib');
+        $loader = $kernel->loader();
+        $loader->registerNamespace('Stackbox', __DIR__ . '/lib');
+        $loader->registerNamespace('Nijikodo', __DIR__ . '/lib');
 
         // Get current config settings
         $cfg = $kernel->config();
@@ -94,7 +95,7 @@ class Plugin
         ));
 
         // This adds to the load path because it already exists (does not replace it)
-        $kernel->loader()->registerNamespace('Module', $kernel->config('cms.path.modules'));
+        $kernel->loader()->registerNamespace('Module', $site->moduleDirs());
 
         // Layout / API output
         $kernel->events()->addFilter('dispatch_content', 'cms_layout_api_output', array($this, 'layoutOrApiOutput'));

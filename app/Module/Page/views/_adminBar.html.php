@@ -32,7 +32,7 @@
     $moduleDirsPath = $kernel->config('cms.path.modules');
     $moduleDirs = $kernel->finder()
       ->directories()
-      ->in($moduleDirsPath)
+      ->in($kernel->site()->moduleDirs())
       ->depth(1)
       ->sortByName();
     foreach($moduleDirs as $mDir):
