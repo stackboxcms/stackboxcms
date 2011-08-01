@@ -17,6 +17,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function init($action = null)
     {
+        // Always allow images to be resized (even for visitors - no auth)
+        if('imageSizeAction' == $action || 'imageSize' == $action) {
+            return;
+        }
+
         $user = \Kernel()->user();
         if(!$user || !$user->isLoggedIn()) {
             throw new Alloy\Exception\Auth("User must be logged in to view files");
