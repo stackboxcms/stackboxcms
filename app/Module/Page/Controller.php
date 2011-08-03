@@ -130,15 +130,22 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $activeTemplate = $page->template;   
         }
         $activeTheme = current(explode('/', $activeTemplate));
-        $themeUrl = $site->urlThemes() . $activeTheme . '/';
         $template = new Template($activeTemplate);
         $template->format($request->format);
+
+        // Look in site folder first for theme
+        $themeUrl = $site->urlThemes() . $activeTheme . '/';
         $template->path($site->dirThemes());
 
-        // Ensure template exists and set to default if not
+        // Fallback to global 'themes' folder
+        if(!$template->exists()) {
+            $themeUrl = $kernel->config('cms.url.themes') . $activeTheme . '/';
+            $template->path($kernel->config('cms.path.themes'));
+        }
+
+        // Fallback to default generic template (provided by Stackbox)
         // @todo Also display warning for logged-in users that page fell back to default template
         if(!$template->exists()) {
-            //echo "Template does not exist at " . $themeUrl;
             $template->file($kernel->config('cms.default.theme') . '/' . $kernel->config('cms.default.theme_template'), 'html');
         }
 
