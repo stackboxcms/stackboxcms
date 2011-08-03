@@ -29,6 +29,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $kernel = $this->kernel;
         $request = $kernel->request();
         $user = $kernel->user();
+        $site = $kernel->site();
         
         // Ensure page exists
         $mapper = $kernel->mapper();
@@ -129,14 +130,15 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $activeTemplate = $page->template;   
         }
         $activeTheme = current(explode('/', $activeTemplate));
-        $themeUrl = $kernel->config('cms.url.themes') . $activeTheme . '/';
+        $themeUrl = $site->urlThemes() . $activeTheme . '/';
         $template = new Template($activeTemplate);
         $template->format($request->format);
-        $template->path($kernel->config('cms.path.themes'));
+        $template->path($site->dirThemes());
 
         // Ensure template exists and set to default if not
         // @todo Also display warning for logged-in users that page fell back to default template
         if(!$template->exists()) {
+            //echo "Template does not exist at " . $themeUrl;
             $template->file($kernel->config('cms.default.theme') . '/' . $kernel->config('cms.default.theme_template'), 'html');
         }
 

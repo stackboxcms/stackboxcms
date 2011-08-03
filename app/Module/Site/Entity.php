@@ -75,6 +75,15 @@ class Entity extends Stackbox\EntityAbstract
 
 
     /**
+     * Site themes directory
+     */
+    public function dirThemes()
+    {
+        return $this->dir() . '/themes/';
+    }
+
+
+    /**
      * Site directory
      */
     public function moduleDirs()
@@ -84,5 +93,25 @@ class Entity extends Stackbox\EntityAbstract
             $kernel->config('cms.path.modules'),
             $kernel->config('cms.path.files') . 'content/'
         );
+    }
+
+
+    /**
+     * Return the full URL to the site folder
+     * 
+     * @return string
+     */
+    public function url()
+    {
+        return \Kernel()->config('cms.url.files');
+    }
+
+
+    /**
+     * URL to site themes directory
+     */
+    public function urlThemes()
+    {
+        return $this->url() . '/themes/';
     }
 }
