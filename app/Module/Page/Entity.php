@@ -72,6 +72,7 @@ class Entity extends Stackbox\EntityAbstract
     {
         $this->__set('site_id', \Kernel()->config('cms.site.id'));
         $this->__set('url', self::formatPageUrl($this->__get('url')));
+        $this->__set('title', htmlentities($this->__get('title'), ENT_QUOTES, "UTF-8"));
         return parent::beforeSave($mapper);
     }
     
