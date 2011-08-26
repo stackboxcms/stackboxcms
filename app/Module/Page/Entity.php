@@ -28,6 +28,7 @@ class Entity extends Stackbox\EntityAbstract
             'site_id' => array('type' => 'int', 'default' => 0, 'unique' => 'site_page'),
             'parent_id' => array('type' => 'int', 'index' => true, 'default' => 0),
             'title' => array('type' => 'string', 'required' => true),
+            'navigation_title' => array('type' => 'string'),
             'url' => array('type' => 'string', 'required' => true, 'unique' => 'site_page'),
             'meta_keywords' => array('type' => 'string'),
             'meta_description' => array('type' => 'string'),
@@ -148,5 +149,14 @@ class Entity extends Stackbox\EntityAbstract
     public function isVisible()
     {
         return ($this->visibility == self::VISIBILITY_VISIBLE);
+    }
+
+
+    /**
+     * Navigation title
+     */
+    public function navigationTitle()
+    {
+        return $this->navigation_title ? $this->navigation_title : $this->title;
     }
 }

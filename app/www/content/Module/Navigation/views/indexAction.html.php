@@ -3,7 +3,7 @@
 $tree = $view->generic('treeview');
 $tree->data($pages)
     ->item(function($page) use($view) {
-        return '<a href="' . $view->url(array('page' => ltrim($page->url, '/')), 'page') . '" title="' . $page->title . '">' . $page->title . '</a>';
+        return '<a href="' . $view->url(array('page' => ltrim($page->url, '/')), 'page') . '" title="' . $page->navigationTitle() . '">' . $page->navigationTitle() . '</a>';
     })
     ->itemChildren(function($page) {
         return $page->children;
