@@ -104,14 +104,29 @@ class Entity extends Stackbox\EntityAbstract
 
         // Build array of theme directories to look in
         $tplDir = $kernel->config('cms.path.themes');
-        $tplDirs = array();
+        $themeDirs = array();
         foreach($site->themes() as $theme) {
-            $tplDirs[] = rtrim($tplDir, '/') . '/' . $theme . '/';
+            // Global themes folder
+            $themeDirs[] = rtrim($tplDir, '/') . '/' . $theme . '/';
+            // Site themes folder
+            $themeDirs[] = rtrim($site->dirThemes(), '/') . '/' . $theme . '/';
+        }
+
+        // Ensure directories exist before giving them to Finder
+        foreach($themeDirs as $ti => $themeDir) {
+            if(!is_dir($themeDir)) {
+                unset($themeDirs[$ti]);
+            }
+        }
+
+        // Ensure there is at least ONE directory if no others exist (fallback to default template)
+        if(0 == count($themeDirs)) {
+            $themeDirs[] = rtrim($tplDir, '/') . '/default/';
         }
 
         // Find template files
         $templates = $kernel->finder()
-            ->in($tplDirs)
+            ->in($themeDirs)
             ->files()
             ->name('*.html.tpl')
             ->depth(0)
@@ -121,6 +136,7 @@ class Entity extends Stackbox\EntityAbstract
         foreach($templates as $tpl) {
             // Remove path info
             $tplRelPath = str_replace($tplDir, '', $tpl->getPathname());
+            $tplRelPath = str_replace($site->dirThemes(), '', $tpl->getPathname());
             // Remove extensions
             $tplRelPath = str_replace('.html.tpl', '', $tplRelPath);
             // Set in array to use
