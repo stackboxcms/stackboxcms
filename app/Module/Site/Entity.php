@@ -24,7 +24,7 @@ class Entity extends Stackbox\EntityAbstract
             'title' => array('type' => 'string', 'required' => true),
             'theme' => array('type' => 'string'),
             'status' => array('type' => 'int', 'length' => 1, 'default' => self::STATUS_ACTIVE),
-            'date_created' => array('type' => 'datetime'),
+            'date_created' => array('type' => 'datetime', 'default' => new \DateTime()),
             'date_modified' => array('type' => 'datetime')
         );
     }
@@ -51,8 +51,8 @@ class Entity extends Stackbox\EntityAbstract
      */
     public function beforeSave(Spot\Mapper $mapper)
     {
-        $this->__set('shortname', strtolower(preg_replace("/[^a-zA-Z0-9]/g", "", $this->__get('shortname'))));
-        return parent::beforeSave($mapper);
+        $this->__set('shortname', strtolower(preg_replace("/[^a-zA-Z0-9]/", "", $this->__get('shortname'))));
+        $this->__set('date_modified', new \DateTime());
     }
 
 
