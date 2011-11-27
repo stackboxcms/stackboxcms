@@ -107,11 +107,17 @@ cms.modal = (function (cms, $) {
                 tData[field.name] = field.value;
             });
             
+            var fMethod = tForm.attr('method');
             $.ajax({
-                type: "POST",
+                type: fMethod ? fMethod.toUpperCase() : "POST",
                 url: tForm.attr('action'),
                 data: tForm.serialize(),
                 success: function(data, textStatus, req) {
+                    if("GET" === fMethod.toUpperCase()) {
+                        m.content(req.responseText);
+                        return;
+                    }
+
                     nData = $(data);
                     if(tData._method == 'DELETE') {
                         if(tData.item_id) {
