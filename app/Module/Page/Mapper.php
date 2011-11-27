@@ -59,11 +59,6 @@ class Mapper extends Stackbox\Module\MapperAbstract
 
             // Step 1: Build index-based array of page IDs to their respective page objects
             foreach($pages as $page) {
-                // Mark page as 'current page'
-                if($page->id == $currentPage->id) {
-                    $page->is_in_path = true;
-                }
-
                 // Add to index by ID
                 self::$_pageIndex[$page->id] = $page;
             }
@@ -73,22 +68,29 @@ class Mapper extends Stackbox\Module\MapperAbstract
                 if(isset(self::$_pageIndex[$page->parent_id])) {
                     // Set page children
                     self::$_pageIndex[$page->parent_id]->children[] = $page;
-
-                    // Add to path to current page
-                    self::$_pageIndex[$page->id]->id_path = trim(self::$_pageIndex[$page->parent_id]->id_path . '.' . $page->parent_id, '.');
                 }
             }
 
-            // Mark all pages in path of current page
-            $currentPage = self::$_pageIndex[$currentPage->id];
-            if($currentPage->id_path) {
-                foreach(explode('.', $currentPage->id_path) as $pId) {
-                    self::$_pageIndex[$pId]->is_in_path = true;
-                }
-            }
+            // Step 3: Start at $currentPage and step back up through parents marking them in the current path
+            $this->markPagesInPathFromPage(self::$_pageIndex[$currentPage->id]);
         }
 
         return $this->buildPageTree(self::$_pageIndex, $startPageId);
+    }
+
+
+    /**
+     * Mark all parent pages from first given page as in the current path
+     */
+    protected function markPagesInPathFromPage(Entity $page) {
+        // Mark page in path
+        self::$_pageIndex[$page->id]->is_in_path = true;
+
+        // Mark parent page in path recursively
+        if($page->parent_id) {
+            $fn = __FUNCTION__;
+            $this->$fn(self::$_pageIndex[$page->parent_id]);
+        }
     }
 
 
@@ -117,8 +119,8 @@ class Mapper extends Stackbox\Module\MapperAbstract
 
             $hasChildren = isset($index[$p->id]);
             if($hasChildren) {
-                $func = __FUNCTION__;
-                $p->children = $this->$func($index, $p->id, $level+1);
+                $fn = __FUNCTION__;
+                $p->children = $this->$fn($index, $p->id, $level+1);
             }
 
             // Add page to item array

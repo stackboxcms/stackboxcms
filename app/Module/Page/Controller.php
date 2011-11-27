@@ -40,11 +40,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if($pageUrl == '/') {
                 // Create new page for the homepage automatically if it does not exist
                 $page = $pageMapper->get('Module\Page\Entity');
-                $page->site_id = $kernel->config('cms.site.id');
+                $page->site_id = $site->id;
                 $page->parent_id = 0;
                 $page->title = "Home";
                 $page->url = $pageUrl;
-                $page->date_created = $pageMapper->connection('Module\Page\Entity')->dateTime();
+                $page->template = $site->theme . '/index';
+                $page->date_created = new \DateTime();
                 $page->date_modified = $page->date_created;
                 if(!$pageMapper->save($page)) {
                     throw new Alloy\Exception("Unable to automatically create homepage at '" . $pageUrl . "' - Please check data source permissions");
