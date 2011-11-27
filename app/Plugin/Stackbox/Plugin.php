@@ -27,8 +27,7 @@ class Plugin
         $cfg = $kernel->config();
         $app = $cfg['app'];
 
-        // @todo Determine which site HOST is and set site_id
-        // @todo Set file paths with current site_id
+        // Hostname lookup
         $hostname = $kernel->request()->server('HTTP_HOST');
 
         // Get site by hostname
@@ -39,6 +38,37 @@ class Plugin
             $content = $kernel->dispatch('page', 'install');
             echo $content;
             exit();
+        }
+
+        // Site not found - setup first site automaticlly on first viewed hostname
+        if(!$site) {
+            // Count sites
+            $siteCount = $siteMapper->all('Module\Site\Entity')->count();
+            if(0 == $siteCount) {
+                // Add first site with current hostname
+                $newSite = $siteMapper->create('Module\Site\Entity', array(
+                    'reseller_id' => 0,
+                    'shortname' => $hostname,
+                    'title' => 'StackboxCMS Website',
+                    'theme' => 'default',
+                    'status' => \Module\Site\Entity::STATUS_ACTIVE,
+                    'date'
+                ));
+                $siteSaved = $siteMapper->save($newSite);
+
+                // Add site domain record
+                if($siteSaved) {
+                    $siteDomain = $siteMapper->create('Module\Site\Domain', array(
+                        'site_id' => $newSite->id,
+                        'domain' => $hostname,
+                        'type' => \Module\Site\Domain::TYPE_NORMAL
+                    ));
+                    $siteMapper->save($siteDomain);
+
+                    // Set site
+                    $site = $newSite;
+                }
+            }
         }
 
         // Site not found - no hostname match

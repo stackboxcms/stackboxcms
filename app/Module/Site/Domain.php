@@ -1,6 +1,6 @@
 <?php
 namespace Module\Site;
-use Stackbox;
+use Stackbox, Spot;
 
 /**
  * Site domain entity
@@ -24,7 +24,13 @@ class Domain extends Stackbox\EntityAbstract
             'domain' => array('type' => 'string', 'required' => true),
             'type' => array('type' => 'int', 'length' => 1, 'default' => self::TYPE_NORMAL),
             'redirect_url' => array('type' => 'string'),
-            'date_created' => array('type' => 'datetime')
+            'date_created' => array('type' => 'datetime', 'default' => new \DateTime())
         );
     }
+
+
+    /**
+     * Overridden without calling parent so base Entity will not try to set 'site_id' automatically
+     */
+    public function beforeSave(Spot\Mapper $mapper) {}
 }
