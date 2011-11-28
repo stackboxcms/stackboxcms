@@ -223,7 +223,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Return view object for the add/edit form
      */
-    protected function formView()
+    protected function formView($entityName = null)
     {
         return $this->kernel->spotForm('Module\User\Entity')
             ->removeFields(array('site_id', 'salt'));

@@ -14,5 +14,5 @@ abstract class EntityAbstract extends Stackbox\EntityAbstract
             'page_id' => array('type' => 'int', 'index' => true, 'default' => 0),
             'module_id' => array('type' => 'int', 'index' => true, 'required' => true)
         ));
-	}    
+	}
 }

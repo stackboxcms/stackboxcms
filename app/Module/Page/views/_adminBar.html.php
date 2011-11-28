@@ -1,30 +1,41 @@
-<div id="cms_admin_bar" class="cms_ui">
-  <div id="cms_admin_bar_primary">
-    <ul>
-      <li><a id="cms_admin_bar_editPage" href="#"><span>Edit Page</span></a></li>
-      <li><a id="cms_admin_bar_addContent" href="#"><span>Add Module</span></a></li>
-    </ul>
-  </div>
-  <div id="cms_admin_bar_inside">
+<!-- Admin top bar -->
+<div id="cms_admin_bar" class="topbar" data-dropdown="dropdown">
+  <div class="topbar-inner">
     <!-- page menu -->
-    <ul>
-      <li><a href="<?php echo $kernel->url(array('action' => 'pages'), 'index_action'); ?>" rel="modal">Pages</a></li>
-      <li><a href="<?php echo $kernel->url(array('action' => 'new'), 'index_action'); ?>" rel="modal">New Page</a></li>
-      <?php if('/' == $page->url): // ugly hack until routes are fixed for good ?>
-        <li><a href="<?php echo $kernel->url(array('action' => 'edit'), 'index_action'); ?>" rel="modal">Edit Page</a></li>
-      <?php else: ?>
-        <li><a href="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'edit'), 'page_action'); ?>" rel="modal">Edit Page</a></li>
-        <li><a href="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'delete'), 'page_action'); ?>" rel="modal">Delete Page</a></li>
-      <?php endif; ?>
+    <ul class="nav">
+      <li><a id="cms_admin_bar_editPage" class="cms_admin_bar_edit" href="#">Edit Page</a></li>
+      <li><a id="cms_admin_bar_addContent" class="cms_admin_bar_edit" href="#">Add Module</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle">Site</a>
+        <ul class="dropdown-menu">
+          <li><a href="<?php echo $view->url(array('action' => 'new'), 'index_action'); ?>" rel="modal">New Page</a></li>
+          <li><a href="<?php echo $view->url(array('action' => 'pages'), 'index_action'); ?>" rel="modal">Pages (Sitemap)</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle">Page</a>
+        <ul class="dropdown-menu">
+          <?php if('/' == $page->url): // ugly hack until routes are fixed for good ?>
+            <li><a href="<?php echo $view->url(array('action' => 'edit'), 'index_action'); ?>" rel="modal">Edit Page</a></li>
+          <?php else: ?>
+            <li><a href="<?php echo $view->url(array('page' => $page->url, 'action' => 'edit'), 'page_action'); ?>" rel="modal">Edit Page</a></li>
+            <li><a href="<?php echo $view->url(array('page' => $page->url, 'action' => 'delete'), 'page_action'); ?>" rel="modal">Delete Page</a></li>
+          <?php endif; ?>
+          <li><a href="<?php echo $view->url(array('page' => $page->url, 'module_id' => $page->id, 'module_name' => 'page', 'module_action' => 'settings'), 'module'); ?>" rel="modal">Page Settings</a></li>
+        </ul>
+      </li>
     </ul>
     <!-- user menu -->
-    <ul id="cms_admin_nav_user">
+    <ul id="cms_admin_nav_user" class="nav secondary-nav">
       <li><a href="<?php echo $kernel->url(array('page' => $page->url, 'module_name' => 'user', 'module_id' => 0, 'module_action' => 'editlist'), 'module'); ?>" rel="modal">Users</a></li>
       <li><a href="<?php echo $kernel->url('logout'); ?>">Logout</a></li>
     </ul>
     <div class="clear"></div>
   </div>
 </div>
+
+
+<!-- Modules user can add in regions -->
 <div id="cms_admin_modules" class="cms_ui">
   <div class="cms_ui_pane_content">
     <?php

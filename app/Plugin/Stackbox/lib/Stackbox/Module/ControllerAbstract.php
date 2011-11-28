@@ -69,9 +69,16 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
     /**
      * Return view object for the add/edit form
      */
-    protected function formView()
+    protected function formView($entityName = null)
     {
-        $fields = $this->kernel->mapper()->fields("Module\\" . $this->name() . "\\Entity");
+        if(null === $entityName) {
+            if(defined('static::ENTITY')) {
+                $entityName = static::ENTITY;
+            } else {
+                $entityName = "Module\\" . $this->name() . "\\Entity";   
+            }
+        }
+        $fields = $this->kernel->mapper()->fields($entityName);
         $view = new \Alloy\View\Generic\Form('form');
         $view->action("")
             ->fields($fields)

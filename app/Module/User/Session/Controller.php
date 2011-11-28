@@ -174,7 +174,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Return view object for the add/edit form
      */
-    protected function formView()
+    protected function formView($entityName = null)
     {
         $view = new \Alloy\View\Generic\Form('form');
         $view->action($this->kernel->url('login'))

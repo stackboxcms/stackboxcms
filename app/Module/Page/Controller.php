@@ -82,11 +82,15 @@ class Controller extends Stackbox\Module\ControllerAbstract
             }
             
             // Load requested module
-            $moduleObject = $kernel->module($moduleName);
+            // Try 'Site' module first
+            $moduleObject = $kernel->module('Site_' . $moduleName);
+            if(false === $moduleObject) {
+                $moduleObject = $kernel->module($moduleName);
+            }
 
             // Ensure module is a placeable module on the page
             if(!($moduleObject instanceof Stackbox\Module\ControllerAbstract)) {
-                throw new Alloy\Exception("Module '" . $moduleName . "' must extend 'Stackbox\Module\ControllerAbstract' to be a placeable Stackbox module");
+                throw new Alloy\Exception("Module '" . $moduleName . "' must extend 'Stackbox\Module\ControllerAbstract' or 'Stackbox\Site\Module\ControllerAbstract' to be a placeable Stackbox module");
             }
 
             // Ensure user can execute requested action
@@ -173,8 +177,14 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $modules->orWhere(array('site_id' => $kernel->config('cms.site.id'), 'region' => $template->regionsType('global')));
         }
         foreach($modules as $module) {
-            // Loop over modules, building content for each region
-            $moduleResponse = $kernel->dispatch($module->name, 'indexAction', array($request, $page, $module));
+            // Try 'Site' module first, then normal module ('Site' modules override global ones)
+            $moduleObject = $kernel->module('Site_' . $module->name);
+            if(false === $moduleObject) {
+                $moduleObject = $kernel->module($module->name);
+            }
+
+            // Dispatch to module's 'indexAction' to display module content on page
+            $moduleResponse = $kernel->dispatch($moduleObject, 'indexAction', array($request, $page, $module));
             if(!isset($regionModules[$module->region]) || !is_array($regionModules[$module->region])) {
                 $regionModules[$module->region] = array();
             }
@@ -430,9 +440,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Return view object for the add/edit form
      */
-    protected function formView()
+    protected function formView($entityName = null)
     {
-        $view = parent::formView();
+        $view = parent::formView($entityName);
         $fields = $view->fields();
         
         // Override int 'parent_id' with option select box
@@ -538,6 +548,27 @@ class Controller extends Stackbox\Module\ControllerAbstract
             }
         }
         return $content;
+    }
+
+
+    /**
+     * Settings init
+     * 
+     * Define all settings fields and values that will be needed
+     */
+    public function settings($page, $module)
+    {
+        return array(
+            // Group
+            'advanced' => array(
+                // Fields
+                'force_https' => array(
+                    'type' => 'boolean',
+                    'default' => false,
+                    'after' => 'Force page to be viewed via secure connection (HTTPS requres active SSL certificate)'
+                )
+            )
+        );
     }
     
     
