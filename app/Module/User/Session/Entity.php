@@ -5,7 +5,7 @@ use Stackbox;
 class Entity extends Stackbox\EntityAbstract
 {
     // Table
-    protected static $_datasource = "user_session";
+    protected static $_datasource = "cms_user_sessions";
     
     /**
      * Fields

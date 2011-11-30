@@ -6,7 +6,7 @@ use Spot;
 class Entity extends Stackbox\EntityAbstract
 {
     // Table
-    protected static $_datasource = "users";
+    protected static $_datasource = "cms_users";
     
     /**
      * Fields

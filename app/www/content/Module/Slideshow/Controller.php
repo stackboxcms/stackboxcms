@@ -225,7 +225,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Return view object for the add/edit form
      */
-    protected function formView()
+    protected function formView($entityName = null)
     {
         $view = $this->kernel->spotForm('Module\Slideshow\Item');
         $fields = $view->fields();

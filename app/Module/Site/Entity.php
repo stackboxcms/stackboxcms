@@ -11,7 +11,7 @@ class Entity extends Stackbox\EntityAbstract
     const STATUS_DISABLED = 0;
 
     // Table
-    protected static $_datasource = "sites";
+    protected static $_datasource = "cms_sites";
     
     /**
      * Fields
@@ -113,5 +113,42 @@ class Entity extends Stackbox\EntityAbstract
     public function urlThemes()
     {
         return $this->url() . '/themes/';
+    }
+
+
+    /**
+     * Get site shortname
+     */
+    public function shortname()
+    {
+        return $this->shortname;
+    }
+
+
+    /**
+     * Get and return settings in special collction with direct access to settings by 'setting_key' name
+     */
+    public function settings()
+    {
+        if(null !== $this->_settings) {
+            return $this->_settings;
+        }
+
+        $kernel = \Kernel();
+        $this->_settings = $kernel->mapper('Module\Settings\Mapper')->getSettingsForModule('site', $this->id);
+        return $this->_settings;
+    }
+
+
+    /**
+     * Get setting value by key name
+     */
+    public function setting($key, $default = null)
+    {
+        $settings = $this->settings();
+        if($v = $settings->$key) {
+            return $v;
+        }
+        return $default;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 // Form URL to update settings with
 $formUrl = $view->url(array(
-  'module_name' => 'page_module_settings',
+  'module_name' => 'settings',
   'module_id' => (int) $module->id),
 'module');
 ?>
@@ -11,7 +11,7 @@ $formUrl = $view->url(array(
 <?php if(isset($settingsInit)): ?>
 <form action="<?php echo $formUrl; ?>" method="POST">
   
-  <ul id="tabs-m<?php echo $module->id; ?>-settings" class="tabs">
+  <ul id="tabs-m<?php echo $module->id; ?>-settings" class="tabs" data-tabs="tabs">
     <?php
     $i = 0;
     foreach($settingsInit as $group => $fields):
@@ -49,12 +49,9 @@ $formUrl = $view->url(array(
 
   
   <div class="app_form_actions"> 
+    <input type="hidden" name="target_module_name" value="<?php echo $module->name; ?>" />
     <button type="submit" class="app_action_primary">Save</button> 
     <a href="#" class="app_action_cancel">Cancel</a>
   </div> 
 </form>
-
-<script type="text/javascript">
-  $('#tabs-m<?php echo $module->id; ?>-settings').tabs();
-</script>
 <?php endif; ?>

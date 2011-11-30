@@ -63,19 +63,15 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $moduleName = $request->module_name;
             $moduleAction = $request->module_action;
             
-            if($moduleId) {
+            $module = false;
+            if($moduleName != 'page' && $moduleName != 'site' && $moduleId) {
                 // Get module by ID
                 $module = $mapper->first('Module\Page\Module\Entity', array('id' => $moduleId));
-            } else {
-                // Get new module entity, no ID supplied
-                // @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
-                $module = $mapper->get('Module\Page\Module\Entity');
-                $module->id = $moduleId;
-                $module->name = $moduleName;
             }
             
             // Setup dummy module object if there is none loaded
-            if(!$module) {
+            // @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
+            if(false === $module) {
                 $module = $mapper->get('Module\Page\Module\Entity');
                 $module->id = $moduleId;
                 $module->name = $moduleName;
@@ -586,7 +582,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // Page
         $this->kernel->mapper()->migrate('Module\Page\Entity');
         $this->kernel->mapper()->migrate('Module\Page\Module\Entity');
-        $this->kernel->mapper()->migrate('Module\Page\Module\Settings\Entity');
+        $this->kernel->mapper()->migrate('Module\Settings\Entity');
         return parent::install($action, $params);
     }
     

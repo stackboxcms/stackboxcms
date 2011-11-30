@@ -10,7 +10,7 @@ class Entity extends Stackbox\EntityAbstract
 
 
     // Table
-    protected static $_datasource = "pages";
+    protected static $_datasource = "cms_pages";
 
     // Public property that will contain child pages when Mapper::pageTree() is called
     public $children = array();
@@ -175,5 +175,33 @@ class Entity extends Stackbox\EntityAbstract
     public function navigationTitle()
     {
         return $this->navigation_title ? $this->navigation_title : $this->title;
+    }
+
+
+    /**
+     * Get and return settings in special collction with direct access to settings by 'setting_key' name
+     */
+    public function settings()
+    {
+        if(null !== $this->_settings) {
+            return $this->_settings;
+        }
+
+        $kernel = \Kernel();
+        $this->_settings = $kernel->mapper('Module\Settings\Mapper')->getSettingsForModule('page', $this->id);
+        return $this->_settings;
+    }
+
+
+    /**
+     * Get setting value by key name
+     */
+    public function setting($key, $default = null)
+    {
+        $settings = $this->settings();
+        if($v = $settings->$key) {
+            return $v;
+        }
+        return $default;
     }
 }

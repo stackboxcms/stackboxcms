@@ -5,7 +5,7 @@ use Stackbox;
 class Entity extends Stackbox\EntityAbstract
 {
     // Setup table and fields
-    protected static $_datasource = "page_modules";
+    protected static $_datasource = "cms_page_modules";
     protected $_settings;
     
     /**
@@ -24,41 +24,18 @@ class Entity extends Stackbox\EntityAbstract
         ) + parent::fields();
     }
 
-    /**
-     * Relations
-     */
-    /*
-    public static function relations() {
-        return array(
-            // Settings as key => value
-            'settings' => array(
-                'type' => 'HasManyKV', // HasMany Key/Values
-                'entity' => 'Module\Page\Module\Settings\Entity',
-                'keyField' => 'setting_key',
-                'valueField' => 'setting_value',
-                'where' => array('site_id' => ':entity.site_id', 'module_id' => ':entity.id')
-            )
-        ) + parent::relations();
-    }
-    */
-
 
     /**
      * Get and return settings in special collction with direct access to settings by 'setting_key' name
      */
     public function settings()
     {
-        if($this->_settings) {
+        if(null !== $this->_settings) {
             return $this->_settings;
         }
 
         $kernel = \Kernel();
-        $mapper = $kernel->mapper();
-        $settings = $mapper->all('Module\Page\Module\Settings\Entity')
-            ->where(array('site_id' => $this->site_id, 'module_id' => $this->id))
-            ->order(array('ordering' => 'ASC'));
-
-        $this->_settings = new Settings\Collection($settings);
+        $this->_settings = $kernel->mapper('Module\Settings\Mapper')->getSettingsForModule($this->name, $this->id);
         return $this->_settings;
     }
 
@@ -73,5 +50,13 @@ class Entity extends Stackbox\EntityAbstract
             return $v;
         }
         return $default;
+    }
+
+    /**
+     * Get lowercase module name
+     */
+    public function name()
+    {
+        return strtolower($this->name);
     }
 }

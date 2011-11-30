@@ -1,12 +1,18 @@
 <?php
-namespace Module\Page\Module\Settings;
-use Alloy, Module, Stackbox;
+namespace Module\Settings;
+
+use Stackbox;
+use Alloy\Request;
+use Module\Page\Entity as Page;
+use Module\Page\Module\Entity as Module;
 
 /**
  * Page Module Settings Module
  */
 class Controller extends Stackbox\Module\ControllerAbstract
 {
+    const ENTITY = 'Module\Settings\Entity';
+
     // Path override
     protected $_path = __DIR__;
 
@@ -15,7 +21,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Public listing of slideshow items
      * @method GET
      */
-    public function indexAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
+    public function indexAction(Request $request, Page $page, Module $module)
     {
         return false;
     }
@@ -26,7 +32,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * 
      * @method GET
      */
-    public function editlistAction(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
+    public function editlistAction(Request $request, Page $page, Module $module)
     {
         // Get all settings for current module
         $settings = $module->settings()->toArray();
@@ -42,16 +48,25 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * 
      * @method POST
      */
-    public function postMethod(Alloy\Request $request, Module\Page\Entity $page, Module\Page\Module\Entity $module)
+    public function postMethod(Request $request, Page $page, Module $module)
     {
-        $postSettings = $request->post(); // POST payload
         $mapper = $this->kernel->mapper();
+        $target_module_name = $request->target_module_name;
+        $postSettings = $request->post(); // POST payload
+        if(isset($postSettings['target_module_name'])) {
+            unset($postSettings['target_module_name']);
+        }
 
         // Steps:
         // - Loop over all settings to see which ones already exist and update them
         // - Add settings that don't exist
-
-        $settings = $module->settings();
+        if('site' == $target_module_name) {
+            $settings = $this->kernel->site()->settings();
+        } elseif('page' == $target_module_name) {
+            $settings = $page->settings();
+        } else {
+            $settings = $module->settings();
+        }
         $currentSettings = $settings->toArray();
 
         $updateSettings = array_intersect_key($postSettings, $currentSettings);
@@ -69,7 +84,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $setting = new Entity();
             $setting->data(array(
                 'site_id' => $module->site_id,
-                'module_id' => $module->id,
+                'type' => $target_module_name,
+                'type_id' => (int) $module->id,
                 'setting_key' => $key,
                 'setting_value' => $value
             ));
@@ -90,7 +106,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function install($action = null, array $params = array())
     {
-        $this->kernel->mapper()->migrate('Module\Page\Module\Settings\Entity');
+        $this->kernel->mapper()->migrate(self::ENTITY);
         return parent::install($action, $params);
     }
     
@@ -102,6 +118,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function uninstall()
     {
-        return $this->kernel->mapper()->dropDatasource('Module\Page\Module\Settings\Entity');
+        return $this->kernel->mapper()->dropDatasource(self::ENTITY);
     }
 }

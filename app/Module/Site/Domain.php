@@ -12,7 +12,7 @@ class Domain extends Stackbox\EntityAbstract
     const TYPE_REDIRECT = 3;
 
     // Table
-    protected static $_datasource = "site_domains";
+    protected static $_datasource = "cms_site_domains";
     
     /**
      * Fields

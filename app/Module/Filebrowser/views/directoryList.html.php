@@ -2,6 +2,14 @@
 use Module\Filebrowser\File;
 
 $request = $kernel->request();
+$size = null;
+$width = $height = 100;
+if($request->size) {
+  // Requested image size dimensions
+  $size = explode('x', $request->size, 2);
+  $width = $size[0];
+  $height = isset($size[1]) ? $size[1] : $width;
+}
 ?>
 
 <div class="cms_filebrowser">
@@ -39,12 +47,13 @@ $request = $kernel->request();
     $grid = $view->generic('cellgrid');
     $grid->data($files)
       ->columns(6)
-      ->cell(function($mFile) {
+      ->cell(function($mFile) use($size, $width, $height) {
         // Get into File object
         $file = new File($mFile);
       ?>
         <?php if($file->isImage()): // Image ?>
         <div class="cms_filebrowser_tile cms_filebrowser_image cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">
+          <?php if(!$size): ?>
           <nav class="cms_filebrowser_hover_nav">
             <ul>
               <li><a href="<?php echo $file->getSizeUrl(100, 100); ?>">Thumbnail (100x100)</a></li>
@@ -55,7 +64,8 @@ $request = $kernel->request();
               <li><a href="<?php echo $file->getUrl(); ?>">Full Size</a></li>
             </ul>
           </nav>
-          <a href="<?php echo $file->getUrl(); ?>"><img src="<?php echo $file->getSizeUrl(100, 100); ?>" alt="<?php echo $file->getFilename(); ?>" /></a>
+          <?php endif; ?>
+          <a href="<?php echo ($size) ? $file->getSizeUrl($width, $height) : $file->getUrl(); ?>"><img src="<?php echo $file->getSizeUrl($width, $height); ?>" alt="<?php echo $file->getFilename(); ?>" /></a>
         </div>
         <?php else: // File ?>
         <div class="cms_filebrowser_tile cms_filebrowser_file cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">

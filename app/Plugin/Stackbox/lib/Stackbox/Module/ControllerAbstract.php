@@ -1,6 +1,11 @@
 <?php
 namespace Stackbox\Module;
+
 use Alloy;
+use Stackbox;
+use Alloy\Request;
+use Module\Page\Entity as Page;
+use Module\Page\Module\Entity as Module;
 
 /**
  * Base application module controller
@@ -129,25 +134,15 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
     /**
      * Settings display
      */
-    public function settingsAction($request, $page, $module)
+    public function settingsAction(Request $request, Page $page, Module $module)
     {
-        // @todo Settings implementation
-        /**
-         
-         Want: $module->settings to be collection object with all module settings loaded:
-            - Spot Relation (maybe new custom relation type?)
-            - Object access: $module->settings->display_type
-                NULL or default value if no setting exists yet in datastore
-
-         */
-        
         $settings = array();
         if(method_exists($this, 'settings')) {
             $settings = $this->settings($page, $module);
         }
 
         // Dispatch to settings module to handle this and pass in retrieved settings to template
-        return $this->kernel->dispatch('Page_Module_Settings', 'editlistAction', array($request, $page, $module))
+        return $this->kernel->dispatch('Settings', 'editlistAction', array($request, $page, $module))
             ->set(array('settingsInit' => $settings));
     }
 }

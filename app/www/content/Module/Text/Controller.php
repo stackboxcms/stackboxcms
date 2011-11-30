@@ -166,9 +166,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * Return view object for the add/edit form
      */
-    protected function formView()
+    protected function formView($entityName = null)
     {
-        $view = parent::formView();
+        $view = parent::formView($entityName);
         $fields = $view->fields();
         
         // Set text 'content' as type 'editor' to get WYSIWYG

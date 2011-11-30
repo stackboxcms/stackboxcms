@@ -1,5 +1,5 @@
 <?php
-namespace Module\Page\Module\Settings;
+namespace Module\Settings;
 use Stackbox;
 
 class Collection extends Stackbox\EntityAbstract implements \Countable, \IteratorAggregate
@@ -17,7 +17,11 @@ class Collection extends Stackbox\EntityAbstract implements \Countable, \Iterato
         $this->_settingsEntities = $settings;
 
         // Store as array key => value
-        $this->_settings = $settings->toArray('setting_key', 'setting_value');
+        if($settings instanceof \Spot\Entity\Collection || $settings instanceof \Spot\Query) {
+            $this->_settings = $settings->toArray('setting_key', 'setting_value');
+        } else {
+            $this->_settings = $settings;
+        }
     }
 
 

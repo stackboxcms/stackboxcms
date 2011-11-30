@@ -31,13 +31,10 @@ $router->route('filebrowser', '/filebrowser/<:action>')
     ->delete(array('action' => 'delete'));
 
 // Dynamic image resize reserved route
-$router->route('image_size', '/site/<#site_id>/images/_size/<#width>x<#height>/<*image>')
+$router->route('image_size', '/site/<:site>/images/_size/<#width>x<#height>/<*image>')
     ->defaults(array('module' => 'Filebrowser', 'action' => 'imageSize', 'format' => 'html'));
 
-/*
-$router->route('module_item_action', $pageRouteItem . 'm,<:module_name>,<#module_id>/<#module_item>/<:module_action>(.<:format>)')
-    ->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'));
-/*/
+
 
 // Normal Routes
 $router->route('module_item', $pageRouteItem . 'm,<:module_name>,<#module_id>/<#module_item>(/<:module_action>)(.<:format>)')
