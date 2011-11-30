@@ -65,7 +65,7 @@ if($request->size) {
             </ul>
           </nav>
           <?php endif; ?>
-          <a href="<?php echo ($size) ? $file->getSizeUrl($width, $height) : $file->getUrl(); ?>"><img src="<?php echo $file->getSizeUrl($width, $height); ?>" alt="<?php echo $file->getFilename(); ?>" /></a>
+          <a href="<?php echo ($size) ? $file->getSizeUrl($width, $height) : $file->getUrl(); ?>"><img src="<?php echo $file->getSizeUrl(100, 100); ?>" alt="<?php echo $file->getFilename(); ?>" /></a>
         </div>
         <?php else: // File ?>
         <div class="cms_filebrowser_tile cms_filebrowser_file cms_filebrowser_extension_<?php echo $file->getExtension(); ?>">

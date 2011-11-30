@@ -218,9 +218,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
             // Redirect to images or files
             if($subDir = 'images') {
-                return $kernel->redirect($kernel->url(array('action' => 'images'), 'filebrowser'));
+                return $kernel->redirect($kernel->url(array('action' => 'images'), 'filebrowser', $request->query()));
             }
-            return $kernel->redirect($kernel->url(array('action' => 'files'), 'filebrowser'));
+            return $kernel->redirect($kernel->url(array('action' => 'files'), 'filebrowser', $request->query()));
         } else {
             return $kernel->resource()
                 ->status(400)

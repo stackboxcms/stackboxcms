@@ -220,17 +220,6 @@ class Treeview extends Template
         $this->set('levelMax', $level);
         return $this;
     }
-
-
-    /**
-     * Get currnet level
-     *
-     * @param int $level Current level
-     */
-    public function level()
-    {
-        return self::$_level;
-    }
     
     
     /**

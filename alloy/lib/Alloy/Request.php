@@ -13,9 +13,12 @@ namespace Alloy;
  */
 class Request
 {
+    // Request URL
+    protected $_url;
+
     // Request parameters
     protected $_params = array();
-    
+
 
     /**
      * Ensure magic quotes are not mucking up request data
@@ -32,16 +35,61 @@ class Request
             array_walk_recursive($_COOKIE, $stripslashes_gpc);
             array_walk_recursive($_REQUEST, $stripslashes_gpc);
         }
+
+        // Properly handle PUT and DELETE request params
+        if($this->isPut() || $this->isDelete()) {
+            parse_str(file_get_contents('php://input'), $params);
+            $this->params($params);
+        }
+    }
+
+
+    /**
+     * Return requested URL path
+     *
+     * Works for HTTP(S) requests and CLI requests using the -u flag for URL dispatch emulation
+     * 
+     * @return string Requested URL path segement
+     */
+    public function url()
+    {
+        if(null === $this->_url) {
+            if($this->isCli()) {
+                // CLI request
+                $cliArgs = getopt("u:");
+                
+                $requestUrl = isset($cliArgs['u']) ? $cliArgs['u'] : '/';
+                $qs = parse_url($requestUrl, PHP_URL_QUERY);
+                $cliRequestParams = array();
+                parse_str($qs, $cliRequestParams);
+                
+                // Set parsed query params back on request object
+                $this->setParams($cliRequestParams);
+                
+                // Set requestUrl and remove query string if present so router can parse it as expected
+                if($qsPos = strpos($requestUrl, '?')) {
+                    $requestUrl = substr($requestUrl, 0, $qsPos);
+                }
+                
+            } else {
+                // HTTP request
+                $requestUrl = $this->get('u', '/');
+            }
+            $this->_url = $requestUrl;
+        }
+
+        return $this->_url;
     }
     
+    
     /**
-    * Access values contained in the superglobals as public members
-    * Order of precedence: 1. GET, 2. POST, 3. COOKIE, 4. SERVER, 5. ENV
-    *
-    * @see http://msdn.microsoft.com/en-us/library/system.web.httprequest.item.aspx
-    * @param string $key
-    * @return mixed
-    */
+     * Access values contained in the superglobals as public members
+     * Order of precedence: 1. GET, 2. POST, 3. COOKIE, 4. SERVER, 5. ENV
+     *
+     * @see http://msdn.microsoft.com/en-us/library/system.web.httprequest.item.aspx
+     * @param string $key
+     * @return mixed
+     */
     public function get($key, $default = null)
     {
         switch (true) {
@@ -219,7 +267,8 @@ class Request
     public function query($key = null, $default = null)
         {
         if (null === $key) {
-            return $_GET;
+            // Return _GET params without routing param or other params set by Alloy or manually on the request object
+            return array_diff_key($_GET, $this->param() + array('u' => 1));
         }
         
         return (isset($_GET[$key])) ? $_GET[$key] : $default;
@@ -333,20 +382,20 @@ class Request
     
     
     /**
-    * Return the method by which the request was made
+    * Return the method by which the request was made. Always returns HTTP_METHOD in UPPERCASE.
     *
-    * @return string
+    * @return string HTTP Request method in UPPERCASE
     */
     public function method()
     {
-        $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
+        $sm = strtoupper($this->server('REQUEST_METHOD', 'GET'));
 
-        // Emulate REST for browsers
-        if($method == "POST" && $this->post('_method')) {
-            $method = strtoupper($this->post('_method'));
+        // POST + '_method' override to emulate REST behavior in browsers that do not support it
+        if('POST' == $sm && $this->get('_method')) {
+            return strtoupper($this->get('_method'));
         }
 
-        return $method;
+        return $sm;
     }
     
     
@@ -434,6 +483,17 @@ class Request
     public function isHead()
     {
         return ($this->method() == "HEAD");
+    }
+
+
+    /**
+     *  Determine is incoming request is OPTIONS
+     *
+     *  @return boolean
+     */
+    public function isOptions()
+    {
+        return ($this->method() == "OPTIONS");
     }
     
     
