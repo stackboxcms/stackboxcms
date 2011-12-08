@@ -91,7 +91,11 @@ $app['i18n'] = array(
     'language' => 'en_US',
     'timezone' => 'America/Chicago',
     'date_format' => 'M d, Y',
-    'time_format' => 'H:i:s'
+    'time_format' => 'H:i:s',
+    'currency' => array(
+        'code' => 'USD',
+        'symbol' => '$'
+    )
 );
 
 return $cfg + array('app' => $app);
