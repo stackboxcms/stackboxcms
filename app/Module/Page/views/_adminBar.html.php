@@ -39,19 +39,37 @@
 <div id="cms_admin_modules" class="cms_ui">
   <div class="cms_ui_pane_content">
     <?php
+    // NOT this place for this... Should move it somewhere better soon...
+    $site = $kernel->site();
+    $moduleConfig = function(\SplFileInfo $file) use($site, $kernel) {
+      // Require config file
+      $cfg = require $file->getRealPath();
+
+      // Set standardized config values based on SplFileInfo object
+      $cfg['dirname'] = strrchr($file->getPath(), '/');
+      $cfg['path_dir'] = $file->getRealPath();
+      $cfg['is_site'] = !(false === strpos($cfg['path_dir'], $site->dir()));
+      if($cfg['is_site']) {
+        $cfg['url_dir'] = $site->url() . $kernel->config('cms.dir.modules') . 'Module/Site' . $cfg['dirname'];
+      } else {
+        $cfg['url_dir'] = $kernel->config('url.root') . $kernel->config('cms.dir.modules') . 'Module' . $cfg['dirname'];
+      }
+      return $cfg;
+    };
+
     // Module Files
     $moduleDirsPath = $kernel->config('cms.path.modules');
     $moduleDirs = $kernel->finder()
-      ->directories()
+      ->files()
+      ->name('_module.php')
       ->in($kernel->site()->moduleDirs())
-      ->depth(1)
       ->sortByName();
-    foreach($moduleDirs as $mDir):
-      $moduleAssetsUrl = $kernel->config('url.root') . $kernel->config('cms.dir.modules') . 'Module/' . $mDir->getFilename() . '/assets/';
+    foreach($moduleDirs as $mFile):
+      $mCfg = $moduleConfig($mFile);
     ?>
-      <div rel="cms_module_tile_<?php echo $mDir->getFilename(); ?>" class="cms_module_tile">
-        <h3><?php echo $mDir->getFilename(); ?></h3>
-        <div class="cms_module_tile_icon"><img src="<?php echo $moduleAssetsUrl; ?>/images/icon.png" alt="<?php echo $mDir->getFilename(); ?> Module" width="32" height="32" /></div>
+      <div rel="cms_module_tile_<?php echo $mCfg['name']; ?>" class="cms_module_tile">
+        <h3><?php echo $mCfg['name']; ?></h3>
+        <div class="cms_module_tile_icon"><img src="<?php echo $mCfg['url_dir']; ?>/assets/images/icon.png" alt="<?php echo $mCfg['name']; ?> Module" width="32" height="32" /></div>
       </div>
     <?php endforeach; ?>
     <div class="clear"></div>

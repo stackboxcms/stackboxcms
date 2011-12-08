@@ -180,7 +180,15 @@ class Controller extends Stackbox\Module\ControllerAbstract
             }
 
             // Dispatch to module's 'indexAction' to display module content on page
-            $moduleResponse = $kernel->dispatch($moduleObject, 'indexAction', array($request, $page, $module));
+            try {
+                $moduleResponse = $kernel->dispatch($moduleObject, 'indexAction', array($request, $page, $module));
+            } catch(\Exception $e) {
+                // Catch module exeptions and render them inside region where module would have gone
+                // (allows users to delete and edit bad modules instead of killing the whole page and forcing manual database modification)
+                $moduleResponse = $kernel->events('cms')->filter('module_dispatch_exception', $e);
+            }
+
+            // Setup named region array for module content
             if(!isset($regionModules[$module->region]) || !is_array($regionModules[$module->region])) {
                 $regionModules[$module->region] = array();
             }
