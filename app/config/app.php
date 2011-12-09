@@ -25,6 +25,9 @@ $requestUrl = isset($_GET['u']) ? $_GET['u'] : '';
 $requestPath = parse_url(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/', PHP_URL_PATH);
 $urlBase = str_replace($requestUrl, '', $requestPath);
 
+// Fixes nginx try_files uri passing (thanks Alon Rohter)
+$urlBase = (substr($urlBase,0,1) === '/') ? $urlBase : '/' . $urlBase;
+
 // URL info
 $isHttps = (!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? false : true;
 $urlHost = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost');
