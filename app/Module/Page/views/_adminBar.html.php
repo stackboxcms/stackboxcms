@@ -8,19 +8,15 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle">Site</a>
         <ul class="dropdown-menu">
-          <li><a href="<?php echo $view->url(array('action' => 'new'), 'index_action'); ?>" rel="modal">New Page</a></li>
-          <li><a href="<?php echo $view->url(array('action' => 'pages'), 'index_action'); ?>" rel="modal">Pages (Sitemap)</a></li>
+          <li><a href="<?php echo $view->url(array('page' => $page->url, 'module_id' => $page->id, 'module_name' => 'page', 'module_action' => 'new'), 'module'); ?>" rel="modal">New Page</a></li>
+          <li><a href="<?php echo $view->url(array('page' => $page->url, 'module_id' => $page->id, 'module_name' => 'page', 'module_action' => 'pages'), 'module'); ?>" rel="modal">Pages (Sitemap)</a></li>
         </ul>
       </li>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle">Page</a>
         <ul class="dropdown-menu">
-          <?php if('/' == $page->url): // ugly hack until routes are fixed for good ?>
-            <li><a href="<?php echo $view->url(array('action' => 'edit'), 'index_action'); ?>" rel="modal">Edit Page</a></li>
-          <?php else: ?>
-            <li><a href="<?php echo $view->url(array('page' => $page->url, 'action' => 'edit'), 'page_action'); ?>" rel="modal">Edit Page</a></li>
-            <li><a href="<?php echo $view->url(array('page' => $page->url, 'action' => 'delete'), 'page_action'); ?>" rel="modal">Delete Page</a></li>
-          <?php endif; ?>
+          <li><a href="<?php echo $view->url(array('page' => $page->url, 'module_id' => $page->id, 'module_name' => 'page', 'module_action' => 'edit'), 'module'); ?>" rel="modal">Edit Page</a></li>
+          <li><a href="<?php echo $view->url(array('page' => $page->url, 'module_id' => $page->id, 'module_name' => 'page', 'module_action' => 'delete'), 'module'); ?>" rel="modal">Delete Page</a></li>
           <li><a href="<?php echo $view->url(array('page' => $page->url, 'module_id' => $page->id, 'module_name' => 'page', 'module_action' => 'settings'), 'module'); ?>" rel="modal">Page Settings</a></li>
         </ul>
       </li>

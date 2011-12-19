@@ -51,12 +51,6 @@ $router->route('module', $pageRouteItem . 'm,<:module_name>,<#module_id>(/<:modu
     ->put(array('module_action' => 'put'))
     ->delete(array('module_action' => 'delete'));
 
-$router->route('page_action', $pageRouteItem . '/<:action>\.<:format>')
-    ->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
-
-$router->route('index_action', '/<:action>\.<:format>')
-    ->defaults(array('page' => '/', 'module' => 'Page', 'format' => 'html'));
-
 $router->route('page', $pageRouteItem)
     ->defaults(array('page' => '/', 'module' => 'Page', 'action' => 'index', 'format' => 'html'))
     ->post(array('action' => 'post'))
