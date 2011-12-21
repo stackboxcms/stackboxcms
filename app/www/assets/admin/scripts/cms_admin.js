@@ -366,7 +366,7 @@ $(function() {
                 var nModuleName = nModule.attr('rel').replace('cms_module_tile_', '');
                 $.ajax({
                     type: "POST",
-                    url: cms.config.url + cms.page.url + 'm,Page_Module,0.html',
+                    url: cms.config.url + cms.page.url + 'm,page_module,0',
                     data: {'region': nRegionName, 'name': nModuleName},
                     success: function(data, textStatus, req) {
                         // Replace content on page with new content from AJAX response
@@ -388,7 +388,7 @@ $(function() {
             // Serialize modules to save module/region positions
             $.ajax({
                 type: "GET",
-                url: cms.config.url + cms.page.url + 'm,page_module,0/saveSort.html',
+                url: cms.config.url + cms.page.url + 'm,page_module,0/saveSort',
                 data: 'ajax=1' + cms_serializeRegionModules(),
                 success: function(data, textStatus, req) {
                     // Show edit controls if CMS in edit mode
