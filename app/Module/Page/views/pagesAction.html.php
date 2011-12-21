@@ -3,7 +3,7 @@
 <h2>Pages</h2>
 <p>Drag &amp; drop pages to re-arrange them. Changes will not be permanent until you click 'Save'.</p>
 
-<form action="<?php echo $kernel->url(array('page' => $page->url, 'action' => 'pages'), 'page_action'); ?>" method="POST">
+<form action="<?php echo $view->url(array('page' => $page->url, 'module_id' => $page->id, 'module_name' => 'page', 'module_action' => 'pages'), 'module'); ?>" method="POST">
 <?php
 // Use generic TreeView to recursively display links
 $tree = $view->generic('treeview')
