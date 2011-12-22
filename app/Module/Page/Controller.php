@@ -55,6 +55,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
             }
         }
 
+        // Force HTTPS if set
+        if($page->setting('force_https', false) && !$request->isSecure() && !$request->no_redirect) {
+            $uri = $request->server('REQUEST_URI');
+            \Kernel()->redirect('https://' . $request->server('HTTP_HOST') . $uri);
+            exit;
+        }
+
         // Single module call?
         // @todo Check against matched route name instead of general request params (? - may restict query string params from being used)
         $mainContent = false;
@@ -111,7 +118,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if(!is_callable(array($moduleObject, $moduleAction))) {
                 throw new \BadMethodCallException("Module '" . $moduleName ."' does not have a callable method '" . $moduleAction . "'");
             }
-            $moduleResponse = $kernel->dispatch($moduleObject, $moduleAction, array($request, $page, $module));
+            try {
+                $moduleResponse = $kernel->dispatch($moduleObject, $moduleAction, array($request, $page, $module));
+            } catch(\Exception $e) {
+                // Catch module exeptions and pass them through filter
+                $moduleResponse = $kernel->events('cms')->filter('module_dispatch_exception', $e);
+            }
             
             // Set content as main content (detail view)
             $mainContent = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
@@ -324,12 +336,14 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function postMethod($request)
     {
-        $mapper = $this->kernel->mapper('Module\Page\Mapper');
-        $entity = $mapper->get('Module\Page\Entity')->data($request->post());
-        $entity->site_id = $this->kernel->config('cms.site.id');
+        $kernel = \Kernel();
+        $mapper = $kernel->mapper('Module\Page\Mapper');
+        $entity = $mapper->get('Module\Page\Entity');
+        $entity->data($request->post());
+        $entity->site_id = $kernel->site()->id;
         $entity->parent_id = (int) $request->parent_id;
-        $entity->date_created = $mapper->connection('Module\Page\Entity')->dateTime();
-        $entity->date_modified = $entity->date_created;
+        $entity->date_created = new \DateTime();
+        $entity->date_modified = new \DateTime();
         
         // Auto-genereate URL if not filled in
         if(!$request->url) {
@@ -512,8 +526,14 @@ class Controller extends Stackbox\Module\ControllerAbstract
                       $content .= '</ul></div>';
                     endif;
 
-                    // Call 'content' explicitly so Exceptions are not trapped in __toString
-                    $moduleResponse = $moduleResponse->content();
+                    try {
+                        // Call 'content' explicitly so Exceptions are not trapped in __toString
+                        $moduleResponse = $moduleResponse->content();
+                    } catch(\Exception $e) {
+                        // Catch module exeptions and render them inside region where module would have gone
+                        // (allows users to delete and edit bad modules instead of killing the whole page and forcing manual database modification)
+                        $moduleResponse = $kernel->events('cms')->filter('module_dispatch_exception', $e);
+                    }
                 }
 
                 // Build module HTML

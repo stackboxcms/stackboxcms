@@ -15,7 +15,7 @@ abstract class EntityAbstract extends Spot\Entity
 		// Site id for multi-site installations
 		return array(
 			'id' => array('type' => 'int', 'primary' => true, 'serial' => true),
-    		'site_id' => array('type' => 'int', 'index' => true, 'default' => 0)
+    	'site_id' => array('type' => 'int', 'index' => true, 'default' => 0)
 		);
 	}
     

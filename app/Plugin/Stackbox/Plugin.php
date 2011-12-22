@@ -130,6 +130,9 @@ class Plugin
         // Layout / API output
         $kernel->events()->addFilter('dispatch_content', 'cms_layout_api_output', array($this, 'layoutOrApiOutput'));
 
+        // Add 'autoinstall' method as callback for cms 'module_dispatch_exception' filter when exceptions are encountered
+        $kernel->events('cms')->addFilter('module_dispatch_exception', 'stackbox_autoinstall_on_exception', array($this, 'autoinstallOnException'));
+
         // If debugging, track execution time and memory usage
         if($kernel->config('app.mode.development') || $kernel->config('app.debug')) {
             $timeStart = microtime(true);
@@ -212,6 +215,39 @@ class Plugin
                 $response->contentType('application/json');
             } elseif('xml' == $request->format) {
                 $response->contentType('text/xml');
+            }
+        }
+
+        return $content;
+    }
+
+
+    /**
+     * Autoinstall missing tables on exception
+     */
+    public function autoinstallOnException($content)
+    {
+        $kernel = \Kernel();
+
+        // Database error
+        if($content instanceof \PDOException
+          || $content instanceof \Spot\Exception_Datasource_Missing) {
+            if($content instanceof \Spot\Exception_Datasource_Missing
+              ||'42S02' == $content->getCode()
+              || false !== stripos($content->getMessage(), 'Base table or view not found')) {
+                // Last dispatch attempt
+                $ld = $kernel->lastDispatch();
+
+                // Debug trace message
+                $mName = is_object($ld['module']) ? get_class($ld['module']) : $ld['module'];
+                $kernel->trace("PDO Exception on module '" . $mName . "' when dispatching '" . $ld['action'] . "' Attempting auto-install in Stackbox plugin at " . __METHOD__ . "", $content);
+
+                // Table not found - auto-install module to cause Entity migrations
+                $content = $kernel->dispatch($ld['module'], 'install');
+
+                if(false !== $content) {
+                    $content = "<strong>[[ Auto-installed module '" . $mName . "'. Please refresh page ]]</strong>";
+                }
             }
         }
 
