@@ -1,7 +1,7 @@
 <?php 
 $form = $view->generic('form')
     ->type('upload')
-    ->action($view->url(array('action' => 'new'), 'filebrowser', \Kernel()->request()->query()))
+    ->action($view->url(array('action' => 'post'), 'filebrowser', \Kernel()->request()->query()))
     ->method('post')
     ->fields(array(
         'upload' => array('type' => 'file')

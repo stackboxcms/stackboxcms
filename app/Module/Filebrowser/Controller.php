@@ -228,6 +228,14 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     'file' => array('Unable to upload file')
                     ));
         }
+        return $kernel->redirect($kernel->url(array('action' => 'images'), 'filebrowser', $request->query()));
+    }
+    public function postAction($request)
+    {
+        if($request->isPost()) {
+            return $this->postMethod($request);
+        }
+        return false;
     }
     
     
