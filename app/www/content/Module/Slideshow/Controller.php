@@ -197,6 +197,16 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // Group
             'display' => array(
                 // Fields
+                'alignment' => array(
+                    'type' => 'select',
+                    'default' => 'left',
+                    'after' => 'Alignment of slideshow',
+                    'options' => array(
+                        'left' => 'Left',
+                        'center' => 'Center',
+                        'right' => 'Right'
+                    )
+                ),
                 'width' => array(
                     'type' => 'int',
                     'default' => 600,
@@ -206,6 +216,16 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     'type' => 'int',
                     'default' => 350,
                     'after' => 'Pixel height of the slideshow'
+                ),
+                'background_color' => array(
+                    'type' => 'string',
+                    'default' => null,
+                    'after' => 'CSS Color of background (hex or color name)'
+                ),
+                'slide_container_class' => array(
+                    'type' => 'string',
+                    'default' => null,
+                    'after' => 'CSS class that will be applied to top-level slide container'
                 ),
                 'slide_delay' => array(
                     'type' => 'int',
