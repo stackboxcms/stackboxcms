@@ -118,8 +118,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
     
     /**
      * Install Module
-     *
-     * @see Cx_Module_Controller_Abstract
      */
     public function install($action = null, array $params = array())
     {
@@ -130,8 +128,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
     
     /**
      * Uninstall Module
-     *
-     * @see Cx_Module_Controller_Abstract
      */
     public function uninstall()
     {

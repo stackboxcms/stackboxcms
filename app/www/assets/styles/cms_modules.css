@@ -55,6 +55,13 @@
 .niji_method {
     color: #FF6400;
 }
+/* ensure bootstrap styles don't conflict */
+.module_code pre {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
 
 /**
  * Slideshow Module

@@ -103,6 +103,10 @@ ADMIN UI
 /*
 ADMIN BAR
 ================================================== */
+#cms_admin_bar {
+  background-color: #222;
+}
+
 a.cms_admin_bar_edit {
     display: block;
     float: left;
