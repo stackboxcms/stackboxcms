@@ -261,15 +261,16 @@ cms.modal = (function (cms, $) {
                 ['Bold','Italic','Underline','Strike'],
                 ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
                 ['Link','Unlink','Anchor'],
-                ['Image','File','Flash','Table','HorizontalRule','Smiley','SpecialChar','-','About'],
+                ['Image','File','Flash','Table','HorizontalRule','Smiley','SpecialChar','-','code-button-code','code-button-pre'],
                 '/',
                 ['Format','FontSize'],
                 ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
                 ['Subscript','Superscript'],
                 ['TextColor','BGColor','-','RemoveFormat'],
                 ['Find','Replace'],
-                ['ShowBlocks','-','Source']
+                ['ShowBlocks','-','Source','-','About']
             ],
+            extraPlugins: "code-button",
             autoUpdateElementJquery: true,
             baseFloatZIndex: 9000,
 

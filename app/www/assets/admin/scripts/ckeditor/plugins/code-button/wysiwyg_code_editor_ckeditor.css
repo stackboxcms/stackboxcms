@@ -1,0 +1,16 @@
+/**
+ * Display the button's label as text in the editor (rather than using an icon).
+ *
+ * This is based on a blog post by Peter Petrik:
+ * http://peterpetrik.com/blog/ckeditor-and-geshi-filter
+ */
+
+.cke_skin_kama .cke_button_code-button-pre span.cke_icon,
+.cke_skin_kama .cke_button_code-button-code span.cke_icon {
+  display: none !important;
+}
+.cke_skin_kama .cke_button_code-button-pre span.cke_label,
+.cke_skin_kama .cke_button_code-button-code span.cke_label {
+  display: inline;
+  font-size: 90%;
+}
