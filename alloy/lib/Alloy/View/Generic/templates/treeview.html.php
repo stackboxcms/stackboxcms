@@ -2,10 +2,10 @@
 $currentLevel = $view::$_level;
 
 // Check if we're okay to display against min level set
-$levelMinCheck = (!$levelMin || $currentLevel >= $levelMin);
+$levelMinCheck = (!$levelMin || $currentLevel > $levelMin);
 
 // Check if we're okay to display against max level set
-$levelMaxCheck = (!$levelMax || $currentLevel <= $levelMax);
+$levelMaxCheck = (!$levelMax || $currentLevel < $levelMax);
 
 
 if($levelMaxCheck):
@@ -38,7 +38,8 @@ if($levelMaxCheck):
 
       // Ensure we can go to next level
       // Don't show children if current level is equal to max
-      if($levelMaxCheck && $currentLevel != $levelMax):
+      // DO show full tree if max is set to '0'
+      if($levelMaxCheck && ($levelMax == 0 || $currentLevel != $levelMax)):
         // Item children (hierarchy)
         if(isset($itemChildrenCallback)):
           $children = $itemChildrenCallback($item);

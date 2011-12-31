@@ -8,9 +8,14 @@ $tree->data($pages)
     ->itemChildren(function($page) {
         return $page->children;
     })
-    ->levelMin($module->setting('level_min', 0))
-    ->levelMax($module->setting('level_max', 0))
-    ->filter(function($page) use($module) {
+    ->levelMin((int) $module->setting('level_min', 0))
+    ->levelMax((int) $module->setting('level_max', 0))
+    ->filter(function($page) use($module, $currentPage) {
+        // Filter pages based on section
+        if('section' == $module->setting('type')) {
+            // Section-based navigation
+        }
+
         // Setting: Show Homepage?
         if($page->isHomepage() && !$module->setting('show_homepage')) {
             return false;

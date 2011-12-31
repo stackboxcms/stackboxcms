@@ -16,6 +16,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      */
     public function indexAction(Request $request, Page $page, Module $module)
     {
+        $currentPage = $page;
         if('section' == $module->setting('type')) {
             $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree($page, $page);
         } else {
@@ -23,7 +24,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         }
         
         return $this->template(__FUNCTION__)
-            ->set(compact('pages', 'module'));
+            ->set(compact('pages', 'module', 'currentPage'));
     }
     
     
