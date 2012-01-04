@@ -18,8 +18,8 @@ class Plugin
     {
         $this->kernel = $kernel;
 
-        // Let autoloader know where to find Imagine library files
-        $kernel->loader()->registerNamespace('Imagine', __DIR__ . '/lib');
+        // Require PHAR package
+        require 'phar://' . __DIR__ . '/imagine.phar';
 
         // Make methods globally avaialble with Kernel
         $kernel->addMethod('imagine', function($adapter = 'Gd') {
