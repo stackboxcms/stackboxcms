@@ -115,7 +115,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // Resize to requested width/height
         $image = $kernel->imagine()
             ->open($imagePath . '/' . $image)
-            ->thumbnail(new Imagine\Image\Box($width, $height), Imagine\ImageInterface::THUMBNAIL_INSET)
+            ->thumbnail(new Imagine\Image\Box($width, $height), Imagine\Image\ImageInterface::THUMBNAIL_INSET)
             ->save($resizeDir . $image);
 
         // Send image content to browser
