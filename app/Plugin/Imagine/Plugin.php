@@ -6,7 +6,7 @@ use Alloy;
  * Imagine Plugin
  * Adds Imagine lib to your Alloy project
  * 
- * @version 0.1.4
+ * @version 0.2.8
  * @see https://github.com/avalanche123/Imagine
  */
 class Plugin

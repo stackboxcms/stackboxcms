@@ -207,6 +207,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $err = '';
 
                 // CKEditor relies on receiving this custom callback after successful upload
+                /*
                 return '
                 <script type="text/javascript">
                   try {
@@ -214,6 +215,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                   } catch(e) {}
                 </script>
                 ';
+                */
             }
 
             // Redirect to images or files
