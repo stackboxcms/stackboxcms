@@ -177,9 +177,14 @@ if($kernel) {
     
     // Debugging on?
     if($kernel->config('app.debug')) {
+        // Request Data
+        echo "<h2>Request Data</h2>";
+        echo $kernel->dump($kernel->request()->params());
+
         echo "<hr />";
         echo "<h2>Event Trace</h2>";
         echo $kernel->dump($kernel->trace());
+        
     }
 
     // Notify that response has been sent
