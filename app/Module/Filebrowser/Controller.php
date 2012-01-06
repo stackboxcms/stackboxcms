@@ -199,25 +199,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // ===========================================================================
 
         if($saveResult) {
-            // CKEditor custom response
-            // @see http://docs.cksource.com/CKEditor_3.x/Developers_Guide/File_Browser_(Uploader)/Custom_File_Browser
-            if($request->get('CKEditor')) {
-                $callback = $request->get('CKEditorFuncNum');
-                $url = $kernel->config('cms.url.files') . $subDir . '/' . $fileName;
-                $err = '';
-
-                // CKEditor relies on receiving this custom callback after successful upload
-                /*
-                return '
-                <script type="text/javascript">
-                  try {
-                    window.parent.CKEDITOR.tools.callFunction(' . $callback . ', "' . $url . '", "' . $err . '");
-                  } catch(e) {}
-                </script>
-                ';
-                */
-            }
-
             // Redirect to images or files
             if($subDir = 'images') {
                 return $kernel->redirect($kernel->url(array('action' => 'images'), 'filebrowser', $request->query()));
