@@ -23,7 +23,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 'module_id' => $module->id,
                 'status' => Entity::STATUS_PUBLISHED
             ))
-            ->order('date_created');
+            ->order(array('date_created' => 'DESC'));
         
         // Return only content for HTML
         if($request->format == 'html') {
