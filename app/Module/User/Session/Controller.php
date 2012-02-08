@@ -7,6 +7,9 @@ use Stackbox;
  */
 class Controller extends Stackbox\Module\ControllerAbstract
 {
+    const COOKIE_NAME = '_mcnc';
+
+
     /**
      * Access control list for controller methods
      */
@@ -113,6 +116,9 @@ class Controller extends Stackbox\Module\ControllerAbstract
             unset($_SESSION['user']);
             session_write_close();
         }
+
+        // Delete logged-in cookie
+        setcookie(static::COOKIE_NAME, '0', time()-28800);
         
         // Delete all sessions matched for current user
         $this->kernel->mapper()->delete('Module\User\Entity', array('user_id' => $user->id));
@@ -134,6 +140,10 @@ class Controller extends Stackbox\Module\ControllerAbstract
             list($userId, $userSession) = explode(':', $sessionKey);
             $userSession = $mapper->first('Module\User\Session\Entity', array('user_id' => $userId, 'session_id' => $userSession));
             if($userSession) {
+                // Set cookie to flag logged in user (useful for cache busting)
+                setcookie(static::COOKIE_NAME, '1', time()+28800); // 28,800 = 8 hours
+
+                // Return user object
                 return $mapper->get('Module\User\Entity', $userSession->user_id);
             }
         }
