@@ -17,15 +17,18 @@ class Plugin extends PluginAbstract
     public function init()
     {
         // Add Doctrine\Common\Cache to load path
-        $this->kernel->loader()
-            ->registerNamespace('Doctrine\Common\Cache', __DIR__ . '/lib/Doctrine/Common/Cache');
+        $this->kernel->loader()->registerNamespace('Doctrine', __DIR__ . '/lib');
 
         // Load Memcache connection
         $memcache = new \Memcache();
         $memcache->connect($this->config['host'], $this->config['port']);
 
+        // Initiate cache
         $cache = new \Doctrine\Common\Cache\MemcacheCache();
         $cache->setMemcache($memcache);
+
+        // Required for advanced deletion options like regex, pattern, and prefix
+        $cache->setManageCacheIds(true);
 
         // Save cache instance on object
         $this->cache = $cache;
@@ -38,7 +41,7 @@ class Plugin extends PluginAbstract
     /**
      * Set cache key with full page output
      */
-    protected function cacheOutput($output)
+    public function cacheOutput($output)
     {
         $user = $this->kernel->user();
         $request = $this->kernel->request();
@@ -54,6 +57,14 @@ class Plugin extends PluginAbstract
 
             // Cache output content
             $this->cache->set($cacheKey, (string) $response->content());
+        }
+
+        // Delete all cache entries on request when user logged in and it is NOT a GET or HEAD
+        // Really overkill, but it's the only safe way to not run into cache invalidation issues
+        if($user->isLoggedIn() && (!$request->isGet() || !$request->isHead())) {
+            // Delete all cache entries prefixed with current site
+            $sitePrefix = $request->scheme() . $request->host();
+            $this->cache->deleteByPrefix($sitePrefix);
         }
     }
 }
