@@ -27,9 +27,6 @@ class Plugin extends PluginAbstract
         $cache = new \Doctrine\Common\Cache\MemcacheCache();
         $cache->setMemcache($memcache);
 
-        // Required for advanced deletion options like regex, pattern, and prefix
-        $cache->setManageCacheIds(true);
-
         // Save cache instance on object
         $this->cache = $cache;
 
