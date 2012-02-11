@@ -53,7 +53,7 @@ class Plugin extends PluginAbstract
                         . $request->method()
                         . $request->uri();
 
-            $cacheContent = (string) $response->content();
+            $cacheContent = $response->content();
 
             // Append cache comment if HTML
             if('html' === $request->format) {
@@ -66,12 +66,14 @@ class Plugin extends PluginAbstract
 
         // Delete all cache entries on request when user logged in and it is NOT a GET or HEAD
         // Really overkill, but it's the only safe way to not run into cache invalidation issues
-        if($user->isLoggedIn() && (!$request->isGet() && !$request->isHead())) {
+        if($user->isLoggedIn()) {
 
-            if($request->clear_cache) {
+            // Delete all cache entries with flag
+            if($request->isGet() && $request->clear_cache) {
                 $this->cache->deleteAll();
-            } else {
-                // Delete all cache entries prefixed with current site
+
+            // Delete all cache entries prefixed with current site
+            } elseif(!$request->isGet() && !$request->isHead()) {
                 $sitePrefix = $request->scheme() . $request->host();
                 @$this->cache->deleteByPrefix($sitePrefix);   
             }
