@@ -22,9 +22,7 @@ try {
             throw new \InvalidArgumentException("Plugin configuration from app config must be an array. Given (" . gettype($plugins) . ").");
         }
 
-        foreach($plugins as $pluginName) {
-            $plugin = $kernel->plugin($pluginName);
-        }
+        $kernel->loadPlugins($plugins);
     }
     $kernel->events()->trigger('boot_start');
     
