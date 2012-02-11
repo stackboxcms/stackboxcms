@@ -160,6 +160,8 @@ class Plugin
         $response = $kernel->response();
 
         $response->contentType('text/html');
+
+        // Default cache settings for frontend/proxy caches like nginx and Varnish
         $response->header("Expires", gmdate("D, d M Y H:i:s", strtotime('+2 hours')) . " GMT");
         $response->header("Last-Modified", gmdate( "D, d M Y H:i:s" ) . " GMT");
         $response->header("Cache-Control", "max-age=7200, must-revalidate");
