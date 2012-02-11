@@ -52,8 +52,10 @@ class Plugin extends PluginAbstract
                         . $request->method()
                         . $request->uri();
 
+            $cacheContent = (string) $response->content() . "\n<!-- PageCache: " . date('r') . " -->";
+
             // Cache output content
-            $this->cache->set($cacheKey, (string) $response->content());
+            $this->cache->save($cacheKey, $cacheContent);
         }
 
         // Delete all cache entries on request when user logged in and it is NOT a GET or HEAD
