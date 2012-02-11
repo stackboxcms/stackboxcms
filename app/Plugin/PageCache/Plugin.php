@@ -42,6 +42,7 @@ class Plugin extends PluginAbstract
     {
         $user = $this->kernel->user();
         $request = $this->kernel->request();
+        $response = $this->kernel->response();
 
         // Only cache if user is not logged in, and request is GET
         if(!$user->isLoggedIn() && $request->isGet()) {
@@ -65,10 +66,15 @@ class Plugin extends PluginAbstract
 
         // Delete all cache entries on request when user logged in and it is NOT a GET or HEAD
         // Really overkill, but it's the only safe way to not run into cache invalidation issues
-        if($user->isLoggedIn() && (!$request->isGet() || !$request->isHead())) {
-            // Delete all cache entries prefixed with current site
-            $sitePrefix = $request->scheme() . $request->host();
-            $this->cache->deleteByPrefix($sitePrefix);
+        if($user->isLoggedIn() && (!$request->isGet() && !$request->isHead())) {
+
+            if($request->clear_cache) {
+                $this->cache->deleteAll();
+            } else {
+                // Delete all cache entries prefixed with current site
+                $sitePrefix = $request->scheme() . $request->host();
+                @$this->cache->deleteByPrefix($sitePrefix);   
+            }
         }
     }
 }
