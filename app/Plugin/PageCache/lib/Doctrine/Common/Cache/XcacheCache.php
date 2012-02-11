@@ -1,6 +1,7 @@
 <?php
-
 /*
+ *  $Id$
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,26 +27,48 @@ namespace Doctrine\Common\Cache;
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
  * @since   2.0
+ * @version $Revision: 3938 $
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class XcacheCache extends CacheProvider
+class XcacheCache extends AbstractCache
 {
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    public function getIds()
     {
-        return $this->doContains($id) ? unserialize(xcache_get($id)) : false;
+        $this->_checkAuth();
+        $keys = array();
+
+        for ($i = 0, $count = xcache_count(XC_TYPE_VAR); $i < $count; $i++) {
+            $entries = xcache_list(XC_TYPE_VAR, $i);
+
+            if (is_array($entries['cache_list'])) {
+                foreach ($entries['cache_list'] as $entry) {
+                    $keys[] = $entry['name'];
+                }
+            }
+        }
+
+        return $keys;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doContains($id)
+    protected function _doFetch($id)
+    {
+        return $this->_doContains($id) ? unserialize(xcache_get($id)) : false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function _doContains($id)
     {
         return xcache_isset($id);
     }
@@ -53,7 +76,7 @@ class XcacheCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doSave($id, $data, $lifeTime = 0)
+    protected function _doSave($id, $data, $lifeTime = 0)
     {
         return xcache_set($id, serialize($data), (int) $lifeTime);
     }
@@ -61,22 +84,11 @@ class XcacheCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doDelete($id)
+    protected function _doDelete($id)
     {
         return xcache_unset($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doFlush()
-    {
-        $this->checkAuthorization();
-
-        xcache_clear_cache(XC_TYPE_VAR, 0);
-
-        return true;
-    }
 
     /**
      * Checks that xcache.admin.enable_auth is Off
@@ -84,27 +96,10 @@ class XcacheCache extends CacheProvider
      * @throws \BadMethodCallException When xcache.admin.enable_auth is On
      * @return void
      */
-    protected function checkAuthorization()
+    protected function _checkAuth()
     {
         if (ini_get('xcache.admin.enable_auth')) {
             throw new \BadMethodCallException('To use all features of \Doctrine\Common\Cache\XcacheCache, you must set "xcache.admin.enable_auth" to "Off" in your php.ini.');
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetStats()
-    {
-        $this->checkAuthorization();
-
-        $info = xcache_info(XC_TYPE_VAR, 0);
-        return array(
-            Cache::STATS_HITS   => $info['hits'],
-            Cache::STATS_MISSES => $info['misses'],
-            Cache::STATS_UPTIME => null,
-            Cache::STATS_MEMORY_USAGE       => $info['size'],
-            Cache::STATS_MEMORY_AVAILIABLE  => $info['avail'],
-        );
     }
 }

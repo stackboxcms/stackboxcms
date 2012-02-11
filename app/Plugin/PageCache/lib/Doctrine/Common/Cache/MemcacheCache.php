@@ -1,6 +1,7 @@
 <?php
-
 /*
+ *  $Id$
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -23,23 +24,24 @@ namespace Doctrine\Common\Cache;
 use \Memcache;
 
 /**
- * Memcache cache provider.
+ * Memcache cache driver.
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
  * @since   2.0
+ * @version $Revision: 3938 $
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class MemcacheCache extends CacheProvider
+class MemcacheCache extends AbstractCache
 {
     /**
      * @var Memcache
      */
-    private $memcache;
+    private $_memcache;
 
     /**
      * Sets the memcache instance to use.
@@ -48,7 +50,7 @@ class MemcacheCache extends CacheProvider
      */
     public function setMemcache(Memcache $memcache)
     {
-        $this->memcache = $memcache;
+        $this->_memcache = $memcache;
     }
 
     /**
@@ -58,61 +60,64 @@ class MemcacheCache extends CacheProvider
      */
     public function getMemcache()
     {
-        return $this->memcache;
+        return $this->_memcache;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    public function getIds()
     {
-        return $this->memcache->get($id);
+        $keys = array();
+        $allSlabs = $this->_memcache->getExtendedStats('slabs');
+
+        foreach ($allSlabs as $server => $slabs) {
+            if (is_array($slabs)) {
+                foreach (array_keys($slabs) as $slabId) {
+                    $dump = $this->_memcache->getExtendedStats('cachedump', (int) $slabId);
+
+                    if ($dump) {
+                        foreach ($dump as $entries) {
+                            if ($entries) {
+                                $keys = array_merge($keys, array_keys($entries));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $keys;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doContains($id)
+    protected function _doFetch($id)
     {
-        return (bool) $this->memcache->get($id);
+        return $this->_memcache->get($id);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doSave($id, $data, $lifeTime = 0)
+    protected function _doContains($id)
     {
-        return $this->memcache->set($id, $data, 0, (int) $lifeTime);
+        return (bool) $this->_memcache->get($id);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doDelete($id)
+    protected function _doSave($id, $data, $lifeTime = 0)
     {
-        return $this->memcache->delete($id);
+        return $this->_memcache->set($id, $data, 0, (int) $lifeTime);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doFlush()
+    protected function _doDelete($id)
     {
-        return $this->memcache->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetStats()
-    {
-        $stats = $this->memcache->getStats();
-        return array(
-            Cache::STATS_HITS   => $stats['get_hits'],
-            Cache::STATS_MISSES => $stats['get_misses'],
-            Cache::STATS_UPTIME => $stats['uptime'],
-            Cache::STATS_MEMORY_USAGE       => $stats['bytes'],
-            Cache::STATS_MEMORY_AVAILIABLE  => $stats['limit_maxbytes'],
-        );
+        return $this->_memcache->delete($id);
     }
 }

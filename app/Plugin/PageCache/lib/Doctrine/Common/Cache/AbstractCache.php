@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -21,23 +20,21 @@
 namespace Doctrine\Common\Cache;
 
 /**
- * Base class for cache provider implementations.
+ * Base class for cache driver implementations.
  *
- * @since   2.2
+ * @since 2.0
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache
+abstract class AbstractCache implements Cache
 {
-    const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
+    /** @var string The cache id to store the index of cache ids under */
+    private $_cacheIdsIndexId = 'doctrine_cache_ids';
 
-    /**
-     * @var string The namespace to prefix all cache ids with
-     */
-    private $namespace = '';
+    /** @var string The namespace to prefix all cache ids with */
+    private $_namespace = null;
 
     /**
      * Set the namespace to prefix all cache ids with.
@@ -47,17 +44,7 @@ abstract class CacheProvider implements Cache
      */
     public function setNamespace($namespace)
     {
-        $this->namespace = (string) $namespace;
-    }
-
-    /**
-     * Retrieve the namespace that prefixes all cache ids.
-     *
-     * @return string
-     */
-    public function getNamespace()
-    {
-        return $this->namespace;
+        $this->_namespace = $namespace;
     }
 
     /**
@@ -65,7 +52,7 @@ abstract class CacheProvider implements Cache
      */
     public function fetch($id)
     {
-        return $this->doFetch($this->getNamespacedId($id));
+        return $this->_doFetch($this->_getNamespacedId($id));
     }
 
     /**
@@ -73,7 +60,7 @@ abstract class CacheProvider implements Cache
      */
     public function contains($id)
     {
-        return $this->doContains($this->getNamespacedId($id));
+        return $this->_doContains($this->_getNamespacedId($id));
     }
 
     /**
@@ -81,7 +68,7 @@ abstract class CacheProvider implements Cache
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        return $this->_doSave($this->_getNamespacedId($id), $data, $lifeTime);
     }
 
     /**
@@ -89,38 +76,96 @@ abstract class CacheProvider implements Cache
      */
     public function delete($id)
     {
-        return $this->doDelete($this->getNamespacedId($id));
-    }
+        $id = $this->_getNamespacedId($id);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getStats()
-    {
-        return $this->doGetStats();
-    }
+        if (strpos($id, '*') !== false) {
+            return $this->deleteByRegex('/' . str_replace('*', '.*', $id) . '/');
+        }
 
-    /**
-     * Deletes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
-     */
-    public function flushAll()
-    {
-        return $this->doFlush();
+        return $this->_doDelete($id);
     }
 
     /**
      * Delete all cache entries.
      *
-     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     * @return array $deleted  Array of the deleted cache ids
      */
     public function deleteAll()
     {
-        $namespaceCacheKey = sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
-        $namespaceVersion  = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
+        $ids = $this->getIds();
 
-        return $this->doSave($namespaceCacheKey, $namespaceVersion + 1);
+        foreach ($ids as $id) {
+            $this->delete($id);
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Delete cache entries where the id matches a PHP regular expressions
+     *
+     * @param string $regex
+     * @return array $deleted  Array of the deleted cache ids
+     */
+    public function deleteByRegex($regex)
+    {
+        $deleted = array();
+
+        $ids = $this->getIds();
+
+        foreach ($ids as $id) {
+            if (preg_match($regex, $id)) {
+                $this->delete($id);
+                $deleted[] = $id;
+            }
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Delete cache entries where the id has the passed prefix
+     *
+     * @param string $prefix
+     * @return array $deleted  Array of the deleted cache ids
+     */
+    public function deleteByPrefix($prefix)
+    {
+        $deleted = array();
+
+        $prefix = $this->_getNamespacedId($prefix);
+        $ids = $this->getIds();
+
+        foreach ($ids as $id) {
+            if (strpos($id, $prefix) === 0) {
+                $this->delete($id);
+                $deleted[] = $id;
+            }
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Delete cache entries where the id has the passed suffix
+     *
+     * @param string $suffix
+     * @return array $deleted  Array of the deleted cache ids
+     */
+    public function deleteBySuffix($suffix)
+    {
+        $deleted = array();
+
+        $ids = $this->getIds();
+
+        foreach ($ids as $id) {
+            if (substr($id, -1 * strlen($suffix)) === $suffix) {
+                $this->delete($id);
+                $deleted[] = $id;
+            }
+        }
+
+        return $deleted;
     }
 
     /**
@@ -129,12 +174,13 @@ abstract class CacheProvider implements Cache
      * @param string $id  The id to namespace
      * @return string $id The namespaced id
      */
-    private function getNamespacedId($id)
+    private function _getNamespacedId($id)
     {
-        $namespaceCacheKey = sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
-        $namespaceVersion  = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
-
-        return sprintf('%s[%s][%s]', $this->namespace, $id, $namespaceVersion);
+        if ( ! $this->_namespace || strpos($id, $this->_namespace) === 0) {
+            return $id;
+        } else {
+            return $this->_namespace . $id;
+        }
     }
 
     /**
@@ -143,7 +189,7 @@ abstract class CacheProvider implements Cache
      * @param string $id cache id The id of the cache entry to fetch.
      * @return string The cached data or FALSE, if no cache entry exists for the given id.
      */
-    abstract protected function doFetch($id);
+    abstract protected function _doFetch($id);
 
     /**
      * Test if an entry exists in the cache.
@@ -151,7 +197,7 @@ abstract class CacheProvider implements Cache
      * @param string $id cache id The cache id of the entry to check for.
      * @return boolean TRUE if a cache entry exists for the given cache id, FALSE otherwise.
      */
-    abstract protected function doContains($id);
+    abstract protected function _doContains($id);
 
     /**
      * Puts data into the cache.
@@ -161,7 +207,7 @@ abstract class CacheProvider implements Cache
      * @param int $lifeTime The lifetime. If != false, sets a specific lifetime for this cache entry (null => infinite lifeTime).
      * @return boolean TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
-    abstract protected function doSave($id, $data, $lifeTime = false);
+    abstract protected function _doSave($id, $data, $lifeTime = false);
 
     /**
      * Deletes a cache entry.
@@ -169,20 +215,12 @@ abstract class CacheProvider implements Cache
      * @param string $id cache id
      * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
-    abstract protected function doDelete($id);
+    abstract protected function _doDelete($id);
 
     /**
-     * Deletes all cache entries.
+     * Get an array of all the cache ids stored
      *
-     * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
+     * @return array $ids
      */
-    abstract protected function doFlush();
-
-     /**
-     * Retrieves cached information from data store
-     *
-     * @since   2.2
-     * @return  array An associative array with server's statistics if available, NULL otherwise.
-     */
-    abstract protected function doGetStats();
+    abstract public function getIds();
 }

@@ -1,6 +1,7 @@
 <?php
-
 /*
+ *  $Id$
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -21,23 +22,40 @@
 namespace Doctrine\Common\Cache;
 
 /**
- * APC cache provider.
+ * APC cache driver.
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
  * @since   2.0
+ * @version $Revision$
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
+ * @todo Rename: APCCache
  */
-class ApcCache extends CacheProvider
+class ApcCache extends AbstractCache
 {
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    public function getIds()
+    {
+        $ci = apc_cache_info('user');
+        $keys = array();
+
+        foreach ($ci['cache_list'] as $entry) {
+            $keys[] = $entry['info'];
+        }
+
+        return $keys;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function _doFetch($id)
     {
         return apc_fetch($id);
     }
@@ -45,7 +63,7 @@ class ApcCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doContains($id)
+    protected function _doContains($id)
     {
         $found = false;
 
@@ -57,7 +75,7 @@ class ApcCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doSave($id, $data, $lifeTime = 0)
+    protected function _doSave($id, $data, $lifeTime = 0)
     {
         return (bool) apc_store($id, $data, (int) $lifeTime);
     }
@@ -65,33 +83,8 @@ class ApcCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doDelete($id)
+    protected function _doDelete($id)
     {
         return apc_delete($id);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doFlush()
-    {
-        return apc_clear_cache() && apc_clear_cache('user');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetStats()
-    {
-        $info = apc_cache_info();
-        $sma  = apc_sma_info();
-
-        return array(
-            Cache::STATS_HITS              => $info['num_hits'],
-            Cache::STATS_MISSES            => $info['num_misses'],
-            Cache::STATS_UPTIME            => $info['start_time'],
-            Cache::STATS_MEMORY_USAGE      => $info['mem_size'],
-            Cache::STATS_MEMORY_AVAILIABLE => $sma['avail_mem'],
-        );
     }
 }
