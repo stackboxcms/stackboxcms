@@ -38,7 +38,7 @@ class Plugin extends PluginAbstract
     /**
      * Set cache key with full page output
      */
-    public function cacheOutput($output)
+    public function cacheOutput()
     {
         $user = $this->kernel->user();
         $request = $this->kernel->request();
@@ -52,7 +52,12 @@ class Plugin extends PluginAbstract
                         . $request->method()
                         . $request->uri();
 
-            $cacheContent = (string) $response->content() . "\n<!-- PageCache: " . date('r') . " -->";
+            $cacheContent = (string) $response->content();
+
+            // Append cache comment if HTML
+            if('html' === $request->format) {
+                $cacheContent .= "\n<!-- PageCache: " . date('r') . " -->";
+            }
 
             // Cache output content
             $this->cache->save($cacheKey, $cacheContent);
