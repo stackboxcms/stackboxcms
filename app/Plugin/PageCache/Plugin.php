@@ -70,7 +70,7 @@ class Plugin extends PluginAbstract
 
             // Delete all cache entries with flag
             if($request->isGet() && $request->clear_cache) {
-                $this->cache->deleteAll();
+                $this->cache->getMemcache()->flush();
 
             // Delete all cache entries prefixed with current site
             } elseif(!$request->isGet() && !$request->isHead()) {
