@@ -121,7 +121,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
         setcookie(static::COOKIE_NAME, '0', time()-28800);
         
         // Delete all sessions matched for current user
-        $this->kernel->mapper()->delete('Module\User\Entity', array('user_id' => $user->id));
         $this->kernel->mapper()->delete('Module\User\Session\Entity', array('user_id' => $user->id));
         return $this->kernel->redirect($this->kernel->url(array('page' => '/'), 'page'));
     }
