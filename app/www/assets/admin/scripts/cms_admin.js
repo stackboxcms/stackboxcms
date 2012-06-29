@@ -193,6 +193,7 @@ cms.modal = (function (cms, $) {
         $.ajax({
             type: "GET",
             url: a.attr('href'),
+            cache: false,
             success: function(data, textStatus, req) {
                 cms.modal.content(data);
             },

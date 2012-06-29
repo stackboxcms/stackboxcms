@@ -6,7 +6,6 @@ use Alloy\Request;
 use Module\Page\Entity as Page;
 use Module\Page\Module\Entity as Module;
 
-
 /**
  * Blog Module
  * Blog Posts Controller

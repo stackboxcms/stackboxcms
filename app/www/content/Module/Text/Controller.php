@@ -1,6 +1,10 @@
 <?php
 namespace Module\Text;
+
 use Stackbox;
+use Alloy\Request;
+use Module\Page\Entity as Page;
+use Module\Page\Module\Entity as Module;
 
 /**
  * Text Module
@@ -10,7 +14,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function indexAction($request, $page, $module)
+    public function indexAction(Request $request, Page $page, Module $module)
     {
         $item = $this->kernel->mapper('Module\Text\Mapper')->currentEntity($module);
         if(!$item) {
@@ -31,7 +35,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function newAction($request, $page, $module)
+    public function newAction(Request $request, Page $page, Module $module)
     {
         $form = $this->formView()
             ->method('post')
@@ -44,7 +48,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method GET
      */
-    public function editlistAction($request, $page, $module)
+    public function editlistAction(Request $request, Page $page, Module $module)
     {
         $form = $this->formView()
             ->action($this->kernel->url(array('page' => $page->url, 'module_name' => $this->name(), 'module_id' => $module->id), 'module'), 'module')
@@ -71,7 +75,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Create a new resource with the given parameters
      * @method POST
      */
-    public function postMethod($request, $page, $module)
+    public function postMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper('Module\Text\Mapper');
         $item = $mapper->get('Module\Text\Entity')->data($request->post());
@@ -98,7 +102,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
      * Save over existing entry (from edit)
      * @method PUT
      */
-    public function putMethod($request, $page, $module)
+    public function putMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper('Module\Text\Mapper');
         $item = $mapper->currentEntity($module);
@@ -129,7 +133,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     /**
      * @method DELETE
      */
-    public function deleteMethod($request, $page, $module)
+    public function deleteMethod(Request $request, Page $page, Module $module)
     {
         $mapper = $this->kernel->mapper('Module\Text\Mapper');
         $item = $mapper->get('Module\Text\Entity', $request->module_item);
