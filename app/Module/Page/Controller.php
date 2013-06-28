@@ -9,7 +9,7 @@ use Alloy\Request;
 class Controller extends Stackbox\Module\ControllerAbstract
 {
     protected $_path = __DIR__;
-    
+
     /**
      * @method GET
      */
@@ -19,8 +19,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
         return $this->viewUrl($request->page);
     }
-    
-    
+
+
     /**
      * View page by URL
      */
@@ -30,7 +30,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $request = $kernel->request();
         $user = $kernel->user();
         $site = $kernel->site();
-        
+
         // Ensure page exists
         $mapper = $kernel->mapper();
         $pageMapper = $kernel->mapper('Module\Page\Mapper');
@@ -69,13 +69,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
             $moduleId = (int) $request->module_id;
             $moduleName = $request->module_name;
             $moduleAction = $request->module_action;
-            
+
             $module = false;
             if($moduleName != 'page' && $moduleName != 'site' && $moduleId) {
                 // Get module by ID
                 $module = $mapper->first('Module\Page\Module\Entity', array('id' => $moduleId));
             }
-            
+
             // Setup dummy module object if there is none loaded
             // @todo Possibly restrict callable action with ID of '0' to 'new', etc. because other functions may depend on saved and valid module record
             if(false === $module) {
@@ -83,7 +83,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $module->id = $moduleId;
                 $module->name = $moduleName;
             }
-            
+
             // Load requested module
             // Try 'Site' module first
             $moduleObject = $kernel->module('Site_' . $moduleName);
@@ -100,13 +100,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if(!$moduleObject->userCanExecute($user, $moduleAction)) {
                 throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
             }
-            
+
             // Emulate REST for browsers
             $requestMethod = $request->method();
             if($request->isPost() && $request->post('_method')) {
                 $requestMethod = $request->post('_method');
             }
-            
+
             // Append 'Action' or 'Method' depending on HTTP method
             if(strtolower($requestMethod) == strtolower($moduleAction)) {
                 $moduleAction = $moduleAction . (false === strpos($moduleAction, 'Method') ? 'Method' : '');
@@ -118,13 +118,13 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if(!is_callable(array($moduleObject, $moduleAction))) {
                 throw new \BadMethodCallException("Module '" . $moduleName ."' does not have a callable method '" . $moduleAction . "'");
             }
+
             try {
                 $moduleResponse = $kernel->dispatch($moduleObject, $moduleAction, array($request, $page, $module));
             } catch(\Exception $e) {
                 // Catch module exeptions and pass them through filter
                 $moduleResponse = $kernel->events('cms')->filter('module_dispatch_exception', $e);
             }
-            
             // Set content as main content (detail view)
             $mainContent = $this->regionModuleFormat($request, $page, $module, $user, $moduleResponse);
 
@@ -133,14 +133,14 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 return $mainContent;
             }
         }
-        
+
         // Load page template
         $activeTheme = ($page->theme) ? $page->theme : $kernel->config('cms.site.theme', $kernel->config('cms.default.theme'));
         // Default template or page template
         if(!$page->template) {
             $activeTemplate = $activeTheme . '/' . $kernel->config('cms.default.theme_template');
         } else {
-            $activeTemplate = $page->template;   
+            $activeTemplate = $page->template;
         }
         $activeTheme = current(explode('/', $activeTemplate));
         $template = new Template($activeTemplate);
@@ -167,7 +167,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         // Add jQuery as the first item
         $templateHead = $template->head();
         $templateHead->script($kernel->config('cms.url.assets') . 'jquery.min.js');
-        
+
         // Template Region Defaults
         $regionModules = array();
         $mainRegion = $template->regionMain();
@@ -175,11 +175,11 @@ class Controller extends Stackbox\Module\ControllerAbstract
         foreach($template->regions() as $regionName => $regionData) {
             $regionModules[$regionName] = $regionData['content'];
         }
-        
+
         // Modules
         $modules = $page->modules;
         $unusedModules = array();
-        
+
         // Also include modules in global template regions if global regions are present
         if($template->regionsType('global')) {
             $modules->orWhere(array('site_id' => $kernel->config('cms.site.id'), 'region' => $template->regionsType('global')));
@@ -204,7 +204,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if(!isset($regionModules[$module->region]) || !is_array($regionModules[$module->region])) {
                 $regionModules[$module->region] = array();
             }
-            
+
             // If we have a 'main' module render, don't dispatch/render other content in main region
             if(false !== $mainContent) {
                 // If module goes in 'main' region, skip it
@@ -221,7 +221,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         if(false !== $mainContent) {
             $regionModules[$mainRegionName] = array($mainContent);
         }
-        
+
         // Replace region content
         $regionModules = $kernel->events('cms')->filter('module_page_template_regions', $regionModules);
         foreach($regionModules as $region => $modules) {
@@ -234,17 +234,17 @@ class Controller extends Stackbox\Module\ControllerAbstract
             }
             $template->regionContent($region, $regionContent);
         }
-        
+
         // Replace template tags
         $tags = $mapper->data($page);
         $tags = $kernel->events('cms')->filter('module_page_template_data', $tags);
         foreach($tags as $tagName => $tagValue) {
             $template->replaceTag($tagName, $tagValue);
         }
-        
+
         // Template string content
         $template->clean(); // Remove all unmatched tokens
-        
+
         // Admin stuff for HTML format
         if($template->format() == 'html') {
 
@@ -252,7 +252,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             if($user && $user->isAdmin()) {
                 // Admin toolbar, javascript, styles, etc.
                 $templateHead->script($kernel->config('cms.url.assets') . 'jquery-ui.min.js');
-                
+
                 // Setup javascript variables for use
                 $templateHead->prepend('<script type="text/javascript">
                 var cms = {
@@ -271,23 +271,23 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 $templateHead->script($kernel->config('cms.url.assets_admin') . 'scripts/cms_admin.js');
                 $templateHead->stylesheet('jquery-ui/aristo/aristo.css');
                 $templateHead->stylesheet($kernel->config('cms.url.assets_admin') . 'styles/cms_admin.css');
-                
+
                 // Grab template contents
                 $template = $template->content();
-                
+
                 // Admin bar and edit controls
                 $templateBodyContent = $this->template('_adminBar')
                     ->path(__DIR__ . '/views/')
                     ->set('page', $page);
                 $template = str_replace("</body>", $templateBodyContent . "\n</body>", $template);
             }
-            
+
             // Global styles and scripts
             $templateHead->stylesheet($kernel->config('url.assets') . 'styles/cms_modules.css');
-            
+
             // Render head
             $template = str_replace("</head>", $templateHead->content() . "\n</head>", $template);
-            
+
             // Prepend asset path to beginning of "href" or "src" attributes that is prefixed with '@'
             $template = preg_replace("/<(.*?)([src|href]+)=\"@([^\"|:]+)\"([^>]*)>/i", "<$1$2=\"".$themeUrl."$3\"$4>", $template);
             // Replace '!' prepend with web URL root
@@ -296,46 +296,58 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // Other output formats not supported at this time
             return false; // 404
         }
-        
+
         return $template;
     }
-    
-    
+
+
     /**
      * @method GET
      */
     public function newAction($request)
     {
+        if(!$this->userCanExecute($user, __METHOD__)) {
+            throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+        }
+
         return $this->formView()
             ->method('post')
             ->action($this->kernel->url(array('page' => '/'), 'page'));
     }
-    
-    
+
+
     /**
      * @method GET
      */
     public function editAction($request)
     {
+        if(!$this->userCanExecute($user, __METHOD__)) {
+            throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+        }
+
         $kernel = $this->kernel;
-        
+
         // Ensure page exists
         $mapper = $this->kernel->mapper('Module\Page\Mapper');
         $page = $mapper->getPageByUrl($request->page);
         if(!$page) {
             return false;
         }
-        
+
         return $this->formView()->data($page->toArray());
     }
-    
-    
+
+
     /**
      * Create a new resource with the given parameters
      * @method POST
      */
     public function postMethod($request)
     {
+        if(!$this->userCanExecute($user, __METHOD__)) {
+            throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+        }
+
         $kernel = \Kernel();
         $mapper = $kernel->mapper('Module\Page\Mapper');
         $entity = $mapper->get('Module\Page\Entity');
@@ -344,7 +356,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $entity->parent_id = (int) $request->parent_id;
         $entity->date_created = new \DateTime();
         $entity->date_modified = new \DateTime();
-        
+
         // Auto-genereate URL if not filled in
         if(!$request->url) {
             $entity->url = $this->kernel->formatUrl($request->title);
@@ -363,13 +375,17 @@ class Controller extends Stackbox\Module\ControllerAbstract
                 ->errors($mapper->errors());
         }
     }
-    
-    
+
+
     /**
      * @method GET
      */
     public function deleteAction($request)
     {
+        if(!$this->userCanExecute($user, __METHOD__)) {
+            throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+        }
+
         if($request->format == 'html') {
             $view = new \Alloy\View\Generic\Form('form');
             $form = $view
@@ -380,40 +396,44 @@ class Controller extends Stackbox\Module\ControllerAbstract
         }
         return false;
     }
-    
-    
+
+
     /**
      * @method DELETE
      */
     public function deleteMethod($request)
     {
+        if(!$this->userCanExecute($user, __METHOD__)) {
+            throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+        }
+
         // Ensure page exists
         $mapper = $this->kernel->mapper('Module\Page\Mapper');
         $page = $mapper->getPageByUrl($request->page);
         if(!$page) {
             return false;
         }
-        
+
         $mapper->delete($page);
     }
-    
-    
+
+
     /**
      * @method GET
      */
     public function sitemapAction($request)
     {
         $kernel = $this->kernel;
-        
+
         // Ensure page exists
         $mapper = $kernel->mapper('Module\Page\Mapper');
         $page = $mapper->getPageByUrl($request->url);
         if(!$page) {
             return false;
         }
-        
+
         $pages = $mapper->pageTree($page);
-        
+
         // View template
         return $this->template(__FUNCTION__)
             ->format($request->format)
@@ -423,11 +443,15 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
     /**
      * Pages display for admins to sort pages with
-     * 
+     *
      * @method GET
      */
     public function pagesAction($request)
     {
+        if(!$this->userCanExecute($user, __METHOD__)) {
+            throw new Alloy\Exception\Auth("User does not have sufficient permissions to execute requested action. Please login and try again.");
+        }
+
         $kernel = $this->kernel;
         $mapper = $kernel->mapper('Module\Page\Mapper');
 
@@ -438,7 +462,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             // @todo Need to force a page reload somehow so nav will reflect changes
             return "Saved";
         }
-        
+
         // Ensure page exists
         $page = $mapper->getPageByUrl($request->url);
         if(!$page) {
@@ -447,14 +471,14 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
         // All pages in tree form
         $pages = $mapper->pageTree($page);
-        
+
         // View template
         return $this->template(__FUNCTION__)
             ->format($request->format)
             ->set(compact('page', 'pages'));
     }
-    
-    
+
+
     /**
      * Return view object for the add/edit form
      */
@@ -462,7 +486,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
     {
         $view = parent::formView($entityName);
         $fields = $view->fields();
-        
+
         // Override int 'parent_id' with option select box
         $fields['parent_id']['type'] = 'select';
         // Get all pages for site
@@ -483,7 +507,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
             Entity::VISIBILITY_VISIBLE => 'Visible in Navigation',
             Entity::VISIBILITY_HIDDEN => 'Hidden from Navigation'
         );
-        
+
         // Prepare view
         $view->action("")
             ->method('post')
@@ -491,8 +515,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
             ->removeFields(array('id', 'ordering', 'date_created', 'date_modified'));
         return $view;
     }
-    
-    
+
+
     /**
      * Format module return content for display on page response
      */
@@ -548,7 +572,6 @@ class Controller extends Stackbox\Module\ControllerAbstract
                     <div class="cms_ui_title"><span>' . $module->name . '</span></div>
                     <ul>
                       <li><a href="' . $kernel->url(array('page' => $page->url, 'module_name' => ($module->name) ? $module->name : $this->name(), 'module_id' => (int) $module->id, 'module_action' => 'editlist'), 'module') . '">Edit</a></li>';
-                      
                       // Options submenu
                       $content .= '
                       <li class="cms_ui_controls_menu">
@@ -578,7 +601,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
     /**
      * Settings init
-     * 
+     *
      * Define all settings fields and values that will be needed
      */
     public function settings($page, $module)
@@ -595,8 +618,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
             )
         );
     }
-    
-    
+
+
     /**
      * Install Module
      *
@@ -614,8 +637,8 @@ class Controller extends Stackbox\Module\ControllerAbstract
         $this->kernel->mapper()->migrate('Module\Settings\Entity');
         return parent::install($action, $params);
     }
-    
-    
+
+
     /**
      * Uninstall Module
      *

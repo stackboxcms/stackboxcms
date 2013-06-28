@@ -26,8 +26,8 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
             'edit' => array('new', 'edit', 'editlist', 'delete', 'post', 'put', 'newAction', 'editAction', 'editlistAction', 'deleteAction', 'postMethod', 'putMethod', 'deleteMethod')
         );
     }
-    
-    
+
+
     /**
      * Authorize user to execute action
      */
@@ -35,7 +35,7 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
     {
         // Default role for all users
         $roles = array('view');
-        
+
         // Add roles for current user
         if($user && $user->isLoggedIn()) {
             if($user->isAdmin()) {
@@ -43,7 +43,7 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
                 $roles = array('view', 'edit', 'admin');
             }
         }
-        
+
         // Get required role to execute requested action
         $requiredRole = null;
         foreach($this->acl() as $role => $acl) {
@@ -52,16 +52,16 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
                 break;
             }
         }
-        
+
         // If required role is in user's roles
         if(in_array($requiredRole, $roles)) {
             return true;
         }
-        
+
         return false;
     }
-    
-    
+
+
     /**
      * Return view object for the add/edit form
      */
@@ -69,8 +69,8 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
     {
         return str_replace('\\', '_', $this->name());
     }
-    
-    
+
+
     /**
      * Return view object for the add/edit form
      */
@@ -80,7 +80,7 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
             if(defined('static::ENTITY')) {
                 $entityName = static::ENTITY;
             } else {
-                $entityName = "Module\\" . $this->name() . "\\Entity";   
+                $entityName = "Module\\" . $this->name() . "\\Entity";
             }
         }
         $fields = $this->kernel->mapper()->fields($entityName);
@@ -90,8 +90,8 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
             ->removeFields(array('id', 'site_id', 'page_id', 'module_id', 'date_created', 'date_modified'));
         return $view;
     }
-    
-    
+
+
     /**
      * Install Module
      *
@@ -106,14 +106,14 @@ abstract class ControllerAbstract extends Alloy\Module\ControllerAbstract
         }
         return $response;
     }
-    
-    
+
+
     /**
      * Uninstall Module
      */
     public function uninstall() { return true; }
-    
-    
+
+
     /**
      * Return current class path
      * Attempts to guess based on common 'modules' directory

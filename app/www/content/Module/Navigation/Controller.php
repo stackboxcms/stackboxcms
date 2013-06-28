@@ -22,12 +22,12 @@ class Controller extends Stackbox\Module\ControllerAbstract
         } else {
             $pages = $this->kernel->mapper('Module\Page\Mapper')->pageTree($page);
         }
-        
+
         return $this->template(__FUNCTION__)
             ->set(compact('pages', 'module', 'currentPage'));
     }
-    
-    
+
+
     /**
      * @method GET
      */
@@ -39,7 +39,7 @@ class Controller extends Stackbox\Module\ControllerAbstract
 
     /**
      * Settings init
-     * 
+     *
      * Define all settings fields and values that will be needed
      */
     public function settings($page, $module)
